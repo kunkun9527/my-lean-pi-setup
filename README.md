@@ -4,6 +4,14 @@
 
 A context-efficient [Pi coding agent](https://github.com/earendil-works/pi) stack plus five common tools with lean model-facing interfaces.
 
+## Why I made these lean versions
+
+I originally built these wrappers for personal use, then open-sourced them because they may help other Pi users.
+
+Pi's appeal is its lean, controllable context. Some excellent plugins expose long tool descriptions that consume substantial tokens on every request, which works against that goal. These wrappers reduce the model-facing descriptions while preserving the upstream runtime and features. Capable modern LLMs generally do not need repetitive, overly elaborate instructions to use clear tool schemas reliably.
+
+Updating a wrapper is straightforward: review the upstream changes against the lean version, check for breaking API, schema, or runtime changes, update the pinned dependency and adapter when needed, then run the tests and remeasure the context footprint.
+
 ## Measured initial context footprint
 
 These figures measure recurring model-facing initialization context, not one-time process memory.
