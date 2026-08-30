@@ -2,113 +2,114 @@
 
 [English](README.md)
 
-这是我的 [Pi coding agent](https://github.com/earendil-works/pi) 配置导航，涵盖 token/上下文优化与日常体验增强。
+这是一份聚焦于 [Pi coding agent](https://github.com/earendil-works/pi) 上下文优化组件的指南，并推荐少量经过 lean 处理的常用工具。
 
-本仓库只提供文档，不包含安装器、复制版配置或 API 凭据。请阅读各项目链接中的 README，并且只添加自己需要的组件。
+本仓库只提供文档，不包含安装器、复制版配置、私人端点或 API 凭据。请阅读各链接项目的 README，并且只安装自己需要的组件。
 
-## 设计目标
+## 上下文优化组件
 
-1. 减少模型可见的工具 schema 和反复出现的 system prompt 文本。
-2. 通过压缩和输出控制，让长会话持续可用。
-3. 保留上游 runtime 行为，而不是重新实现一套。
-4. 不让本地 UI 集成进入公开插件。
-5. 将供应商路由、加速和通知视为体验优化，而不是 token 优化。
+这些组件分别处理上下文消耗的不同环节，是这套配置的重点。
 
-## Token 与上下文优化
+### 1. billion-context-pi-lean
 
-### 我维护的 lean wrapper
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 是长会话的主要上下文组件。它在 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 上提供紧凑的 `compress` + `acp_context` 接口，同时保留上游压缩与恢复引擎。
 
-| 项目 | 作用 | 保留的能力 |
+它适合用于：
+
+- 将已经使用完的对话区间替换为高密度摘要；
+- 相关细节再次需要时，恢复已压缩内容；
+- 避免每轮都暴露完整上游工具接口，同时让长会话保持可用。
+
+### 2. pi-slim
+
+[pi-slim](https://github.com/robzolkos/pi-slim) 将 Pi 反复出现的文档指导改为按需启用，从而缩减基础 prompt。
+
+这是对静态 prompt 文本的直接削减，通常也是最适合优先添加的组件。
+
+### 3. Headroom / noheadroom
+
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 会压缩庞大的上下文和工具结果，避免它们挤占真正有用的工作信息。
+
+它与 Billion Context 互补：Headroom 控制进入或留在活动上下文中的庞大内容，Billion Context 则负责较早对话区间的管理和后续恢复。
+
+### 4. RTK 与 pi-rtk-optimizer
+
+[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 会减少冗长的 shell 命令输出，并自动改写受支持的命令。
+
+它从源头节省上下文：让精简后的命令输出进入对话，而不是等冗长输出已经占用空间后再压缩。
+
+### 5. pi-context-view
+
+[pi-context-view](https://github.com/dimk90/pi-context-view) 会显示基础 prompt、工具定义、扩展注入和对话内容分别使用了多少上下文。
+
+它是观测工具，不是压缩器。可以用它测量修改前后的配置，并找出下一个主要上下文开销来源。
+
+## 各组件如何配合
+
+| 环节 | 组件 | 目的 |
 | --- | --- | --- |
-| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) | 在 Billion Context 上提供精简的 `compress` + `acp_context` 接口。 | 上游上下文引擎与恢复操作。 |
-| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | 将任务工具缩减为一个紧凑的操作 schema。 | 完整任务生命周期与依赖管理。 |
-| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | 用更小的 schema 保留结构化澄清。 | 上游提问 UI 与验证逻辑。 |
-| [pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) | 提供精简的锚点读取、替换和撤销工具。 | Hashline 的行安全编辑模型。 |
-| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | 用单一 schema 整合网页操作，按需提供帮助。 | 上游搜索、抓取、验证和续取行为。 |
-| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | 用单一 schema 整合 subagent 操作，按需提供帮助。 | 发现、前台/后台执行、结果、引导、渲染和生命周期行为。 |
+| 静态 prompt | `pi-slim` | 删除反复出现的文档指导。 |
+| 工具与命令输出 | RTK + `pi-rtk-optimizer` | 避免冗长 shell 输出进入上下文。 |
+| 活动上下文 | Headroom / noheadroom | 压缩庞大的结果和活动内容。 |
+| 长会话历史 | `billion-context-pi-lean` | 压缩已使用区间，并按需恢复细节。 |
+| 测量 | `pi-context-view` | 显示上下文成本并验证优化效果。 |
 
-安装 wrapper 前，应删除或禁用对应的上游扩展项。同时加载两者会产生重复工具，也会破坏节省 token 的目标。
+## 推荐的 lean 常用工具
 
-### 其他上下文优化组件
+下面是常用的 Pi 工具。它们缩小了模型可见接口，同时不刻意删除上游 runtime 行为。
 
-| 组件 | 作用 | 重要说明 |
-| --- | --- | --- |
-| [pi-slim](https://github.com/robzolkos/pi-slim) | 将 Pi 反复注入的文档指导改为按需启用。 | 直接减少 system prompt。 |
-| [Billion Context](https://github.com/ranxianglei/billion-context-pi) | 压缩和恢复较早的对话区间。 | 我的配置通过 `billion-context-pi-lean` 使用它。 |
-| [Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) | 压缩庞大的上下文和工具结果。 | 我的 cache-mode fork 仅在本地；其他用户应以上游项目为可移植起点。 |
-| [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) + [RTK](https://github.com/rtk-ai/rtk) | 重写 shell 命令并压缩受支持命令的输出。 | 我的本地 fork 保留 RTK 默认全局历史数据库，未在此发布。 |
-| [pi-context-view](https://github.com/dimk90/pi-context-view) | 展示上下文消耗在哪里。 | 它只负责诊断，本身不会减少上下文。 |
+### pi-subagents-lean
 
-### Prompt cache 保温不是压缩
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 将 subagent 操作整合到一个紧凑 schema 中，并按需提供帮助。
 
-[pi-warm-cache](https://github.com/ribbons-digital/pi-warm-cache) 会在空闲间隔内保活受支持供应商的 prompt cache。它**不是**压缩插件，也**不会**减少发送给供应商的 token 总量。每次 warm probe 都是真实 completion，可能消耗缓存输入、非缓存输入、cache write 和输出 token。
+它保留发现、前台和后台执行、结果、引导、渲染以及生命周期行为。安装后应检查每个已发现 agent 的模型、prompt、工具和扩展白名单，并删除不需要的 agent 类型。
 
-只有在供应商路线受支持，并且预期缓存折扣高于 probe 成本时才应启用。应查看 `/warm` 和 `/warm savings`，不要假设它一定节省费用或额度。
+### pi-web-access-lean
 
-## 体验优化
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 将网页搜索、检查、抓取和续取整合到一个紧凑的操作 schema 中。
 
-### 供应商访问与速度
+详细参数通过按需帮助提供，不必在每轮模型上下文中重复出现。
 
-| 组件 | 作用 |
-| --- | --- |
-| [pi-multi-provider-manager](https://www.npmjs.com/package/pi-multi-provider-manager) | 管理多个供应商账户和部分 API-key 供应商。 |
-| [pi-opencode-bridge](https://www.npmjs.com/package/pi-opencode-bridge) | 发现 OpenCode 模型，并通过 Pi 的兼容供应商路径接入。 |
-| 本地 OpenAI-compatible 供应商注册 | 添加私有或自托管兼容端点；端点和凭据配置必须留在本地。 |
-| [pi-openai-fast](https://github.com/diegopetrucci/pi-extensions) | 为受支持的 OpenAI Codex 模型启用 priority service tier；这可能改变供应商费用或额度行为。 |
-| [pi-fireworks-quota](https://github.com/ZeR020/pi-fireworks-quota) | 显示 Fireworks 余额、支出、token 和限制信息。 |
+### pi-hashline-edit-pro-lean
 
-供应商扩展不会自动节省 token。它们的价值在于路由、账户管理、可用性、速度或可观测性。
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 提供紧凑的锚点读取、替换和撤销工具，同时保留 Hashline 的行安全编辑模型。
 
-### 工作流与界面
+它适合需要可靠编辑、但不希望每次请求都发送庞大编辑工具 schema 的场景。
 
-| 组件 | 作用 |
-| --- | --- |
-| [pi-notify](https://github.com/diegopetrucci/pi-extensions) | Pi 等待输入时发送通知。 |
-| [@getpipher/vision](https://github.com/getpipher/vision) | 提供感知模型能力的图片处理；我的 OpenAI Responses/collapsed-display 改动仅在本地。 |
-| [pi-mainflow](https://github.com/fghosth/pi-mainflow) | 提供分阶段规划与实现工作流。 |
-| [@narumitw/pi-goal](https://github.com/narumiruna/pi-extensions) | 执行专注于单一目标的自主工作流。 |
-| [pi-ponytail](https://github.com/thelegendtubaguy/pi-ponytail) | 提供可选的高级开发者工作模式；上游仓库已归档。 |
-| [pi-pwsh-native](https://github.com/takomine/pi-pwsh-native) | 改善 Windows 上的原生 PowerShell 工作流。 |
+### rpiv-ask-user-question-lean
 
-## Subagent 配置
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 用更小的 schema 保留结构化澄清 UI 和验证行为。
 
-我的专用 agent 使用显式扩展白名单，使每个角色只获得所需工具。只有在确实需要时，通用 worker agent 才会继承全部已启用扩展。
+当 agent 需要用户明确选择，而不是自由格式追问时，可以使用它。
 
-安装 [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 后：
+### rpiv-todo-lean
 
-1. 检查每个已发现的 agent 定义及其 `model`。
-2. 删除不需要的 agent 类型。
-3. 按自己的工作流重命名或修改 prompt、tools 和扩展白名单。
-4. 检查全局、工作区和项目位置中的同名 agent，因为上游发现优先级可能选择与你预期不同的定义。
-5. 只在某个角色确实有用时，才给该 subagent 添加 token 优化扩展。
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 将任务管理缩减为一个紧凑的操作 schema，同时保留任务状态、依赖关系、负责人和生命周期操作。
 
-在某个 subagent 进程中加载 cache warmer，只会保活该进程的供应商缓存，不会自动保活其他 agent 会话。
-
-## 公开插件与我的本地配置
-
-上面的公开仓库刻意**不依赖我的本地 collapsed-tool display service**，因此其他 Pi 用户可以直接使用。
-
-在我的活动安装中，每个仓库都检出在私有 `local-collapsed-compat` 分支，该分支恢复可选的显示集成。这些本地专用提交不会推送到 GitHub。核心代码和文档仍可从公开 `main` 同步，同时将 UI 专用补丁留在本地。
-
-其他未发布的定制——例如折叠工具渲染、cache-mode 默认值、私有供应商端点和本地工作流 fork——只是我机器上的实现细节，不是这些公开插件的安装要求。
+它最适合需要保持进度可见且可恢复的多步骤工作。
 
 ## 建议采用顺序
 
-1. 先用 `pi-context-view` 测量当前 prompt 和工具 schema 成本。
-2. 添加 `pi-slim`。
-3. 只将自己实际使用的大型工具替换为对应 lean wrapper。
-4. 添加一种压缩策略，并在依赖它之前确认恢复功能正常。
-5. 按角色配置 subagent 白名单。
-6. 单独添加供应商与工作流便利功能。
-7. 只有在测量供应商缓存行为和 probe 成本后，才考虑 `pi-warm-cache`。
+1. 安装 `pi-context-view`，记录当前上下文构成。
+2. 添加 `pi-slim`，缩减静态 prompt。
+3. 如果 shell 输出是主要噪声来源，添加 RTK 和 `pi-rtk-optimizer`。
+4. 添加 Headroom，处理庞大的活动上下文和工具结果。
+5. 添加 `billion-context-pi-lean`，处理长会话压缩与恢复。
+6. 只将自己实际使用的常用工具替换为对应 lean 版本。
+7. 再次使用 `pi-context-view` 测量。
 
-## 维护规则
+## 安装规则
 
-- 升级 lean wrapper 前固定或审查上游版本。
-- 不要同时加载上游扩展和对应 lean wrapper。
-- 依赖更新后，重新执行每个仓库文档中的检查。
-- 不要将密钥和机器专用端点提交到仓库。
-- 不只比较 schema 大小，也要比较行为：lean wrapper 应保留上游 runtime 契约。
+- 按照各链接仓库中的安装说明操作。
+- 不要同时加载上游扩展及其 lean wrapper；重复注册会浪费上下文，也可能发生冲突。
+- 只添加工作流实际使用的 lean 工具。
+- 升级 wrapper 前检查其固定的上游版本。
+- 依赖更新后重新执行各仓库文档中的检查。
+- 将机器专用集成、供应商配置、端点和密钥留在公开配置之外。
+
+## 本仓库不介绍的内容
+
+本指南刻意不介绍我的供应商扩展、账户管理器、模型加速选项、通知、视觉配置、工作流模式及其他私人体验插件。它们与上面的核心上下文优化组件和可移植 lean 工具推荐无关。
 
 ## 许可证与归属
 

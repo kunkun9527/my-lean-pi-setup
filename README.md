@@ -2,114 +2,115 @@
 
 [简体中文](README.zh-CN.md)
 
-A documentation-only map of my token-efficient and quality-of-life setup for the [Pi coding agent](https://github.com/earendil-works/pi).
+A focused guide to the context-optimization stack I use with the [Pi coding agent](https://github.com/earendil-works/pi), followed by a small set of commonly useful tools with token-lean interfaces.
 
-This repository intentionally contains no installer, copied configuration, or API credentials. Follow each linked project's own README and add only the pieces you need.
+This repository is documentation only. It contains no installer, copied configuration, private endpoints, or API credentials. Follow each linked project's README and install only what you need.
 
-## Design goals
+## Context optimization stack
 
-1. Reduce model-facing tool schemas and recurring system-prompt text.
-2. Keep long sessions useful through compaction and output control.
-3. Preserve upstream runtime behavior instead of rebuilding it.
-4. Keep local UI integrations out of public packages.
-5. Treat provider routing, speed, and notifications as quality-of-life features—not token savings.
+These components address different parts of context usage. They are the core of this setup.
 
-## Token and context efficiency
+### 1. billion-context-pi-lean
 
-### Lean wrappers I maintain
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) is the main long-session context component. It provides a compact `compress` + `acp_context` interface over [Billion Context](https://github.com/ranxianglei/billion-context-pi) while preserving the upstream compression and recovery engine.
 
-| Project | What it does | What stays intact |
+Use it to:
+
+- replace consumed conversation ranges with dense summaries;
+- recover compressed details when they become relevant again;
+- keep long sessions usable without exposing the full upstream tool surface on every turn.
+
+### 2. pi-slim
+
+[pi-slim](https://github.com/robzolkos/pi-slim) reduces Pi's recurring base prompt by making documentation guidance opt-in.
+
+This is a direct reduction in static prompt text and is usually the simplest component to add first.
+
+### 3. Headroom / noheadroom
+
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses bulky context and tool results before they crowd out useful working information.
+
+It complements Billion Context: Headroom controls oversized material entering or remaining in the active context, while Billion Context manages older conversation ranges and later recovery.
+
+### 4. RTK and pi-rtk-optimizer
+
+[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) reduce noisy shell-command output and automate supported command rewriting.
+
+This saves context near the source: concise command output enters the conversation instead of being compressed only after it has already consumed space.
+
+### 5. pi-context-view
+
+[pi-context-view](https://github.com/dimk90/pi-context-view) shows how much context is used by the base prompt, tool definitions, extension injections, and conversation content.
+
+It is an observability tool, not a compressor. Use it to measure the setup before and after changes and to find the next large source of context overhead.
+
+## How the stack fits together
+
+| Stage | Component | Purpose |
 | --- | --- | --- |
-| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) | Exposes a small `compress` + `acp_context` surface over Billion Context. | The upstream context engine and recovery operations. |
-| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | Reduces the task tool to one compact operation schema. | The full task lifecycle and dependency handling. |
-| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | Keeps structured clarification with a smaller schema. | The upstream question UI and validation. |
-| [pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) | Provides compact anchored read, replace, and undo tools. | Hashline's line-safe editing model. |
-| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | Combines web operations behind one schema with on-demand help. | Upstream search, fetch, verification, and continuation behavior. |
-| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | Combines subagent operations behind one schema with on-demand help. | Discovery, foreground/background execution, results, steering, rendering, and lifecycle behavior. |
+| Static prompt | `pi-slim` | Removes recurring documentation guidance. |
+| Tool and command output | RTK + `pi-rtk-optimizer` | Prevents verbose shell output from entering context. |
+| Active context | Headroom / noheadroom | Compresses bulky results and active material. |
+| Long-session history | `billion-context-pi-lean` | Compresses consumed ranges and restores details on demand. |
+| Measurement | `pi-context-view` | Reveals context cost and verifies improvements. |
 
-Install a wrapper only after removing or disabling the corresponding upstream extension entry. Loading both creates duplicate tools and defeats the token-saving goal.
+## Recommended lean tools
 
-### Other context-saving components
+These are commonly useful Pi tools whose model-facing interfaces have been reduced without intentionally removing their upstream runtime behavior.
 
-| Component | Role | Important note |
-| --- | --- | --- |
-| [pi-slim](https://github.com/robzolkos/pi-slim) | Makes Pi's recurring documentation guidance opt-in. | A direct system-prompt reduction. |
-| [Billion Context](https://github.com/ranxianglei/billion-context-pi) | Compresses and restores older conversation ranges. | I use it through `billion-context-pi-lean`. |
-| [Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) | Compresses bulky context and tool results. | My cache-mode fork is local; use the upstream project as the portable starting point. |
-| [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) + [RTK](https://github.com/rtk-ai/rtk) | Rewrites shell commands and compacts supported command output. | My local fork preserves RTK's default global history database; it is not published here. |
-| [pi-context-view](https://github.com/dimk90/pi-context-view) | Shows where context is being spent. | Diagnostic only; it does not reduce context by itself. |
+### pi-subagents-lean
 
-### Prompt-cache warming is different
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) combines subagent operations behind one compact schema with on-demand help.
 
-[pi-warm-cache](https://github.com/ribbons-digital/pi-warm-cache) keeps supported provider prompt caches alive during idle gaps. It is **not** a compression plugin and does **not** reduce the total number of provider tokens sent. Every warm probe is a real completion that can consume cached-input, uncached-input, cache-write, and output tokens.
+It preserves discovery, foreground and background execution, results, steering, rendering, and lifecycle behavior. After installation, review every discovered agent's model, prompt, tools, and extension allowlist; delete agent types you do not need.
 
-Use it only when the provider route is supported and the expected cache discount is worth the probe cost. Check `/warm` and `/warm savings` rather than assuming it always saves money or quota.
+### pi-web-access-lean
 
-## Quality of life
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) combines web search, checking, fetching, and continuation behind one compact operation schema.
 
-### Provider access and speed
+Detailed parameters remain available through on-demand help instead of being repeated in the model context on every turn.
 
-| Component | Role |
-| --- | --- |
-| [pi-multi-provider-manager](https://www.npmjs.com/package/pi-multi-provider-manager) | Manages multiple provider accounts and selected API-key providers. |
-| [pi-opencode-bridge](https://www.npmjs.com/package/pi-opencode-bridge) | Discovers OpenCode models and connects them through Pi's compatible provider path. |
-| Local OpenAI-compatible provider registration | Adds private or self-hosted compatible endpoints. Keep endpoint and credential configuration local. |
-| [pi-openai-fast](https://github.com/diegopetrucci/pi-extensions) | Enables the supported OpenAI Codex priority service tier. This may change provider cost or quota behavior. |
-| [pi-fireworks-quota](https://github.com/ZeR020/pi-fireworks-quota) | Shows Fireworks balance, spend, token, and limit information. |
+### pi-hashline-edit-pro-lean
 
-Provider extensions do not automatically save tokens. Their value is routing, account management, availability, speed, or observability.
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) provides compact anchored read, replace, and undo tools while preserving Hashline's line-safe editing model.
 
-### Workflow and interface
+It is useful when reliable edits matter but a large editing-tool schema does not need to be sent on every request.
 
-| Component | Role |
-| --- | --- |
-| [pi-notify](https://github.com/diegopetrucci/pi-extensions) | Sends a notification when Pi is ready for input. |
-| [@getpipher/vision](https://github.com/getpipher/vision) | Adds capability-aware image handling. My OpenAI Responses/collapsed-display changes are local only. |
-| [pi-mainflow](https://github.com/fghosth/pi-mainflow) | Provides a staged planning and implementation workflow. |
-| [@narumitw/pi-goal](https://github.com/narumiruna/pi-extensions) | Runs a focused autonomous objective workflow. |
-| [pi-ponytail](https://github.com/thelegendtubaguy/pi-ponytail) | Adds an optional senior-developer working mode. The upstream repository is archived. |
-| [pi-pwsh-native](https://github.com/takomine/pi-pwsh-native) | Improves native PowerShell workflows on Windows. |
+### rpiv-ask-user-question-lean
 
-## Subagent setup
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) keeps the structured clarification UI and validation behavior behind a smaller schema.
 
-My specialized agents use explicit extension allowlists so each role receives only the tools it needs. General-purpose worker agents may inherit all enabled extensions when that is intentional.
+Use it when the agent needs explicit choices rather than unstructured follow-up questions.
 
-After installing [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean):
+### rpiv-todo-lean
 
-1. Inspect every discovered agent definition and its `model`.
-2. Delete agent types you do not need.
-3. Rename or edit prompts, tools, and extension allowlists for your workflow.
-4. Check for same-name agents in global, workspace, and project locations, because upstream discovery precedence can select a different definition than expected.
-5. Add token-saving extensions to a subagent only when they are useful for that role.
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) reduces task management to one compact operation schema while preserving task states, dependencies, ownership, and lifecycle operations.
 
-A cache warmer loaded inside one subagent process warms that process's provider cache; it does not warm every other agent session automatically.
+It is most useful for multi-step work where progress should remain visible and recoverable.
 
-## Public packages vs. my local setup
+## Recommended adoption order
 
-The public repositories above deliberately have **no dependency on my local collapsed-tool display service**. This keeps them portable for other Pi users.
+1. Install `pi-context-view` and record the current context breakdown.
+2. Add `pi-slim` to reduce the static prompt.
+3. Add RTK and `pi-rtk-optimizer` if shell output is a major source of noise.
+4. Add Headroom for bulky active context and tool results.
+5. Add `billion-context-pi-lean` for long-session compression and recovery.
+6. Replace only the common tools you actually use with their lean variants.
+7. Measure again with `pi-context-view`.
 
-In my active installation, each repository is checked out on a private `local-collapsed-compat` branch that restores the optional display integration. Those local-only commits are not pushed to GitHub. Core code and documentation can still be synchronized from public `main` while the UI-specific patch remains local.
+## Installation rules
 
-Other unpublished customizations—such as collapsed tool rendering, cache-mode defaults, private provider endpoints, and local workflow forks—are implementation details of my machine, not installation requirements for these public packages.
-
-## Suggested adoption order
-
-1. Use `pi-context-view` to measure your current prompt and tool-schema cost.
-2. Add `pi-slim`.
-3. Replace only the large tools you actually use with the matching lean wrappers.
-4. Add one compaction strategy and verify that restoration works before relying on it.
-5. Configure subagent allowlists by role.
-6. Add provider and workflow conveniences separately.
-7. Consider `pi-warm-cache` only after measuring your provider's cache behavior and probe cost.
-
-## Maintenance rules
-
-- Pin or review upstream versions before upgrading a lean wrapper.
-- Never load an upstream extension and its lean wrapper at the same time.
+- Follow the installation instructions in each linked repository.
+- Do not load an upstream extension and its lean wrapper at the same time; duplicate registrations waste context and may conflict.
+- Add only the lean tools your workflow actually uses.
+- Review pinned upstream versions before upgrading a wrapper.
 - Re-run each repository's documented checks after dependency updates.
-- Keep secrets and machine-specific endpoints out of repositories.
-- Compare behavior, not just schema size: lean wrappers should preserve the upstream runtime contract.
+- Keep machine-specific integrations, provider settings, endpoints, and secrets outside public configuration.
+
+## What this repository does not cover
+
+This guide intentionally does not document my provider extensions, account managers, model-speed options, notifications, vision setup, workflow modes, or other private quality-of-life plugins. They are unrelated to the focused context-optimization stack and portable lean-tool recommendations above.
 
 ## License and attribution
 
-This repository is documentation. Each linked project keeps its own license, authorship, and support policy. The lean repositories preserve upstream attribution in their individual READMEs and package metadata.
+This repository is documentation. Each linked project retains its own license, authorship, and support policy. The lean repositories preserve upstream attribution in their individual READMEs and package metadata.
