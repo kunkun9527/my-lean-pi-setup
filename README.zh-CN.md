@@ -6,6 +6,55 @@
 
 本仓库只提供文档，不包含安装器、复制版配置、私人端点或 API 凭据。请阅读各链接项目的 README，并且只安装自己需要的组件。
 
+## 实测初始化上下文占用
+
+下列数字衡量插件在初始化时加入的、会反复发送给模型的上下文。测量已排除 Pi 自带工具（`read`、`bash`、`edit`、`write` 等）、skills、context files、对话消息和无关扩展，因此每个结果只归属于表中插件。
+
+### 测量方法与范围
+
+- Pi `0.84.4`、`pi-context-view` `0.4.3`，选择的模型为 `GPT-5.6-SOL`。
+- 每个扩展都在全新的内存会话中单独加载，并关闭 Pi 自带工具、skills 和 context files。
+- 计算口径与 `/context injections` 一致：工具名称 + 描述 + JSON schema + prompt snippet/guidelines，再加扩展注入的 system prompt 文本。斜杠命令和 UI/runtime 代码不会发送给模型，因此不计入。
+- `pi-context-view` 使用 `ceil(字符数 / 4)` 估算文本 token。这些是可复现的估算值，不是供应商 tokenizer 对 GPT 的精确计数；选择的模型不会改变该估算器。
+- 原版对比使用 lean wrapper 固定的准确上游版本。Pi 或插件更新后，数字可能变化。
+
+### 上下文组件
+
+| 组件 | 初始化上下文影响 | 对比 / 解读 |
+| --- | ---: | --- |
+| `billion-context-pi-lean` | **675 tokens** | 原版 `billion-context-pi@0.1.52`：**6,061**。节省 **5,386（88.9%）**。 |
+| `pi-slim@0.2.1` | **净减少 309 tokens** | 正常使用时不新增模型可见工具或指令；从实测基础 prompt 中删除了 1,236 个字符的 Pi 文档指导。 |
+| Headroom / 本地 noheadroom | **初始化 0 tokens** | 在运行期处理上下文和工具结果，不新增启动工具 schema 或 prompt 指令。 |
+| RTK + `pi-rtk-optimizer` | **初始化 0 tokens** | 在实测 rewrite 配置下通过运行期 hook 和 shell rewrite 工作。启用可选源码过滤故障排查提示后可能不为零。 |
+| `pi-context-view@0.4.3` | **初始化 0 tokens** | 注册斜杠命令和观察器，但不新增模型可见指令或工具。 |
+
+初始化为零**不代表没有节省**。Headroom 和 RTK 主要减少后续工具结果/上下文增长，`pi-context-view` 则负责测量这些增长。
+
+### Lean wrapper 对比
+
+| Wrapper | Lean | 固定的原版 | 节省 | 降幅 |
+| --- | ---: | ---: | ---: | ---: |
+| `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
+| `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
+| `pi-web-access-lean` | **141** | 2,376 | 2,235 | **94.1%** |
+| `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
+| `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
+| `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
+| **合计** | **1,906** | **13,425** | **11,519** | **85.8%** |
+
+这六个 lean wrapper 合计只占固定原版接口初始化上下文的约**七分之一**。只要这些工具保持启用，这部分节省就会在模型请求中重复出现；不过供应商的 prompt cache 可能降低其实际计费成本。
+
+### 每个工具明细
+
+| 插件 | Lean 接口 | 原版接口 |
+| --- | --- | --- |
+| Billion Context | `compress` 216 + `acp_context` 90 + prompt 369 = **675** | `compress` 549 + `decompress` 546 + `search_context` 210 + `acp_status` 339 + prompt 4,417 = **6,061** |
+| Subagents | `subagent` = **268** | `Agent` 1,111 + `get_subagent_result` 149 + `steer_subagent` 156 = **1,416** |
+| Web access | `web_access` = **141** | `web_search` 994 + `source_check` 413 + `fetch_content` 576 + `get_search_content` 393 = **2,376** |
+| Hashline edit | `read` 85 + `replace` 203 + `undo_last_replace` 63 = **351** | `read` 247 + `replace` 948 + `undo_last_replace` 215 = **1,410** |
+| Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
+| Todo | `todo` = **256** | `todo` = **904** |
+
 ## 上下文优化组件
 
 这些组件分别处理上下文消耗的不同环节，是这套配置的重点。

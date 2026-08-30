@@ -6,6 +6,55 @@ A focused guide to the context-optimization stack I use with the [Pi coding agen
 
 This repository is documentation only. It contains no installer, copied configuration, private endpoints, or API credentials. Follow each linked project's README and install only what you need.
 
+## Measured initial context footprint
+
+The figures below measure the recurring model-facing context added at initialization. Pi's built-in tools (`read`, `bash`, `edit`, `write`, and related built-ins), skills, context files, conversation messages, and unrelated extensions were excluded, so each result belongs to the named plugin.
+
+### Method and scope
+
+- Pi `0.84.4`, `pi-context-view` `0.4.3`, with `GPT-5.6-SOL` selected.
+- Each extension was loaded alone in a fresh in-memory session with built-in tools, skills, and context files disabled.
+- The calculation matches `/context injections`: tool name + description + JSON schema + prompt snippet/guidelines, plus extension-added system prompt text. Slash commands and UI/runtime code are not counted because they are not sent to the model.
+- `pi-context-view` estimates text as `ceil(characters / 4)`. These are reproducible estimates, not provider-tokenizer-exact GPT token counts; the selected model does not change this estimator.
+- Upstream comparisons use the exact versions pinned by the lean wrappers. Values can change after either Pi or a plugin is updated.
+
+### Context components
+
+| Component | Initial context impact | Comparison / interpretation |
+| --- | ---: | --- |
+| `billion-context-pi-lean` | **675 tokens** | Upstream `billion-context-pi@0.1.52`: **6,061**. Saves **5,386 (88.9%)**. |
+| `pi-slim@0.2.1` | **−309 tokens net** | Adds no model-facing tool or instruction in normal use; removes 1,236 characters of Pi documentation guidance from the measured base prompt. |
+| Headroom / local noheadroom | **0 tokens initially** | Works on context and tool results at runtime; it does not add a startup tool schema or prompt instruction. |
+| RTK + `pi-rtk-optimizer` | **0 tokens initially** | Under the measured rewrite configuration, it works through runtime hooks and shell rewriting. Optional source-filter troubleshooting guidance can make this non-zero when enabled. |
+| `pi-context-view@0.4.3` | **0 tokens initially** | Registers a slash command and observers, but adds no model-facing instructions or tools. |
+
+A zero initial footprint does **not** mean a component saves nothing. Headroom and RTK primarily reduce later tool-result/context growth, while `pi-context-view` measures that growth.
+
+### Lean wrapper comparison
+
+| Wrapper | Lean | Pinned upstream | Saved | Reduction |
+| --- | ---: | ---: | ---: | ---: |
+| `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
+| `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
+| `pi-web-access-lean` | **141** | 2,376 | 2,235 | **94.1%** |
+| `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
+| `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
+| `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
+| **Total** | **1,906** | **13,425** | **11,519** | **85.8%** |
+
+Together, these six lean wrappers use about **one seventh** of the initialization context of their pinned upstream interfaces. This saving recurs on model requests where the tools remain enabled, although provider prompt caching may reduce its billed cost.
+
+### Per-tool breakdown
+
+| Plugin | Lean interface | Original interface |
+| --- | --- | --- |
+| Billion Context | `compress` 216 + `acp_context` 90 + prompt 369 = **675** | `compress` 549 + `decompress` 546 + `search_context` 210 + `acp_status` 339 + prompt 4,417 = **6,061** |
+| Subagents | `subagent` = **268** | `Agent` 1,111 + `get_subagent_result` 149 + `steer_subagent` 156 = **1,416** |
+| Web access | `web_access` = **141** | `web_search` 994 + `source_check` 413 + `fetch_content` 576 + `get_search_content` 393 = **2,376** |
+| Hashline edit | `read` 85 + `replace` 203 + `undo_last_replace` 63 = **351** | `read` 247 + `replace` 948 + `undo_last_replace` 215 = **1,410** |
+| Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
+| Todo | `todo` = **256** | `todo` = **904** |
+
 ## Context optimization stack
 
 These components address different parts of context usage. They are the core of this setup.
