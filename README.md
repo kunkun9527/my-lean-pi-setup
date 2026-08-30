@@ -12,6 +12,79 @@ Pi's appeal is its lean, controllable context. Some excellent plugins expose lon
 
 Updating a wrapper is straightforward: review the upstream changes against the lean version, check for breaking API, schema, or runtime changes, update the pinned dependency and adapter when needed, then run the tests and remeasure the context footprint.
 
+## Context optimization stack
+
+### 1. billion-context-pi-lean
+
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) provides a compact `compress` + `acp_context` interface over [Billion Context](https://github.com/ranxianglei/billion-context-pi) for summarizing consumed conversation ranges and restoring details on demand. In practice, it keeps the active context smaller and prompts the model to compress material it no longer needs. Besides saving tokens, this is especially valuable for models with smaller usable context windows.
+
+### 2. pi-slim
+
+[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi documentation guidance opt-in, directly reducing the recurring base prompt.
+
+### 3. Headroom / noheadroom
+
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses bulky active context and tool results. In my day-to-day use, it has typically reduced token usage by about **20–30%**; this is a personal observation rather than an isolated benchmark. Billion Context handles older conversation ranges and later recovery.
+
+### 4. RTK and pi-rtk-optimizer
+
+[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) reduce shell-command output before it enters the conversation. I am still evaluating this part of the stack and do not yet have detailed savings data.
+
+### 5. pi-context-view
+
+[pi-context-view](https://github.com/dimk90/pi-context-view) measures base-prompt, tool, extension, and conversation context. It is an observability tool, not a compressor.
+
+## Optional lean tools
+
+### pi-subagents-lean
+
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) combines subagent operations behind one schema while preserving execution, results, steering, and lifecycle behavior. Review discovered agents' models, prompts, tools, and extension allowlists; delete unused types.
+
+### pi-web-access-lean
+
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) combines web search, checking, fetching, and continuation behind one schema with on-demand advanced help.
+
+### pi-hashline-edit-pro-lean
+
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) provides compact anchored read, replace, and undo tools while preserving Hashline's line-safe editing model.
+
+### rpiv-ask-user-question-lean
+
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) retains structured clarification, validation, and UI behavior behind a smaller schema.
+
+### rpiv-todo-lean
+
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) retains task states, dependencies, ownership, and lifecycle operations behind one compact schema.
+
+## How the stack fits together
+
+| Stage | Component | Purpose |
+| --- | --- | --- |
+| Static prompt | `pi-slim` | Removes recurring documentation guidance. |
+| Tool and command output | RTK + `pi-rtk-optimizer` | Prevents verbose shell output from entering context. |
+| Active context | Headroom / noheadroom | Compresses bulky results and active material. |
+| Long-session history | `billion-context-pi-lean` | Compresses consumed ranges and restores details on demand. |
+| Measurement | `pi-context-view` | Reveals context cost and verifies improvements. |
+
+## Installation
+
+### Recommended adoption order
+
+1. Measure the current setup with `pi-context-view`.
+2. Add `pi-slim`.
+3. Add RTK and `pi-rtk-optimizer` if shell output is noisy.
+4. Add Headroom for bulky active context and tool results.
+5. Add `billion-context-pi-lean` for long-session compression and recovery.
+6. Replace only tools you use with lean variants.
+7. Measure again.
+
+### Notes
+
+- Follow each linked repository's installation instructions.
+- Never load an upstream extension and its lean wrapper together.
+- Check pinned upstream versions and run the repository's checks after dependency updates.
+- Keep endpoints, provider settings, and secrets out of public configuration.
+
 ## Measured initial context footprint
 
 These figures measure recurring model-facing initialization context, not one-time process memory.
@@ -60,77 +133,6 @@ The six lean wrappers use about one seventh of the pinned upstream interfaces' i
 | Hashline edit | `read` 85 + `replace` 203 + `undo_last_replace` 63 = **351** | `read` 247 + `replace` 948 + `undo_last_replace` 215 = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
 | Todo | `todo` = **256** | `todo` = **904** |
-
-## Context optimization stack
-
-### 1. billion-context-pi-lean
-
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) provides a compact `compress` + `acp_context` interface over [Billion Context](https://github.com/ranxianglei/billion-context-pi) for summarizing consumed conversation ranges and restoring details on demand. In practice, it keeps the active context smaller and prompts the model to compress material it no longer needs. Besides saving tokens, this is especially valuable for models with smaller usable context windows.
-
-### 2. pi-slim
-
-[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi documentation guidance opt-in, directly reducing the recurring base prompt.
-
-### 3. Headroom / noheadroom
-
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses bulky active context and tool results. In my day-to-day use, it has typically reduced token usage by about **20–30%**; this is a personal observation rather than an isolated benchmark. Billion Context handles older conversation ranges and later recovery.
-
-### 4. RTK and pi-rtk-optimizer
-
-[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) reduce shell-command output before it enters the conversation. I am still evaluating this part of the stack and do not yet have detailed savings data.
-
-### 5. pi-context-view
-
-[pi-context-view](https://github.com/dimk90/pi-context-view) measures base-prompt, tool, extension, and conversation context. It is an observability tool, not a compressor.
-
-## How the stack fits together
-
-| Stage | Component | Purpose |
-| --- | --- | --- |
-| Static prompt | `pi-slim` | Removes recurring documentation guidance. |
-| Tool and command output | RTK + `pi-rtk-optimizer` | Prevents verbose shell output from entering context. |
-| Active context | Headroom / noheadroom | Compresses bulky results and active material. |
-| Long-session history | `billion-context-pi-lean` | Compresses consumed ranges and restores details on demand. |
-| Measurement | `pi-context-view` | Reveals context cost and verifies improvements. |
-
-## Recommended lean tools
-
-### pi-subagents-lean
-
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) combines subagent operations behind one schema while preserving execution, results, steering, and lifecycle behavior. Review discovered agents' models, prompts, tools, and extension allowlists; delete unused types.
-
-### pi-web-access-lean
-
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) combines web search, checking, fetching, and continuation behind one schema with on-demand advanced help.
-
-### pi-hashline-edit-pro-lean
-
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) provides compact anchored read, replace, and undo tools while preserving Hashline's line-safe editing model.
-
-### rpiv-ask-user-question-lean
-
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) retains structured clarification, validation, and UI behavior behind a smaller schema.
-
-### rpiv-todo-lean
-
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) retains task states, dependencies, ownership, and lifecycle operations behind one compact schema.
-
-## Recommended adoption order
-
-1. Measure the current setup with `pi-context-view`.
-2. Add `pi-slim`.
-3. Add RTK and `pi-rtk-optimizer` if shell output is noisy.
-4. Add Headroom for bulky active context and tool results.
-5. Add `billion-context-pi-lean` for long-session compression and recovery.
-6. Replace only tools you use with lean variants.
-7. Measure again.
-
-## Installation rules
-
-- Follow each linked repository's installation instructions.
-- Never load an upstream extension and its lean wrapper together.
-- Check pinned upstream versions and run the repository's checks after dependency updates.
-- Keep endpoints, provider settings, and secrets out of public configuration.
 
 ## License and attribution
 

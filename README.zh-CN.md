@@ -12,6 +12,79 @@ Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用�
 
 更新包装层也很直接：让 agent 对照审查上游变更与 lean 版本，检查 API、schema 或运行时是否存在破坏性变化；必要时更新固定依赖和适配代码，然后运行测试并重新测量上下文占用。
 
+## 上下文优化组件
+
+### 1. billion-context-pi-lean
+
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 在 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 上提供紧凑的 `compress` + `acp_context` 接口，用于总结已使用的对话区间并按需恢复细节。实际使用中，它能让活动上下文保持较小，并推动模型主动压缩已经不再需要的内容。这不但节约 tokens，对于可用 context window 较小的模型也尤其有价值。
+
+### 2. pi-slim
+
+[pi-slim](https://github.com/robzolkos/pi-slim) 将 Pi 文档指导改为按需启用，直接缩减反复出现的基础 prompt。
+
+### 3. Headroom / noheadroom
+
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 压缩庞大的活动上下文和工具结果。根据我的日常实测，它通常能节约约 **20%–30%** 的 tokens；这是个人使用观察，并非隔离基准测试。Billion Context 则负责较早的对话区间及后续恢复。
+
+### 4. RTK 与 pi-rtk-optimizer
+
+[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在 shell 命令输出进入对话前缩减它们。这部分目前仍在体验中，暂时还没有详细的节省数据。
+
+### 5. pi-context-view
+
+[pi-context-view](https://github.com/dimk90/pi-context-view) 测量基础 prompt、工具、扩展和对话上下文。它是观测工具，不是压缩器。
+
+## 可选的 lean 常用工具
+
+### pi-subagents-lean
+
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 将 subagent 操作整合到一个 schema，同时保留执行、结果、steering 和生命周期行为。请检查已发现 agents 的模型、prompts、工具和扩展白名单，并删除不用的类型。
+
+### pi-web-access-lean
+
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 将网页搜索、核验、抓取和续取整合到一个 schema，高级参数按需提供。
+
+### pi-hashline-edit-pro-lean
+
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 提供紧凑的锚点读取、替换和撤销工具，同时保留 Hashline 的行安全编辑模型。
+
+### rpiv-ask-user-question-lean
+
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 用更小的 schema 保留结构化澄清、验证和 UI 行为。
+
+### rpiv-todo-lean
+
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 用一个紧凑 schema 保留任务状态、依赖关系、负责人和生命周期操作。
+
+## 各组件如何配合
+
+| 环节 | 组件 | 目的 |
+| --- | --- | --- |
+| 静态 prompt | `pi-slim` | 删除反复出现的文档指导。 |
+| 工具与命令输出 | RTK + `pi-rtk-optimizer` | 避免冗长 shell 输出进入上下文。 |
+| 活动上下文 | Headroom / noheadroom | 压缩庞大的结果和活动内容。 |
+| 长会话历史 | `billion-context-pi-lean` | 压缩已使用区间，并按需恢复细节。 |
+| 测量 | `pi-context-view` | 显示上下文成本并验证优化效果。 |
+
+## 安装
+
+### 建议采用顺序
+
+1. 使用 `pi-context-view` 测量当前配置。
+2. 添加 `pi-slim`。
+3. 如果 shell 输出冗长，添加 RTK 和 `pi-rtk-optimizer`。
+4. 添加 Headroom，处理庞大的活动上下文和工具结果。
+5. 添加 `billion-context-pi-lean`，处理长会话压缩与恢复。
+6. 只将实际使用的工具替换为 lean 版本。
+7. 再次测量。
+
+### 注意事项
+
+- 按各链接仓库的说明安装。
+- 不要同时加载上游扩展及其 lean wrapper。
+- 检查固定的上游版本；依赖更新后执行仓库检查。
+- 不要将端点、供应商设置和密钥放入公开配置。
+
 ## 实测初始化上下文占用
 
 下列数字衡量反复发送给模型的初始化上下文，而非一次性的进程内存。
@@ -60,77 +133,6 @@ Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用�
 | Hashline edit | `read` 85 + `replace` 203 + `undo_last_replace` 63 = **351** | `read` 247 + `replace` 948 + `undo_last_replace` 215 = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
 | Todo | `todo` = **256** | `todo` = **904** |
-
-## 上下文优化组件
-
-### 1. billion-context-pi-lean
-
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 在 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 上提供紧凑的 `compress` + `acp_context` 接口，用于总结已使用的对话区间并按需恢复细节。实际使用中，它能让活动上下文保持较小，并推动模型主动压缩已经不再需要的内容。这不但节约 tokens，对于可用 context window 较小的模型也尤其有价值。
-
-### 2. pi-slim
-
-[pi-slim](https://github.com/robzolkos/pi-slim) 将 Pi 文档指导改为按需启用，直接缩减反复出现的基础 prompt。
-
-### 3. Headroom / noheadroom
-
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 压缩庞大的活动上下文和工具结果。根据我的日常实测，它通常能节约约 **20%–30%** 的 tokens；这是个人使用观察，并非隔离基准测试。Billion Context 则负责较早的对话区间及后续恢复。
-
-### 4. RTK 与 pi-rtk-optimizer
-
-[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在 shell 命令输出进入对话前缩减它们。这部分目前仍在体验中，暂时还没有详细的节省数据。
-
-### 5. pi-context-view
-
-[pi-context-view](https://github.com/dimk90/pi-context-view) 测量基础 prompt、工具、扩展和对话上下文。它是观测工具，不是压缩器。
-
-## 各组件如何配合
-
-| 环节 | 组件 | 目的 |
-| --- | --- | --- |
-| 静态 prompt | `pi-slim` | 删除反复出现的文档指导。 |
-| 工具与命令输出 | RTK + `pi-rtk-optimizer` | 避免冗长 shell 输出进入上下文。 |
-| 活动上下文 | Headroom / noheadroom | 压缩庞大的结果和活动内容。 |
-| 长会话历史 | `billion-context-pi-lean` | 压缩已使用区间，并按需恢复细节。 |
-| 测量 | `pi-context-view` | 显示上下文成本并验证优化效果。 |
-
-## 推荐的 lean 常用工具
-
-### pi-subagents-lean
-
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 将 subagent 操作整合到一个 schema，同时保留执行、结果、steering 和生命周期行为。请检查已发现 agents 的模型、prompts、工具和扩展白名单，并删除不用的类型。
-
-### pi-web-access-lean
-
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 将网页搜索、核验、抓取和续取整合到一个 schema，高级参数按需提供。
-
-### pi-hashline-edit-pro-lean
-
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 提供紧凑的锚点读取、替换和撤销工具，同时保留 Hashline 的行安全编辑模型。
-
-### rpiv-ask-user-question-lean
-
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 用更小的 schema 保留结构化澄清、验证和 UI 行为。
-
-### rpiv-todo-lean
-
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 用一个紧凑 schema 保留任务状态、依赖关系、负责人和生命周期操作。
-
-## 建议采用顺序
-
-1. 使用 `pi-context-view` 测量当前配置。
-2. 添加 `pi-slim`。
-3. 如果 shell 输出冗长，添加 RTK 和 `pi-rtk-optimizer`。
-4. 添加 Headroom，处理庞大的活动上下文和工具结果。
-5. 添加 `billion-context-pi-lean`，处理长会话压缩与恢复。
-6. 只将实际使用的工具替换为 lean 版本。
-7. 再次测量。
-
-## 安装规则
-
-- 按各链接仓库的说明安装。
-- 不要同时加载上游扩展及其 lean wrapper。
-- 检查固定的上游版本；依赖更新后执行仓库检查。
-- 不要将端点、供应商设置和密钥放入公开配置。
 
 ## 许可证与归属
 
