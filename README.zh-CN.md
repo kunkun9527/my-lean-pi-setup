@@ -65,7 +65,7 @@ Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用�
 
 ### 1. billion-context-pi-lean
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 在 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 上提供紧凑的 `compress` + `acp_context` 接口，用于总结已使用的对话区间并按需恢复细节。
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 在 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 上提供紧凑的 `compress` + `acp_context` 接口，用于总结已使用的对话区间并按需恢复细节。实际使用中，它能让活动上下文保持较小，并推动模型主动压缩已经不再需要的内容。这不但节约 tokens，对于可用 context window 较小的模型也尤其有价值。
 
 ### 2. pi-slim
 
@@ -73,11 +73,11 @@ Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用�
 
 ### 3. Headroom / noheadroom
 
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 压缩庞大的活动上下文和工具结果；Billion Context 负责较早的对话区间及后续恢复。
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 压缩庞大的活动上下文和工具结果。根据我的日常实测，它通常能节约约 **20%–30%** 的 tokens；这是个人使用观察，并非隔离基准测试。Billion Context 则负责较早的对话区间及后续恢复。
 
 ### 4. RTK 与 pi-rtk-optimizer
 
-[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在 shell 命令输出进入对话前缩减它们。
+[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在 shell 命令输出进入对话前缩减它们。这部分目前仍在体验中，暂时还没有详细的节省数据。
 
 ### 5. pi-context-view
 

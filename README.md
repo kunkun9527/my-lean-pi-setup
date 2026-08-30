@@ -65,7 +65,7 @@ The six lean wrappers use about one seventh of the pinned upstream interfaces' i
 
 ### 1. billion-context-pi-lean
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) provides a compact `compress` + `acp_context` interface over [Billion Context](https://github.com/ranxianglei/billion-context-pi) for summarizing consumed conversation ranges and restoring details on demand.
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) provides a compact `compress` + `acp_context` interface over [Billion Context](https://github.com/ranxianglei/billion-context-pi) for summarizing consumed conversation ranges and restoring details on demand. In practice, it keeps the active context smaller and prompts the model to compress material it no longer needs. Besides saving tokens, this is especially valuable for models with smaller usable context windows.
 
 ### 2. pi-slim
 
@@ -73,11 +73,11 @@ The six lean wrappers use about one seventh of the pinned upstream interfaces' i
 
 ### 3. Headroom / noheadroom
 
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses bulky active context and tool results. Billion Context handles older conversation ranges and later recovery.
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses bulky active context and tool results. In my day-to-day use, it has typically reduced token usage by about **20–30%**; this is a personal observation rather than an isolated benchmark. Billion Context handles older conversation ranges and later recovery.
 
 ### 4. RTK and pi-rtk-optimizer
 
-[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) reduce shell-command output before it enters the conversation.
+[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) reduce shell-command output before it enters the conversation. I am still evaluating this part of the stack and do not yet have detailed savings data.
 
 ### 5. pi-context-view
 
