@@ -38,23 +38,23 @@ Updating a wrapper is straightforward: review the upstream changes against the l
 
 ### pi-subagents-lean
 
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) combines subagent operations behind one schema while preserving execution, results, steering, and lifecycle behavior. Review discovered agents' models, prompts, tools, and extension allowlists; delete unused types.
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) delegates focused tasks to specialized agents, supports background runs, and lets the main agent collect results or steer ongoing work. The lean wrapper combines spawning, result retrieval, and steering behind one compact schema while preserving upstream agent discovery, execution, and lifecycle behavior. Review discovered agents' models, prompts, tools, and extension allowlists; delete unused types.
 
 ### pi-web-access-lean
 
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) combines web search, checking, fetching, and continuation behind one schema with on-demand advanced help.
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) lets an agent search the web, verify claims and sources, fetch full pages, and continue from earlier results. The lean wrapper combines the four upstream tools behind one compact `web_access` schema and moves advanced parameters into on-demand help.
 
 ### pi-hashline-edit-pro-lean
 
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) provides compact anchored read, replace, and undo tools while preserving Hashline's line-safe editing model.
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) lets an agent read files with stable line anchors, apply line-safe replacements, and undo the most recent edit when needed. The lean wrapper shortens the model-facing `read`, `replace`, and `undo_last_replace` schemas while preserving Hashline's anchored editing model.
 
 ### rpiv-ask-user-question-lean
 
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) retains structured clarification, validation, and UI behavior behind a smaller schema.
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) lets an agent present structured choices when requirements or key decisions are unclear and validates the response before continuing. The lean wrapper trims the model-facing schema while preserving structured options, validation, and UI behavior.
 
 ### rpiv-todo-lean
 
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) retains task states, dependencies, ownership, and lifecycle operations behind one compact schema.
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) lets an agent plan multi-step work and track task status, dependencies, and ownership. The lean wrapper keeps creation, updates, queries, deletion, and dependency management behind one compact schema.
 
 ## How the stack fits together
 

@@ -38,23 +38,23 @@ Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用�
 
 ### pi-subagents-lean
 
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 将 subagent 操作整合到一个 schema，同时保留执行、结果、steering 和生命周期行为。请检查已发现 agents 的模型、prompts、工具和扩展白名单，并删除不用的类型。
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 用于将明确任务委派给专门的 agent，支持后台运行，并让主 agent 获取结果或继续调整正在进行的工作。Lean 版本把启动、获取结果和 steering 整合到一个紧凑 schema，同时保留上游的 agent 发现、执行和生命周期行为。请检查已发现 agents 的模型、prompts、工具和扩展白名单，并删除不用的类型。
 
 ### pi-web-access-lean
 
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 将网页搜索、核验、抓取和续取整合到一个 schema，高级参数按需提供。
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 让 agent 能够搜索网页、核验说法和来源、抓取完整页面，并续取之前的结果。Lean 版本把上游四个工具整合到一个紧凑的 `web_access` schema，高级参数则通过按需帮助提供。
 
 ### pi-hashline-edit-pro-lean
 
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 提供紧凑的锚点读取、替换和撤销工具，同时保留 Hashline 的行安全编辑模型。
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 让 agent 通过稳定的行锚点读取文件、执行行安全替换，并在需要时撤销最近一次修改。Lean 版本缩短模型可见的 `read`、`replace` 和 `undo_last_replace` schema，同时保留 Hashline 的锚点编辑模型。
 
 ### rpiv-ask-user-question-lean
 
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 用更小的 schema 保留结构化澄清、验证和 UI 行为。
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 在需求或关键决策不明确时，让 agent 向用户提供结构化选项，并在继续工作前验证回答。Lean 版本缩短模型可见 schema，同时保留结构化选项、验证和 UI 行为。
 
 ### rpiv-todo-lean
 
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 用一个紧凑 schema 保留任务状态、依赖关系、负责人和生命周期操作。
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 让 agent 规划多步骤工作，并跟踪任务状态、依赖关系和负责人。Lean 版本用一个紧凑 schema 保留任务创建、更新、查询、删除和依赖管理。
 
 ## 各组件如何配合
 
