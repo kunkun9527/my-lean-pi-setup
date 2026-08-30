@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-这是我的 [Pi coding agent](https://github.com/badlogic/pi-mono) 配置导航，涵盖 token/上下文优化与日常体验增强。
+这是我的 [Pi coding agent](https://github.com/earendil-works/pi) 配置导航，涵盖 token/上下文优化与日常体验增强。
 
 本仓库只提供文档，不包含安装器、复制版配置或 API 凭据。请阅读各项目链接中的 README，并且只添加自己需要的组件。
 
@@ -67,7 +67,7 @@
 | [@getpipher/vision](https://github.com/getpipher/vision) | 提供感知模型能力的图片处理；我的 OpenAI Responses/collapsed-display 改动仅在本地。 |
 | [pi-mainflow](https://github.com/fghosth/pi-mainflow) | 提供分阶段规划与实现工作流。 |
 | [@narumitw/pi-goal](https://github.com/narumiruna/pi-extensions) | 执行专注于单一目标的自主工作流。 |
-| [pi-ponytail](https://github.com/thelegendtubaguy/pi-ponytail) | 提供可选的高级开发者工作模式。 |
+| [pi-ponytail](https://github.com/thelegendtubaguy/pi-ponytail) | 提供可选的高级开发者工作模式；上游仓库已归档。 |
 | [pi-pwsh-native](https://github.com/takomine/pi-pwsh-native) | 改善 Windows 上的原生 PowerShell 工作流。 |
 
 ## Subagent 配置

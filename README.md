@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-A documentation-only map of my token-efficient and quality-of-life setup for the [Pi coding agent](https://github.com/badlogic/pi-mono).
+A documentation-only map of my token-efficient and quality-of-life setup for the [Pi coding agent](https://github.com/earendil-works/pi).
 
 This repository intentionally contains no installer, copied configuration, or API credentials. Follow each linked project's own README and add only the pieces you need.
 
@@ -67,7 +67,7 @@ Provider extensions do not automatically save tokens. Their value is routing, ac
 | [@getpipher/vision](https://github.com/getpipher/vision) | Adds capability-aware image handling. My OpenAI Responses/collapsed-display changes are local only. |
 | [pi-mainflow](https://github.com/fghosth/pi-mainflow) | Provides a staged planning and implementation workflow. |
 | [@narumitw/pi-goal](https://github.com/narumiruna/pi-extensions) | Runs a focused autonomous objective workflow. |
-| [pi-ponytail](https://github.com/thelegendtubaguy/pi-ponytail) | Adds an optional senior-developer working mode. |
+| [pi-ponytail](https://github.com/thelegendtubaguy/pi-ponytail) | Adds an optional senior-developer working mode. The upstream repository is archived. |
 | [pi-pwsh-native](https://github.com/takomine/pi-pwsh-native) | Improves native PowerShell workflows on Windows. |
 
 ## Subagent setup
