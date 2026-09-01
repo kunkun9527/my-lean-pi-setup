@@ -8,7 +8,7 @@ A curated, context-efficient [Pi coding agent](https://github.com/earendil-works
 
 I initially created these wrappers for my own daily workflow and later open-sourced them for other Pi users focused on context efficiency.
 
-One of Pi's greatest strengths is its lean, controllable context. However, many excellent plugins introduce lengthy tool definitions that consume substantial tokens on every request, working against that advantage. These wrappers condense the model-facing schemas to their essentials while keeping the complete upstream engine and feature set intact. Modern LLMs handle clean, concise schemas reliably without requiring verbose, repetitive instructions in the prompt.
+One of Pi's greatest strengths is its lean, controllable context. However, many excellent extensions introduce lengthy tool definitions that consume substantial tokens on every request, working against that advantage. These wrappers condense the model-facing schemas to their essentials while keeping the complete upstream engine and feature set intact. Modern LLMs handle clean, concise schemas reliably without requiring verbose, repetitive instructions in the prompt.
 
 Maintaining these wrappers is straightforward: when upstream updates arrive, compare the changes against the lean wrapper, check for breaking API or schema modifications, bump the pinned dependency and adapter if needed, and re-run tests and footprint measurements.
 
@@ -123,7 +123,7 @@ Across all six wrappers, initial prompt overhead is cut to approximately one-sev
 
 ### Detailed Per-Tool Comparison
 
-| Plugin | Lean Interface Breakdown | Original Interface Breakdown |
+| Extension | Lean Interface Breakdown | Original Interface Breakdown |
 | --- | --- | --- |
 | Billion Context | `compress` (216) + `acp_context` (90) + prompt (369) = **675** | `compress` (549) + `decompress` (546) + `search_context` (210) + `acp_status` (339) + prompt (4,417) = **6,061** |
 | Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
