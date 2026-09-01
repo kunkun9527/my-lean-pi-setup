@@ -2,116 +2,116 @@
 
 [English](README.md)
 
-一套面向 [Pi coding agent](https://github.com/earendil-works/pi) 的上下文优化配置，以及五个模型可见接口经过精简的常用工具。
+一套面向 [Pi coding agent](https://github.com/earendil-works/pi) 的上下文优化配置方案，包含多个经过深度精简的常用工具封装。
 
-## 为什么制作这些 lean 版本
+## 为什么制作这些精简版插件
 
-这些包装层最初只是为了自用；后来觉得它们也可能帮助其他 Pi 用户，所以将其开源。
+这套精简包装最初是我为了日常自用编写的；后来觉得对其他关注上下文开销的 Pi 用户也会有帮助，于是整理开源。
 
-Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用，但会在每次请求中携带很长的工具描述，持续消耗大量 tokens，这与精简上下文的目标相悖。这些 lean 包装层缩短模型可见描述，同时保留上游运行时和功能。能力较强的现代 LLM 通常不需要重复、过度复杂的指令，也能可靠使用清晰的工具 schema。
+Pi 最突出的优势之一是轻量、可控的上下文。然而，许多优秀的社区插件在每次请求时都会注入冗长详尽的工具说明，导致在对话尚未正式开始前就占用了大量 Token。
 
-更新包装层也很直接：让 agent 对照审查上游变更与 lean 版本，检查 API、schema 或运行时是否存在破坏性变化；必要时更新固定依赖和适配代码，然后运行测试并重新测量上下文占用。
+这套精简版在完整保留上游核心逻辑与功能特性的前提下，将面向模型的 Schema 和描述精简到核心要点。现代大语言模型已经具备很强的理解能力，只要 Schema 结构清晰，无需在 Prompt 中堆砌冗余啰嗦的说明也能稳定执行。
 
-## 上下文优化组件
+日常维护也很清晰：当上游版本更新时，对比上游变更与精简封装，确认 API、Schema 或运行时是否存在破坏性改动，按需调整依赖与适配代码，最后运行测试并重新测量上下文占用即可。
+
+## 上下文优化组件方案
 
 ### 1. billion-context-pi-lean
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 在 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 上提供紧凑的 `compress` + `acp_context` 接口，用于总结已使用的对话区间并按需恢复细节。实际使用中，它能让活动上下文保持较小，并推动模型主动压缩已经不再需要的内容。这不但节约 tokens，对于可用 context window 较小的模型也尤其有价值。
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 基于 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 封装，提供精简的 `compress` 与 `acp_context` 接口。它负责总结历史对话区间并按需恢复细节，使活动上下文始终保持轻量，并提示模型主动压缩过时信息。对于可用上下文窗口较小的模型尤其有效。
 
 ### 2. pi-slim
 
-[pi-slim](https://github.com/robzolkos/pi-slim) 将 Pi 文档指导改为按需启用，直接缩减反复出现的基础 prompt。
+[pi-slim](https://github.com/robzolkos/pi-slim) 将 Pi 默认注入的文档说明改为按需启用，直接削减基础 Prompt 的静态开销。
 
 ### 3. Headroom / noheadroom
 
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 压缩庞大的活动上下文和工具结果。根据我的日常实测，它通常能节约约 **20%–30%** 的 tokens；这是个人使用观察，并非隔离基准测试。Billion Context 则负责较早的对话区间及后续恢复。
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 动态压缩庞大的工具执行结果与运行时上下文。根据我的日常使用体验，通常能减少约 **20% 到 30%** 的 Token 消耗（此为个人工作流实测观察，非单一基准测试）。Billion Context 则负责较早会话区间的归档与召回。
 
 ### 4. RTK 与 pi-rtk-optimizer
 
-[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在 shell 命令输出进入对话前缩减它们。这部分目前仍在体验中，暂时还没有详细的节省数据。
+[RTK](https://github.com/rtk-ai/rtk) 与 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在终端命令输出进入会话前进行针对性过滤与压缩。
 
 ### 5. pi-context-view
 
-[pi-context-view](https://github.com/dimk90/pi-context-view) 测量基础 prompt、工具、扩展和对话上下文。它是观测工具，不是压缩器。
+[pi-context-view](https://github.com/dimk90/pi-context-view) 用于实时监测基础 Prompt、工具、扩展和会话上下文的 Token 分布。它是用于观测分析的度量工具，不执行压缩。
 
-## 可选的 lean 常用工具
+## 精简版常用工具
 
 ### pi-subagents-lean
 
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 用于将明确任务委派给专门的 agent，支持后台运行，并让主 agent 获取结果或继续调整正在进行的工作。Lean 版本把启动、获取结果和 steering 整合到一个紧凑 schema，同时保留上游的 agent 发现、执行和生命周期行为。请检查已发现 agents 的模型、prompts、工具和扩展白名单，并删除不用的类型。
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 支持将复杂任务分派给专业 Subagent，具备后台运行与动态引导能力。精简版将任务启动、结果获取和引导整合为单个 `subagent` 工具，完整保留上游的 Agent 发现与生命周期管理机制。
 
 ### pi-web-access-lean
 
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 让 agent 能够搜索网页、核验说法和来源、抓取完整页面，并续取之前的结果。Lean 版本把上游四个工具整合到一个紧凑的 `web_access` schema，高级参数则通过按需帮助提供。
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 支持网页搜索、事实核验、页面全文抓取与结果续取。精简版将原版的 4 个工具整合为统一的 `web_access` 入口，高级参数转为按需帮助展开。
 
 ### pi-hashline-edit-pro-lean
 
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 让 agent 通过稳定的行锚点读取文件、执行行安全替换，并在需要时撤销最近一次修改。Lean 版本缩短模型可见的 `read`、`replace` 和 `undo_last_replace` schema，同时保留 Hashline 的锚点编辑模型。
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 基于稳定的 HASH 行锚点实现精确的文件编辑与一键回滚。精简版精简了 `read`、`replace` 和 `undo_last_replace` 的 Prompt 描述，同时完整保留 Hashline 的安全校验。
 
 ### rpiv-ask-user-question-lean
 
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 在需求或关键决策不明确时，让 agent 向用户提供结构化选项，并在继续工作前验证回答。Lean 版本缩短模型可见 schema，同时保留结构化选项、验证和 UI 行为。
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 在需求或决策不明确时向用户发起结构化提问。精简版去除了工具说明中的重复描述，完整保留问卷 UI 与选项校验。
 
 ### rpiv-todo-lean
 
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 让 agent 规划多步骤工作，并跟踪任务状态、依赖关系和负责人。Lean 版本用一个紧凑 schema 保留任务创建、更新、查询、删除和依赖管理。
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 提供任务拆解、依赖追踪与状态流转管理。精简版以紧凑的原生扁平 Schema 保留了完整的任务生命周期。
 
-## 各组件如何配合
+## 方案架构概览
 
-| 环节 | 组件 | 目的 |
+| 环节 | 组件 | 功能职责 |
 | --- | --- | --- |
-| 静态 prompt | `pi-slim` | 删除反复出现的文档指导。 |
-| 工具与命令输出 | RTK + `pi-rtk-optimizer` | 避免冗长 shell 输出进入上下文。 |
-| 活动上下文 | Headroom / noheadroom | 压缩庞大的结果和活动内容。 |
-| 长会话历史 | `billion-context-pi-lean` | 压缩已使用区间，并按需恢复细节。 |
-| 测量 | `pi-context-view` | 显示上下文成本并验证优化效果。 |
+| 静态 Prompt | `pi-slim` | 移除常驻的基础文档说明。 |
+| 命令与工具输出 | RTK + `pi-rtk-optimizer` | 拦截并过滤冗长的终端命令输出。 |
+| 活动上下文 | Headroom / noheadroom | 动态压缩运行期的工具输出与会话膨胀。 |
+| 长会话历史 | `billion-context-pi-lean` | 压缩已读历史轮次，支持按需精准恢复。 |
+| 观测度量 | `pi-context-view` | 量化并呈现各模块的 Token 占用。 |
 
-## 安装
+## 安装与配置建议
 
-### 建议采用顺序
+### 推荐启用顺序
 
-1. 使用 `pi-context-view` 测量当前配置。
-2. 添加 `pi-slim`。
-3. 如果 shell 输出冗长，添加 RTK 和 `pi-rtk-optimizer`。
-4. 添加 Headroom，处理庞大的活动上下文和工具结果。
-5. 添加 `billion-context-pi-lean`，处理长会话压缩与恢复。
-6. 只将实际使用的工具替换为 lean 版本。
-7. 再次测量。
+1. 使用 `pi-context-view` 测量当前环境的基础 Token 开销。
+2. 安装 `pi-slim` 缩减基础 Prompt。
+3. 如果终端输出频繁冗长，接入 RTK 与 `pi-rtk-optimizer`。
+4. 接入 Headroom 压缩活动工具结果。
+5. 接入 `billion-context-pi-lean` 负责长会话压缩与召回。
+6. 根据实际需要，将常用工具逐一替换为对应精简版本。
+7. 再次测量对比优化效果。
 
 ### 注意事项
 
-- 按各链接仓库的说明安装。
-- 不要同时加载上游扩展及其 lean wrapper。
-- 检查固定的上游版本；依赖更新后执行仓库检查。
-- 不要将端点、供应商设置和密钥放入公开配置。
+* 请参考各仓库内的说明进行具体安装。
+* 切勿同时加载原版扩展与其对应的精简版，以免重复注册工具。
+* 依赖版本升级后请及时执行检查验证。
+* 切勿将私有 API 密钥与内部服务端点提交至公开配置中。
 
-## 实测初始化上下文占用
+## 初始上下文占用实测
 
-下列数字衡量反复发送给模型的初始化上下文，而非一次性的进程内存。
+以下数据衡量的是常驻注入到模型 Prompt 中的初始上下文占用，并非运行期内存占用。
 
-### 测量方法
+### 测量方式
 
-- Pi `0.84.4`、`pi-context-view` `0.4.3`，选择的模型为 `GPT-5.6-SOL`。
-- 每个扩展都在全新的内存会话中单独加载，并排除 Pi 自带工具、skills、context files、消息和无关扩展。
-- 计算口径与 `/context injections` 一致：工具元数据、相关提示指引和扩展注入的 system prompt。纯运行时 UI 和 slash commands 不计入。
-- Context View 按 `ceil(字符数 / 4)` 估算；这些是可复现的估值，不是 GPT tokenizer 的精确计数。
-- 原版对比使用各 lean wrapper 固定的上游版本；更新后结果可能变化。
+* 测试环境：Pi `0.84.4`，搭配 `pi-context-view` `0.4.3`，选定模型为 `GPT-5.6-SOL`。
+* 每个扩展在全新的隔离会话中单独加载，排除内置工具、Skills 与上下文文件。
+* 统计口径与 `/context injections` 保持一致（包含工具定义、相关提示词与扩展注入内容）。
+* Context View 按 `ceil(字符数 / 4)` 估算 Token。
+* 原版对比基准采用各精简版锁定的上游版本。
 
-### 上下文组件
+### 上下文组件分析
 
-| 组件 | 初始化上下文影响 | 解读 |
+| 组件 | 初始上下文影响 | 说明 |
 | --- | ---: | --- |
-| `billion-context-pi-lean` | **675 tokens** | 原版 `billion-context-pi@0.1.52`：**6,061**。节省 **5,386（88.9%）**。 |
-| `pi-slim@0.2.1` | **净减少 309 tokens** | 从实测基础 prompt 中删除 1,236 个字符的 Pi 文档指导。 |
-| Headroom / 本地 noheadroom | **初始化 0 tokens** | 在运行期减少上下文和工具结果增长。 |
-| RTK + `pi-rtk-optimizer` | **初始化 0 tokens** | 实测 rewrite 配置使用运行期 hooks 和 shell rewriting；可选指引会使结果不为零。 |
-| `pi-context-view@0.4.3` | **初始化 0 tokens** | 添加观察器和 slash command，不添加模型可见工具或指令。 |
+| `billion-context-pi-lean` | **675 tokens** | 原版 `billion-context-pi@0.1.52`: **6,061 tokens**（节省 88.9%）。 |
+| `pi-slim@0.2.1` | **净减少 309 tokens** | 从基础 Prompt 中移除了 1,236 字符的静态文档说明。 |
+| Headroom / noheadroom | **初始 0 tokens** | 属于动态中间件，在运行期动态压缩上下文增长。 |
+| RTK + `pi-rtk-optimizer` | **初始 0 tokens** | 属于运行期 Hook，在命令执行时生效。 |
+| `pi-context-view@0.4.3` | **初始 0 tokens** | 仅注册观测器与 Slash 命令，不向模型注入提示词。 |
 
-初始化为零不代表运行期没有收益：Headroom 和 RTK 减少后续上下文增长，`pi-context-view` 负责测量。
+### 精简版工具对比
 
-### Lean wrapper 对比
-
-| Wrapper | Lean | 固定的原版 | 节省 | 降幅 |
+| 插件封装 | 精简版 | 锁定原版 | 节省 Token | 降幅 |
 | --- | ---: | ---: | ---: | ---: |
 | `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
 | `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
@@ -121,19 +121,19 @@ Pi 的吸引力之一是精简、可控的上下文。有些插件非常好用�
 | `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
 | **合计** | **1,906** | **13,425** | **11,519** | **85.8%** |
 
-六个 lean wrapper 的初始化上下文合计约为固定原版接口的七分之一。只要工具保持启用，这部分节省就会反复出现；供应商的 prompt cache 可能降低实际计费差异。
+综合使用这 6 个精简封装，初始工具定义开销可降至原版的约七分之一。
 
-### 每个工具明细
+### 各工具详细构成
 
-| 插件 | Lean 接口 | 原版接口 |
+| 插件 | 精简版工具结构明细 | 原版工具结构明细 |
 | --- | --- | --- |
-| Billion Context | `compress` 216 + `acp_context` 90 + prompt 369 = **675** | `compress` 549 + `decompress` 546 + `search_context` 210 + `acp_status` 339 + prompt 4,417 = **6,061** |
-| Subagents | `subagent` = **268** | `Agent` 1,111 + `get_subagent_result` 149 + `steer_subagent` 156 = **1,416** |
-| Web access | `web_access` = **141** | `web_search` 994 + `source_check` 413 + `fetch_content` 576 + `get_search_content` 393 = **2,376** |
-| Hashline edit | `read` 85 + `replace` 203 + `undo_last_replace` 63 = **351** | `read` 247 + `replace` 948 + `undo_last_replace` 215 = **1,410** |
+| Billion Context | `compress` (216) + `acp_context` (90) + prompt (369) = **675** | `compress` (549) + `decompress` (546) + `search_context` (210) + `acp_status` (339) + prompt (4,417) = **6,061** |
+| Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
+| Web access | `web_access` = **141** | `web_search` (994) + `source_check` (413) + `fetch_content` (576) + `get_search_content` (393) = **2,376** |
+| Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
 | Todo | `todo` = **256** | `todo` = **904** |
 
-## 许可证与归属
+## 开源协议与归属声明
 
-每个链接项目保留各自的许可证、作者归属和支持政策。各 lean 仓库在 README 与 package metadata 中保留上游归属。
+各链接引用的开源项目均保留其原作者版权与授权协议。所有精简版封装均在其仓库及 Package 元数据中完整保留了上游归属信息。

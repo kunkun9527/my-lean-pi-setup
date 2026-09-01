@@ -2,116 +2,114 @@
 
 [简体中文](README.zh-CN.md)
 
-A context-efficient [Pi coding agent](https://github.com/earendil-works/pi) stack plus five common tools with lean model-facing interfaces.
+A curated, context-efficient [Pi coding agent](https://github.com/earendil-works/pi) configuration featuring lightweight tool wrappers that minimize prompt overhead.
 
-## Why I made these lean versions
+## Why I Built These Lean Wrappers
 
-I originally built these wrappers for personal use, then open-sourced them because they may help other Pi users.
+I initially created these wrappers for my own daily workflow and later open-sourced them for other Pi users focused on context efficiency.
 
-Pi's appeal is its lean, controllable context. Some excellent plugins expose long tool descriptions that consume substantial tokens on every request, which works against that goal. These wrappers reduce the model-facing descriptions while preserving the upstream runtime and features. Capable modern LLMs generally do not need repetitive, overly elaborate instructions to use clear tool schemas reliably.
+One of Pi's greatest strengths is its lean, controllable context. However, many excellent plugins introduce lengthy tool definitions that consume substantial tokens on every request, working against that advantage. These wrappers condense the model-facing schemas to their essentials while keeping the complete upstream engine and feature set intact. Modern LLMs handle clean, concise schemas reliably without requiring verbose, repetitive instructions in the prompt.
 
-Updating a wrapper is straightforward: review the upstream changes against the lean version, check for breaking API, schema, or runtime changes, update the pinned dependency and adapter when needed, then run the tests and remeasure the context footprint.
+Maintaining these wrappers is straightforward: when upstream updates arrive, compare the changes against the lean wrapper, check for breaking API or schema modifications, bump the pinned dependency and adapter if needed, and re-run tests and footprint measurements.
 
-## Context optimization stack
+## Context Optimization Stack
 
 ### 1. billion-context-pi-lean
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) provides a compact `compress` + `acp_context` interface over [Billion Context](https://github.com/ranxianglei/billion-context-pi) for summarizing consumed conversation ranges and restoring details on demand. In practice, it keeps the active context smaller and prompts the model to compress material it no longer needs. Besides saving tokens, this is especially valuable for models with smaller usable context windows.
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) wraps [Billion Context](https://github.com/ranxianglei/billion-context-pi) with a streamlined `compress` and `acp_context` interface. It summarizes older conversation turns and restores fine-grained context on demand, keeping active memory clean and prompting the model to compress stale information. This is particularly valuable for models with smaller context windows.
 
 ### 2. pi-slim
 
-[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi documentation guidance opt-in, directly reducing the recurring base prompt.
+[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi documentation guidance opt-in, directly reducing base prompt overhead.
 
 ### 3. Headroom / noheadroom
 
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses bulky active context and tool results. In my day-to-day use, it has typically reduced token usage by about **20–30%**; this is a personal observation rather than an isolated benchmark. Billion Context handles older conversation ranges and later recovery.
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) dynamically compresses bulky tool outputs and runtime context. In daily usage, this typically saves around **20% to 30%** in token consumption (based on regular workflow observations rather than isolated benchmarks). Billion Context handles older history and long-term recovery.
 
 ### 4. RTK and pi-rtk-optimizer
 
-[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) reduce shell-command output before it enters the conversation. I am still evaluating this part of the stack and do not yet have detailed savings data.
+[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) compress shell command output before it enters the conversation context.
 
 ### 5. pi-context-view
 
-[pi-context-view](https://github.com/dimk90/pi-context-view) measures base-prompt, tool, extension, and conversation context. It is an observability tool, not a compressor.
+[pi-context-view](https://github.com/dimk90/pi-context-view) provides observability into base prompt, tool, extension, and message token costs. It serves as an inspection tool rather than a compressor.
 
-## Optional lean tools
+## Lean Tool Wrappers
 
 ### pi-subagents-lean
 
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) delegates focused tasks to specialized agents, supports background runs, and lets the main agent collect results or steer ongoing work. The lean wrapper combines spawning, result retrieval, and steering behind one compact schema while preserving upstream agent discovery, execution, and lifecycle behavior. Review discovered agents' models, prompts, tools, and extension allowlists; delete unused types.
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) enables delegating tasks to specialized subagents with background execution and dynamic steering. The lean wrapper unifies spawning, result fetching, and steering under a single `subagent` tool while preserving upstream discovery and lifecycle handling.
 
 ### pi-web-access-lean
 
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) lets an agent search the web, verify claims and sources, fetch full pages, and continue from earlier results. The lean wrapper combines the four upstream tools behind one compact `web_access` schema and moves advanced parameters into on-demand help.
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) supports web search, source verification, page fetching, and result pagination. The lean wrapper combines four separate tools into a single `web_access` entrypoint, moving advanced parameters to on-demand help.
 
 ### pi-hashline-edit-pro-lean
 
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) lets an agent read files with stable line anchors, apply line-safe replacements, and undo the most recent edit when needed. The lean wrapper shortens the model-facing `read`, `replace`, and `undo_last_replace` schemas while preserving Hashline's anchored editing model.
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) enables line-safe file editing and instant rollback using stable HASH line anchors. The lean wrapper shortens the tool schemas for `read`, `replace`, and `undo_last_replace` while preserving full Hashline safety validation.
 
 ### rpiv-ask-user-question-lean
 
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) lets an agent present structured choices when requirements or key decisions are unclear and validates the response before continuing. The lean wrapper trims the model-facing schema while preserving structured options, validation, and UI behavior.
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) provides interactive questionnaire prompts for clarifying ambiguous requirements. The lean wrapper strips repetitive prompt verbiage while retaining full UI and validation capabilities.
 
 ### rpiv-todo-lean
 
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) lets an agent plan multi-step work and track task status, dependencies, and ownership. The lean wrapper keeps creation, updates, queries, deletion, and dependency management behind one compact schema.
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) manages structured tasks, dependencies, and execution status. The lean wrapper preserves the complete task lifecycle with a clean, flat schema.
 
-## How the stack fits together
+## Architecture Overview
 
-| Stage | Component | Purpose |
+| Layer | Component | Function |
 | --- | --- | --- |
-| Static prompt | `pi-slim` | Removes recurring documentation guidance. |
-| Tool and command output | RTK + `pi-rtk-optimizer` | Prevents verbose shell output from entering context. |
-| Active context | Headroom / noheadroom | Compresses bulky results and active material. |
-| Long-session history | `billion-context-pi-lean` | Compresses consumed ranges and restores details on demand. |
-| Measurement | `pi-context-view` | Reveals context cost and verifies improvements. |
+| Base Prompt | `pi-slim` | Removes static documentation guidance. |
+| Command Output | RTK + `pi-rtk-optimizer` | Filters verbose terminal outputs. |
+| Active Context | Headroom / noheadroom | Compresses runtime tool results and message bloat. |
+| Session History | `billion-context-pi-lean` | Compresses older conversation turns and recovers context on demand. |
+| Observability | `pi-context-view` | Measures token consumption across extensions and prompts. |
 
-## Installation
+## Installation & Adoption Guide
 
-### Recommended adoption order
+### Recommended Setup Order
 
-1. Measure the current setup with `pi-context-view`.
-2. Add `pi-slim`.
-3. Add RTK and `pi-rtk-optimizer` if shell output is noisy.
-4. Add Headroom for bulky active context and tool results.
-5. Add `billion-context-pi-lean` for long-session compression and recovery.
-6. Replace only tools you use with lean variants.
-7. Measure again.
+1. Measure baseline context usage with `pi-context-view`.
+2. Install `pi-slim` to reduce base prompt size.
+3. Add RTK and `pi-rtk-optimizer` if working with verbose command lines.
+4. Add Headroom to compress active tool results.
+5. Add `billion-context-pi-lean` for long-session compression.
+6. Swap in only the lean tool wrappers relevant to your workflow.
+7. Re-measure to verify context savings.
 
-### Notes
+### Best Practices
 
-- Follow each linked repository's installation instructions.
-- Never load an upstream extension and its lean wrapper together.
-- Check pinned upstream versions and run the repository's checks after dependency updates.
-- Keep endpoints, provider settings, and secrets out of public configuration.
+* Follow individual repository instructions for installation commands.
+* Never load an upstream extension and its lean wrapper simultaneously.
+* Verify pinned dependency versions when updating.
+* Keep API keys and private endpoints out of public configurations.
 
-## Measured initial context footprint
+## Measured Initialization Context Footprint
 
-These figures measure recurring model-facing initialization context, not one-time process memory.
+These figures reflect recurring initialization context injected into model prompts, rather than process memory.
 
-### Method
+### Methodology
 
-- Pi `0.84.4`, `pi-context-view` `0.4.3`, with `GPT-5.6-SOL` selected.
-- Each extension was loaded alone in a fresh in-memory session. Pi built-in tools, skills, context files, messages, and unrelated extensions were excluded.
-- The calculation matches `/context injections`: tool metadata, related prompt guidance, and extension-added system-prompt text. Runtime-only UI and slash commands are excluded.
-- Context View estimates tokens as `ceil(characters / 4)`; these are reproducible estimates, not exact GPT tokenizer counts.
-- Upstream comparisons use the versions pinned by each lean wrapper. Updates can change the results.
+* Test environment: Pi `0.84.4` with `pi-context-view` `0.4.3`, using `GPT-5.6-SOL`.
+* Each extension was evaluated individually in a fresh session, excluding built-in tools, skills, and context files.
+* Calculations align with `/context injections` (tool schemas, related prompts, and extension injections).
+* Context View estimates tokens via `ceil(characters / 4)`.
+* Upstream baselines reflect the versions pinned by each wrapper.
 
-### Context components
+### Stack Breakdown
 
-| Component | Initial context impact | Interpretation |
+| Component | Initial Context Impact | Notes |
 | --- | ---: | --- |
-| `billion-context-pi-lean` | **675 tokens** | Upstream `billion-context-pi@0.1.52`: **6,061**. Saves **5,386 (88.9%)**. |
-| `pi-slim@0.2.1` | **−309 tokens net** | Removes 1,236 characters of Pi documentation guidance from the measured base prompt. |
-| Headroom / local noheadroom | **0 tokens initially** | Reduces context and tool-result growth at runtime. |
-| RTK + `pi-rtk-optimizer` | **0 tokens initially** | The measured rewrite configuration uses runtime hooks and shell rewriting. Optional guidance can make this non-zero. |
-| `pi-context-view@0.4.3` | **0 tokens initially** | Adds observers and a slash command, not model-facing tools or instructions. |
+| `billion-context-pi-lean` | **675 tokens** | Upstream `billion-context-pi@0.1.52`: **6,061 tokens** (saves 88.9%). |
+| `pi-slim@0.2.1` | **-309 tokens net** | Strips 1,236 characters of default documentation guidance from base prompt. |
+| Headroom / noheadroom | **0 tokens initially** | Operates dynamically at runtime to compress context growth. |
+| RTK + `pi-rtk-optimizer` | **0 tokens initially** | Operates dynamically at runtime via shell hooks. |
+| `pi-context-view@0.4.3` | **0 tokens initially** | Provides observers and commands without injecting prompt instructions. |
 
-Zero initial footprint does not mean zero runtime benefit: Headroom and RTK reduce later context growth, while `pi-context-view` measures it.
+### Lean Tool Comparison
 
-### Lean wrapper comparison
-
-| Wrapper | Lean | Pinned upstream | Saved | Reduction |
+| Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
 | `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
 | `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
@@ -121,19 +119,19 @@ Zero initial footprint does not mean zero runtime benefit: Headroom and RTK redu
 | `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
 | **Total** | **1,906** | **13,425** | **11,519** | **85.8%** |
 
-The six lean wrappers use about one seventh of the pinned upstream interfaces' initialization context. This saving recurs while the tools remain enabled; provider prompt caching may reduce the billed difference.
+Across all six wrappers, initial prompt overhead is cut to approximately one-seventh of the original footprint.
 
-### Per-tool breakdown
+### Detailed Per-Tool Comparison
 
-| Plugin | Lean interface | Original interface |
+| Plugin | Lean Interface Breakdown | Original Interface Breakdown |
 | --- | --- | --- |
-| Billion Context | `compress` 216 + `acp_context` 90 + prompt 369 = **675** | `compress` 549 + `decompress` 546 + `search_context` 210 + `acp_status` 339 + prompt 4,417 = **6,061** |
-| Subagents | `subagent` = **268** | `Agent` 1,111 + `get_subagent_result` 149 + `steer_subagent` 156 = **1,416** |
-| Web access | `web_access` = **141** | `web_search` 994 + `source_check` 413 + `fetch_content` 576 + `get_search_content` 393 = **2,376** |
-| Hashline edit | `read` 85 + `replace` 203 + `undo_last_replace` 63 = **351** | `read` 247 + `replace` 948 + `undo_last_replace` 215 = **1,410** |
+| Billion Context | `compress` (216) + `acp_context` (90) + prompt (369) = **675** | `compress` (549) + `decompress` (546) + `search_context` (210) + `acp_status` (339) + prompt (4,417) = **6,061** |
+| Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
+| Web access | `web_access` = **141** | `web_search` (994) + `source_check` (413) + `fetch_content` (576) + `get_search_content` (393) = **2,376** |
+| Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
 | Todo | `todo` = **256** | `todo` = **904** |
 
-## License and attribution
+## License & Attribution
 
-Each linked project retains its own license, authorship, and support policy. The lean repositories preserve upstream attribution in their READMEs and package metadata.
+Each referenced project retains its respective open-source license, authorship, and terms. All wrappers preserve original upstream attribution in their repositories and package metadata.
