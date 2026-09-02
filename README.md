@@ -75,6 +75,10 @@ This `AGENTS.md` is a streamlined distillation synthesized from two community pr
 * [i-have-adhd](https://github.com/ayghri/i-have-adhd): Enforces action-first communication, numbered multi-step execution, and concrete next actions while eliminating conversational fluff.
 * [ponytail](https://github.com/DietrichGebert/ponytail): Implements an anti-overengineering decision ladder (stop at the first sufficient rung: no code, reuse, platform native, minimal change).
 
+### Customizing Subagents Delegation
+
+The `Subagents Delegation` section in `AGENTS.md` provides sensible defaults based on standard upstream types (`Explore`, `Plan`, `general-purpose`). Because subagent workflows and custom agent definitions vary across individual environments, it is strongly recommended to adapt, add, or remove subagent types to match your own development needs.
+
 ### Placement
 
 Pi automatically loads `AGENTS.md` at session startup from:

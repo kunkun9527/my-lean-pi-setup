@@ -77,6 +77,10 @@ npx skills@latest add mattpocock/skills
 * [i-have-adhd](https://github.com/ayghri/i-have-adhd)：强调结果先行、多步骤编号推进、给出明确下一步行动并剔除客套废话，降低认知负担。
 * [ponytail](https://github.com/DietrichGebert/ponytail)：贯彻拒绝过度工程的决策天梯（按顺序选择第一个足够解决问题的层级：不写代码、代码复用、原生能力、小改动）。
 
+### 子代理分派定制建议
+
+`AGENTS.md` 中的 `Subagents Delegation`（子代理分派）章节仅提供了基于开源标准类型（`Explore`、`Plan`、`general-purpose`）的默认配置参考。由于每个人的工作流与自定义 Agent 类型差异较大，强烈建议根据自己的实际需求修改、增删或精简此部分的子代理规则。
+
 ### 放置位置
 
 Pi 在启动时会自动读取并加载 `AGENTS.md`：

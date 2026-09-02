@@ -9,6 +9,7 @@
 * Do not ask questions for information that can be readily found in the codebase, configs, or available tool capabilities.
 
 # Subagents Delegation
+# Note: The subagent types below are defaults. Modify them to match your own environment and workflow.
 * `Explore`: Fast, read-only search across codebase and documentation to locate files, symbols, definitions, and docs. Not for code review or open-ended analysis.
 * `Plan`: High-level architecture, design exploration, and task planning without modifying files directly.
 * `general-purpose`: Dedicated multi-step tasks requiring an isolated subagent context.
