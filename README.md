@@ -56,6 +56,31 @@ Maintaining these wrappers is straightforward: when upstream updates arrive, com
 
 [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) manages structured tasks, dependencies, and execution status. The lean wrapper preserves the complete task lifecycle with a clean, flat schema.
 
+## Curated AGENTS.md Rules
+
+This repository includes a lean, production-ready `AGENTS.md` instruction file available in both [English](AGENTS.md) and [简体中文](AGENTS.zh-CN.md).
+
+### Recommended Prerequisites
+
+Before applying this configuration, it is recommended to install Matt Pocock's skills repository:
+* [mattpocock/skills](https://github.com/mattpocock/skills): A collection of structured engineering workflows. This `AGENTS.md` integrates with workflows such as the `/grill-me` skill for requirement alignment.
+* Installation:
+```bash
+npx skills@latest add mattpocock/skills
+```
+
+### Design Rationale
+
+This `AGENTS.md` is a streamlined distillation synthesized from two community prompt philosophies:
+* [i-have-adhd](https://github.com/ayghri/i-have-adhd): Enforces action-first communication, numbered multi-step execution, and concrete next actions while eliminating conversational fluff.
+* [ponytail](https://github.com/DietrichGebert/ponytail): Implements an anti-overengineering decision ladder (stop at the first sufficient rung: no code, reuse, platform native, minimal change).
+
+### Placement
+
+Pi automatically loads `AGENTS.md` at session startup from:
+* Global configuration: `~/.pi/agent/AGENTS.md`
+* Project configuration: `./AGENTS.md` (or parent directories)
+
 ## Architecture Overview
 
 | Layer | Component | Function |

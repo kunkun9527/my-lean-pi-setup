@@ -58,6 +58,31 @@ Pi 最突出的优势之一是轻量、可控的上下文。然而，许多优�
 
 [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 提供任务拆解、依赖追踪与状态流转管理。精简版以紧凑的原生扁平 Schema 保留了完整的任务生命周期。
 
+## 精选 AGENTS.md 规则模板
+
+本仓库提供了一套开箱即用且经过深度提炼的 `AGENTS.md` 指令模板，包含 [简体中文版](AGENTS.zh-CN.md) 与 [英文版](AGENTS.md)。
+
+### 前置推荐：安装 Skills 仓库
+
+在应用本指令配置前，推荐先安装 Matt Pocock 的 Skills 技能库：
+* [mattpocock/skills](https://github.com/mattpocock/skills)：为 Coding Agent 提供了规范化的工程工作流规范。本配置中的需求对齐机制深度配合其中的 `/grill-me` 等技能使用。
+* 安装命令：
+```bash
+npx skills@latest add mattpocock/skills
+```
+
+### 设计理念与来源
+
+该 `AGENTS.md` 是我结合两个优秀的开源 Prompt 规范并再次精简重构的版本：
+* [i-have-adhd](https://github.com/ayghri/i-have-adhd)：强调结果先行、多步骤编号推进、给出明确下一步行动并剔除客套废话，降低认知负担。
+* [ponytail](https://github.com/DietrichGebert/ponytail)：贯彻拒绝过度工程的决策天梯（按顺序选择第一个足够解决问题的层级：不写代码、代码复用、原生能力、小改动）。
+
+### 放置位置
+
+Pi 在启动时会自动读取并加载 `AGENTS.md`：
+* 全局生效路径：`~/.pi/agent/AGENTS.md`
+* 项目级生效路径：项目根目录 `./AGENTS.md`（或上级目录）
+
 ## 方案架构概览
 
 | 环节 | 组件 | 功能职责 |
