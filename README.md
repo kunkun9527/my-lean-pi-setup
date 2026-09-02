@@ -58,7 +58,7 @@ Maintaining these wrappers is straightforward: when upstream updates arrive, com
 
 ## Curated AGENTS.md Rules
 
-This repository includes a lean, production-ready `AGENTS.md` instruction file available in both [English](AGENTS.md) and [简体中文](AGENTS.zh-CN.md).
+This repository includes a lean, production-ready `AGENTS.md` instruction file available in both [English](agents/en/AGENTS.md) and [简体中文](agents/zh-CN/AGENTS.md).
 
 ### Recommended Prerequisites
 

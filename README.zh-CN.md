@@ -60,7 +60,7 @@ Pi 最突出的优势之一是轻量、可控的上下文。然而，许多优�
 
 ## 精选 AGENTS.md 规则模板
 
-本仓库提供了一套开箱即用且经过深度提炼的 `AGENTS.md` 指令模板，包含 [简体中文版](AGENTS.zh-CN.md) 与 [英文版](AGENTS.md)。
+本仓库提供了一套开箱即用且经过深度提炼的 `AGENTS.md` 指令模板，包含 [简体中文版](agents/zh-CN/AGENTS.md) 与 [英文版](agents/en/AGENTS.md)。
 
 ### 前置推荐：安装 Skills 仓库
 
