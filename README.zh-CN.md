@@ -144,11 +144,11 @@ Pi 在启动时会自动读取并加载 `AGENTS.md`：
 | --- | ---: | ---: | ---: | ---: |
 | `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
 | `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
-| `pi-web-access-lean` | **141** | 2,376 | 2,235 | **94.1%** |
+| `pi-web-access-lean` | **152** | 2,376 | 2,224 | **93.6%** |
 | `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
 | `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
-| **合计** | **1,906** | **13,425** | **11,519** | **85.8%** |
+| **合计** | **1,917** | **13,425** | **11,508** | **85.7%** |
 
 综合使用这 6 个精简封装，初始工具定义开销可降至原版的约七分之一。
 
@@ -158,7 +158,7 @@ Pi 在启动时会自动读取并加载 `AGENTS.md`：
 | --- | --- | --- |
 | Billion Context | `compress` (216) + `acp_context` (90) + prompt (369) = **675** | `compress` (549) + `decompress` (546) + `search_context` (210) + `acp_status` (339) + prompt (4,417) = **6,061** |
 | Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
-| Web access | `web_access` = **141** | `web_search` (994) + `source_check` (413) + `fetch_content` (576) + `get_search_content` (393) = **2,376** |
+| Web access | `web_access` = **152** | `web_search` (994) + `source_check` (413) + `fetch_content` (576) + `get_search_content` (393) = **2,376** |
 | Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
 | Todo | `todo` = **256** | `todo` = **904** |
