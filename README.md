@@ -120,17 +120,17 @@ These figures reflect recurring initialization context injected into model promp
 
 ### Methodology
 
-* Test environment: Pi `0.84.4` with `pi-context-view` `0.4.3`, using `GPT-5.6-SOL`.
-* Each extension was evaluated individually in a fresh session, excluding built-in tools, skills, and context files.
-* Calculations align with `/context injections` (tool schemas, related prompts, and extension injections).
-* Context View estimates tokens via `ceil(characters / 4)`.
+* Test environment: Pi `0.85.1` with `measure-plugin-tokens-v3.mjs`.
+* Each extension was evaluated individually in a fresh isolated session, excluding built-in tools, skills, context files, and unrelated extensions.
+* Measurements cover recurring model-facing initialization context, including tool schemas and extension prompt additions.
+* Token estimates use `ceil(characters / 4)`.
 * Upstream baselines reflect the versions pinned by each wrapper.
 
 ### Stack Breakdown
 
 | Component | Initial Context Impact | Notes |
 | --- | ---: | --- |
-| `billion-context-pi-lean` | **675 tokens** | Upstream `billion-context-pi@0.1.52`: **6,061 tokens** (saves 88.9%). |
+| `billion-context-pi-lean` | **690 tokens** | Upstream `billion-context-pi@0.1.69`: **5,802 tokens** (saves 88.1%). |
 | `pi-slim@0.2.1` | **-309 tokens net** | Strips 1,236 characters of default documentation guidance from base prompt. |
 | Headroom / noheadroom | **0 tokens initially** | Operates dynamically at runtime to compress context growth. |
 | RTK + `pi-rtk-optimizer` | **0 tokens initially** | Operates dynamically at runtime via shell hooks. |
@@ -140,26 +140,26 @@ These figures reflect recurring initialization context injected into model promp
 
 | Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
-| `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
+| `billion-context-pi-lean` | **690** | 5,802 | 5,112 | **88.1%** |
 | `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
-| `pi-web-access-lean` | **152** | 2,376 | 2,224 | **93.6%** |
+| `pi-web-access-lean` | **152** | 2,899 | 2,747 | **94.8%** |
 | `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
-| `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
-| **Total** | **1,917** | **13,425** | **11,508** | **85.7%** |
+| `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
+| **Total** | **1,922** | **13,689** | **11,767** | **86.0%** |
 
-Across all six wrappers, initial prompt overhead is cut to approximately one-seventh of the original footprint.
+Across all six wrappers, initial prompt overhead is reduced by approximately 86%.
 
 ### Detailed Per-Tool Comparison
 
 | Extension | Lean Interface Breakdown | Original Interface Breakdown |
 | --- | --- | --- |
-| Billion Context | `compress` (216) + `acp_context` (90) + prompt (369) = **675** | `compress` (549) + `decompress` (546) + `search_context` (210) + `acp_status` (339) + prompt (4,417) = **6,061** |
+| Billion Context | `compress` (231) + `acp_context` (90) + prompt (369) = **690** | `compress` (549) + context operations (1,095) + prompt (4,158) = **5,802** |
 | Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
-| Web access | `web_access` = **152** | `web_search` (994) + `source_check` (413) + `fetch_content` (576) + `get_search_content` (393) = **2,376** |
+| Web access | `web_access` = **152** | `web_search` (1,242) + `source_check` (533) + `fetch_content` (712) + `get_search_content` (412) = **2,899** |
 | Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
-| Todo | `todo` = **256** | `todo` = **904** |
+| Todo | `todo` = **246** | `todo` = **904** |
 
 ## License & Attribution
 

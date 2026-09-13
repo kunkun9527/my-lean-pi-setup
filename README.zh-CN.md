@@ -122,17 +122,17 @@ Pi 在启动时会自动读取并加载 `AGENTS.md`：
 
 ### 测量方式
 
-* 测试环境：Pi `0.84.4`，搭配 `pi-context-view` `0.4.3`，选定模型为 `GPT-5.6-SOL`。
-* 每个扩展在全新的隔离会话中单独加载，排除内置工具、Skills 与上下文文件。
-* 统计口径与 `/context injections` 保持一致（包含工具定义、相关提示词与扩展注入内容）。
-* Context View 按 `ceil(字符数 / 4)` 估算 Token。
+* 测试环境：Pi `0.85.1`，使用 `measure-plugin-tokens-v3.mjs`。
+* 每个扩展均在全新的隔离会话中单独加载，排除内置工具、Skills、上下文文件与无关扩展。
+* 统计范围为常驻的模型可见初始化上下文，包括工具 Schema 与扩展 Prompt 注入。
+* Token 按 `ceil(字符数 / 4)` 估算。
 * 原版对比基准采用各精简版锁定的上游版本。
 
 ### 上下文组件分析
 
 | 组件 | 初始上下文影响 | 说明 |
 | --- | ---: | --- |
-| `billion-context-pi-lean` | **675 tokens** | 原版 `billion-context-pi@0.1.52`: **6,061 tokens**（节省 88.9%）。 |
+| `billion-context-pi-lean` | **690 tokens** | 原版 `billion-context-pi@0.1.69`: **5,802 tokens**（节省 88.1%）。 |
 | `pi-slim@0.2.1` | **净减少 309 tokens** | 从基础 Prompt 中移除了 1,236 字符的静态文档说明。 |
 | Headroom / noheadroom | **初始 0 tokens** | 属于动态中间件，在运行期动态压缩上下文增长。 |
 | RTK + `pi-rtk-optimizer` | **初始 0 tokens** | 属于运行期 Hook，在命令执行时生效。 |
@@ -142,26 +142,26 @@ Pi 在启动时会自动读取并加载 `AGENTS.md`：
 
 | 扩展封装 | 精简版 | 锁定原版 | 节省 Token | 降幅 |
 | --- | ---: | ---: | ---: | ---: |
-| `billion-context-pi-lean` | **675** | 6,061 | 5,386 | **88.9%** |
+| `billion-context-pi-lean` | **690** | 5,802 | 5,112 | **88.1%** |
 | `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
-| `pi-web-access-lean` | **152** | 2,376 | 2,224 | **93.6%** |
+| `pi-web-access-lean` | **152** | 2,899 | 2,747 | **94.8%** |
 | `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
-| `rpiv-todo-lean` | **256** | 904 | 648 | **71.7%** |
-| **合计** | **1,917** | **13,425** | **11,508** | **85.7%** |
+| `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
+| **合计** | **1,922** | **13,689** | **11,767** | **86.0%** |
 
-综合使用这 6 个精简封装，初始工具定义开销可降至原版的约七分之一。
+综合使用这 6 个精简封装，初始工具定义开销相比原版减少约 86%。
 
 ### 各工具详细构成
 
 | 扩展 | 精简版工具结构明细 | 原版工具结构明细 |
 | --- | --- | --- |
-| Billion Context | `compress` (216) + `acp_context` (90) + prompt (369) = **675** | `compress` (549) + `decompress` (546) + `search_context` (210) + `acp_status` (339) + prompt (4,417) = **6,061** |
+| Billion Context | `compress` (231) + `acp_context` (90) + prompt (369) = **690** | `compress` (549) + 上下文操作 (1,095) + prompt (4,158) = **5,802** |
 | Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
-| Web access | `web_access` = **152** | `web_search` (994) + `source_check` (413) + `fetch_content` (576) + `get_search_content` (393) = **2,376** |
+| Web access | `web_access` = **152** | `web_search` (1,242) + `source_check` (533) + `fetch_content` (712) + `get_search_content` (412) = **2,899** |
 | Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
 | Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
-| Todo | `todo` = **256** | `todo` = **904** |
+| Todo | `todo` = **246** | `todo` = **904** |
 
 ## 开源协议与归属声明
 
