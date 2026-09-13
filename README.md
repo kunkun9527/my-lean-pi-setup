@@ -114,52 +114,42 @@ Pi automatically loads `AGENTS.md` at session startup from:
 * Verify pinned dependency versions when updating.
 * Keep API keys and private endpoints out of public configurations.
 
+## Automated Token Benchmarks
+
+The repository includes a centralized benchmark tool for all six public Lean wrappers. It measures each wrapper and its exact pinned upstream dependency in separate isolated Pi processes.
+
+```bash
+npm run benchmark          # measure, show changes, update JSON and README blocks
+npm run benchmark:report   # measure and print only
+npm run benchmark:check    # verify the snapshot and generated README blocks
+```
+
+Structured results are stored in `benchmarks/results.json`. Generated README content is limited to `token-benchmark` marker blocks; if values do not change, files are left untouched.
+
 ## Measured Initialization Context Footprint
 
-These figures reflect recurring initialization context injected into model prompts, rather than process memory.
-
+<!-- token-benchmark:aggregate:start -->
 ### Methodology
 
-* Test environment: Pi `0.85.1` with `measure-plugin-tokens-v3.mjs`.
-* Each extension was evaluated individually in a fresh isolated session, excluding built-in tools, skills, context files, and unrelated extensions.
-* Measurements cover recurring model-facing initialization context, including tool schemas and extension prompt additions.
-* Token estimates use `ceil(characters / 4)`.
-* Upstream baselines reflect the versions pinned by each wrapper.
-
-### Stack Breakdown
-
-| Component | Initial Context Impact | Notes |
-| --- | ---: | --- |
-| `billion-context-pi-lean` | **690 tokens** | Upstream `billion-context-pi@0.1.69`: **5,802 tokens** (saves 88.1%). |
-| `pi-slim@0.2.1` | **-309 tokens net** | Strips 1,236 characters of default documentation guidance from base prompt. |
-| Headroom / noheadroom | **0 tokens initially** | Operates dynamically at runtime to compress context growth. |
-| RTK + `pi-rtk-optimizer` | **0 tokens initially** | Operates dynamically at runtime via shell hooks. |
-| `pi-context-view@0.4.3` | **0 tokens initially** | Provides observers and commands without injecting prompt instructions. |
+* Test environment: Pi `0.85.1` using the repository's automated benchmark tool.
+* Every Lean and upstream extension is measured in a separate process with an empty temporary home and Pi agent directory.
+* Built-in tools, skills, context files, messages, unrelated extensions, runtime UI, and slash commands are excluded.
+* Tokens use `ceil(characters / 4)`; upstream baselines are the exact dependency versions pinned by each Lean package.
 
 ### Lean Tool Comparison
 
 | Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
 | `billion-context-pi-lean` | **690** | 5,802 | 5,112 | **88.1%** |
-| `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
 | `pi-web-access-lean` | **152** | 2,899 | 2,747 | **94.8%** |
-| `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
 | `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
-| **Total** | **1,922** | **13,689** | **11,767** | **86.0%** |
+| `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
+| `pi-hashline-edit-pro-lean` | **423** | 1,503 | 1,080 | **71.9%** |
+| **Total** | **1,994** | **20,906** | **18,912** | **90.5%** |
 
-Across all six wrappers, initial prompt overhead is reduced by approximately 86%.
-
-### Detailed Per-Tool Comparison
-
-| Extension | Lean Interface Breakdown | Original Interface Breakdown |
-| --- | --- | --- |
-| Billion Context | `compress` (231) + `acp_context` (90) + prompt (369) = **690** | `compress` (549) + context operations (1,095) + prompt (4,158) = **5,802** |
-| Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
-| Web access | `web_access` = **152** | `web_search` (1,242) + `source_check` (533) + `fetch_content` (712) + `get_search_content` (412) = **2,899** |
-| Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
-| Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
-| Todo | `todo` = **246** | `todo` = **904** |
+Across all six wrappers, recurring initialization context is reduced by **18,912 tokens (90.5%)** versus their pinned upstream versions.
+<!-- token-benchmark:aggregate:end -->
 
 ## License & Attribution
 

@@ -1,0 +1,12 @@
+{
+  "name": "my-lean-pi-setup",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "benchmark": "node scripts/benchmark-extensions.mjs update",
+    "benchmark:report": "node scripts/benchmark-extensions.mjs report",
+    "benchmark:check": "node scripts/benchmark-extensions.mjs check",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

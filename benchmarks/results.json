@@ -1,0 +1,642 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-13T23:12:11.410Z",
+  "estimator": "ceil(characters / 4)",
+  "piVersion": "0.85.1",
+  "totals": {
+    "leanTokens": 1994,
+    "upstreamTokens": 20906,
+    "savedTokens": 18912,
+    "reductionPercent": 90.5
+  },
+  "extensions": [
+    {
+      "id": "billion-context",
+      "directory": "billion-context-pi-lean",
+      "displayName": "Billion Context",
+      "leanPackage": "billion-context-pi-lean",
+      "leanVersion": "0.1.69-lean.1",
+      "upstreamPackage": "billion-context-pi",
+      "upstreamVersion": "0.1.69",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 690,
+            "toolTokens": 321,
+            "promptDeltaTokens": 369,
+            "promptDeltaChars": 1473,
+            "activeToolNames": [
+              "compress",
+              "acp_context"
+            ],
+            "tools": [
+              {
+                "name": "compress",
+                "chars": 921,
+                "tokens": 231,
+                "descriptionChars": 91,
+                "schemaChars": 819,
+                "snippetChars": 0,
+                "guidelineChars": 0
+              },
+              {
+                "name": "acp_context",
+                "chars": 359,
+                "tokens": 90,
+                "descriptionChars": 160,
+                "schemaChars": 185,
+                "snippetChars": 0,
+                "guidelineChars": 0
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 5802,
+            "toolTokens": 1644,
+            "promptDeltaTokens": 4158,
+            "promptDeltaChars": 16631,
+            "activeToolNames": [
+              "compress",
+              "decompress",
+              "search_context",
+              "acp_status"
+            ],
+            "tools": [
+              {
+                "name": "compress",
+                "chars": 2196,
+                "tokens": 549,
+                "descriptionChars": 243,
+                "schemaChars": 1495,
+                "snippetChars": 90,
+                "guidelineChars": 357
+              },
+              {
+                "name": "decompress",
+                "chars": 2184,
+                "tokens": 546,
+                "descriptionChars": 655,
+                "schemaChars": 928,
+                "snippetChars": 172,
+                "guidelineChars": 416
+              },
+              {
+                "name": "search_context",
+                "chars": 839,
+                "tokens": 210,
+                "descriptionChars": 212,
+                "schemaChars": 246,
+                "snippetChars": 58,
+                "guidelineChars": 306
+              },
+              {
+                "name": "acp_status",
+                "chars": 1356,
+                "tokens": 339,
+                "descriptionChars": 232,
+                "schemaChars": 831,
+                "snippetChars": 88,
+                "guidelineChars": 192
+              }
+            ]
+          },
+          "savedTokens": 5112,
+          "reductionPercent": 88.1
+        }
+      ]
+    },
+    {
+      "id": "web-access",
+      "directory": "pi-web-access-lean",
+      "displayName": "Web Access",
+      "leanPackage": "@ssk_dev/pi-web-access-lean",
+      "leanVersion": "0.29.0",
+      "upstreamPackage": "pi-web-access",
+      "upstreamVersion": "0.29.0",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 152,
+            "toolTokens": 152,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "web_access"
+            ],
+            "tools": [
+              {
+                "name": "web_access",
+                "chars": 608,
+                "tokens": 152,
+                "descriptionChars": 121,
+                "schemaChars": 266,
+                "snippetChars": 0,
+                "guidelineChars": 208
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 2899,
+            "toolTokens": 2899,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "web_search",
+              "source_check",
+              "fetch_content",
+              "get_search_content"
+            ],
+            "tools": [
+              {
+                "name": "web_search",
+                "chars": 4968,
+                "tokens": 1242,
+                "descriptionChars": 1968,
+                "schemaChars": 2786,
+                "snippetChars": 201,
+                "guidelineChars": 0
+              },
+              {
+                "name": "source_check",
+                "chars": 2131,
+                "tokens": 533,
+                "descriptionChars": 119,
+                "schemaChars": 1905,
+                "snippetChars": 92,
+                "guidelineChars": 0
+              },
+              {
+                "name": "fetch_content",
+                "chars": 2848,
+                "tokens": 712,
+                "descriptionChars": 369,
+                "schemaChars": 2303,
+                "snippetChars": 160,
+                "guidelineChars": 0
+              },
+              {
+                "name": "get_search_content",
+                "chars": 1645,
+                "tokens": 412,
+                "descriptionChars": 120,
+                "schemaChars": 1313,
+                "snippetChars": 191,
+                "guidelineChars": 0
+              }
+            ]
+          },
+          "savedTokens": 2747,
+          "reductionPercent": 94.8
+        }
+      ]
+    },
+    {
+      "id": "ask-user-question",
+      "directory": "rpiv-ask-user-question-lean",
+      "displayName": "Ask User Question",
+      "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
+      "leanVersion": "2.10.1",
+      "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
+      "upstreamVersion": "2.10.1",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 215,
+            "toolTokens": 215,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "ask_user_question"
+            ],
+            "tools": [
+              {
+                "name": "ask_user_question",
+                "chars": 860,
+                "tokens": 215,
+                "descriptionChars": 70,
+                "schemaChars": 546,
+                "snippetChars": 0,
+                "guidelineChars": 224
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 1258,
+            "toolTokens": 1258,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "ask_user_question"
+            ],
+            "tools": [
+              {
+                "name": "ask_user_question",
+                "chars": 5031,
+                "tokens": 1258,
+                "descriptionChars": 1641,
+                "schemaChars": 2033,
+                "snippetChars": 114,
+                "guidelineChars": 1223
+              }
+            ]
+          },
+          "savedTokens": 1043,
+          "reductionPercent": 82.9
+        }
+      ]
+    },
+    {
+      "id": "todo",
+      "directory": "rpiv-todo-lean",
+      "displayName": "Todo",
+      "leanPackage": "@ssk_dev/rpiv-todo-lean",
+      "leanVersion": "2.10.1",
+      "upstreamPackage": "@juicesharp/rpiv-todo",
+      "upstreamVersion": "2.10.1",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 246,
+            "toolTokens": 246,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "todo"
+            ],
+            "tools": [
+              {
+                "name": "todo",
+                "chars": 984,
+                "tokens": 246,
+                "descriptionChars": 119,
+                "schemaChars": 631,
+                "snippetChars": 0,
+                "guidelineChars": 227
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 904,
+            "toolTokens": 904,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "todo"
+            ],
+            "tools": [
+              {
+                "name": "todo",
+                "chars": 3615,
+                "tokens": 904,
+                "descriptionChars": 392,
+                "schemaChars": 1498,
+                "snippetChars": 56,
+                "guidelineChars": 1662
+              }
+            ]
+          },
+          "savedTokens": 658,
+          "reductionPercent": 72.8
+        }
+      ]
+    },
+    {
+      "id": "subagents",
+      "directory": "pi-subagents-lean",
+      "displayName": "Subagents",
+      "leanPackage": "@ssk_dev/pi-subagents-lean",
+      "leanVersion": "0.19.0",
+      "upstreamPackage": "@tintinweb/pi-subagents",
+      "upstreamVersion": "0.19.0",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 268,
+            "toolTokens": 268,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "subagent"
+            ],
+            "tools": [
+              {
+                "name": "subagent",
+                "chars": 1070,
+                "tokens": 268,
+                "descriptionChars": 86,
+                "schemaChars": 543,
+                "snippetChars": 0,
+                "guidelineChars": 430
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 8540,
+            "toolTokens": 8540,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "Agent",
+              "SubagentWorkflow",
+              "get_subagent_result",
+              "steer_subagent"
+            ],
+            "tools": [
+              {
+                "name": "Agent",
+                "chars": 10251,
+                "tokens": 2563,
+                "descriptionChars": 6287,
+                "schemaChars": 2966,
+                "snippetChars": 67,
+                "guidelineChars": 923
+              },
+              {
+                "name": "SubagentWorkflow",
+                "chars": 22442,
+                "tokens": 5611,
+                "descriptionChars": 20664,
+                "schemaChars": 1220,
+                "snippetChars": 80,
+                "guidelineChars": 459
+              },
+              {
+                "name": "get_subagent_result",
+                "chars": 732,
+                "tokens": 183,
+                "descriptionChars": 148,
+                "schemaChars": 481,
+                "snippetChars": 81,
+                "guidelineChars": 0
+              },
+              {
+                "name": "steer_subagent",
+                "chars": 731,
+                "tokens": 183,
+                "descriptionChars": 225,
+                "schemaChars": 408,
+                "snippetChars": 81,
+                "guidelineChars": 0
+              }
+            ]
+          },
+          "savedTokens": 8272,
+          "reductionPercent": 96.9
+        }
+      ]
+    },
+    {
+      "id": "hashline-edit",
+      "directory": "pi-hashline-edit-pro-lean",
+      "displayName": "Hashline Edit",
+      "leanPackage": "pi-hashline-edit-pro-lean",
+      "leanVersion": "3.0.4-lean.1",
+      "upstreamPackage": "pi-hashline-edit-pro",
+      "upstreamVersion": "3.0.4",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 423,
+            "toolTokens": 423,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "read",
+              "replace",
+              "insert",
+              "undo_last_change"
+            ],
+            "tools": [
+              {
+                "name": "read",
+                "chars": 345,
+                "tokens": 87,
+                "descriptionChars": 95,
+                "schemaChars": 156,
+                "snippetChars": 0,
+                "guidelineChars": 87
+              },
+              {
+                "name": "replace",
+                "chars": 517,
+                "tokens": 130,
+                "descriptionChars": 58,
+                "schemaChars": 270,
+                "snippetChars": 0,
+                "guidelineChars": 179
+              },
+              {
+                "name": "insert",
+                "chars": 550,
+                "tokens": 138,
+                "descriptionChars": 68,
+                "schemaChars": 299,
+                "snippetChars": 0,
+                "guidelineChars": 174
+              },
+              {
+                "name": "undo_last_change",
+                "chars": 272,
+                "tokens": 68,
+                "descriptionChars": 50,
+                "schemaChars": 77,
+                "snippetChars": 0,
+                "guidelineChars": 126
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 1503,
+            "toolTokens": 1503,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "read",
+              "replace",
+              "insert",
+              "undo_last_change"
+            ],
+            "tools": [
+              {
+                "name": "read",
+                "chars": 1104,
+                "tokens": 276,
+                "descriptionChars": 450,
+                "schemaChars": 330,
+                "snippetChars": 58,
+                "guidelineChars": 259
+              },
+              {
+                "name": "replace",
+                "chars": 2498,
+                "tokens": 625,
+                "descriptionChars": 580,
+                "schemaChars": 845,
+                "snippetChars": 184,
+                "guidelineChars": 879
+              },
+              {
+                "name": "insert",
+                "chars": 1596,
+                "tokens": 399,
+                "descriptionChars": 259,
+                "schemaChars": 846,
+                "snippetChars": 136,
+                "guidelineChars": 346
+              },
+              {
+                "name": "undo_last_change",
+                "chars": 812,
+                "tokens": 203,
+                "descriptionChars": 381,
+                "schemaChars": 118,
+                "snippetChars": 116,
+                "guidelineChars": 178
+              }
+            ]
+          },
+          "savedTokens": 1080,
+          "reductionPercent": 71.9
+        },
+        {
+          "id": "anchor-grep",
+          "label": "With anchor_grep",
+          "lean": {
+            "totalTokens": 538,
+            "toolTokens": 538,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "read",
+              "replace",
+              "insert",
+              "anchor_grep",
+              "undo_last_change"
+            ],
+            "tools": [
+              {
+                "name": "read",
+                "chars": 345,
+                "tokens": 87,
+                "descriptionChars": 95,
+                "schemaChars": 156,
+                "snippetChars": 0,
+                "guidelineChars": 87
+              },
+              {
+                "name": "replace",
+                "chars": 517,
+                "tokens": 130,
+                "descriptionChars": 58,
+                "schemaChars": 270,
+                "snippetChars": 0,
+                "guidelineChars": 179
+              },
+              {
+                "name": "insert",
+                "chars": 550,
+                "tokens": 138,
+                "descriptionChars": 68,
+                "schemaChars": 299,
+                "snippetChars": 0,
+                "guidelineChars": 174
+              },
+              {
+                "name": "anchor_grep",
+                "chars": 457,
+                "tokens": 115,
+                "descriptionChars": 70,
+                "schemaChars": 303,
+                "snippetChars": 0,
+                "guidelineChars": 70
+              },
+              {
+                "name": "undo_last_change",
+                "chars": 272,
+                "tokens": 68,
+                "descriptionChars": 50,
+                "schemaChars": 77,
+                "snippetChars": 0,
+                "guidelineChars": 126
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 1991,
+            "toolTokens": 1991,
+            "promptDeltaTokens": 0,
+            "promptDeltaChars": 0,
+            "activeToolNames": [
+              "read",
+              "replace",
+              "insert",
+              "anchor_grep",
+              "undo_last_change"
+            ],
+            "tools": [
+              {
+                "name": "read",
+                "chars": 1104,
+                "tokens": 276,
+                "descriptionChars": 450,
+                "schemaChars": 330,
+                "snippetChars": 58,
+                "guidelineChars": 259
+              },
+              {
+                "name": "replace",
+                "chars": 2498,
+                "tokens": 625,
+                "descriptionChars": 580,
+                "schemaChars": 845,
+                "snippetChars": 184,
+                "guidelineChars": 879
+              },
+              {
+                "name": "insert",
+                "chars": 1596,
+                "tokens": 399,
+                "descriptionChars": 259,
+                "schemaChars": 846,
+                "snippetChars": 136,
+                "guidelineChars": 346
+              },
+              {
+                "name": "anchor_grep",
+                "chars": 1951,
+                "tokens": 488,
+                "descriptionChars": 628,
+                "schemaChars": 793,
+                "snippetChars": 133,
+                "guidelineChars": 383
+              },
+              {
+                "name": "undo_last_change",
+                "chars": 812,
+                "tokens": 203,
+                "descriptionChars": 381,
+                "schemaChars": 118,
+                "snippetChars": 116,
+                "guidelineChars": 178
+              }
+            ]
+          },
+          "savedTokens": 1453,
+          "reductionPercent": 73
+        }
+      ]
+    }
+  ]
+}

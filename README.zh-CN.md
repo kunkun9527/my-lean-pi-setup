@@ -116,52 +116,42 @@ Pi 在启动时会自动读取并加载 `AGENTS.md`：
 * 依赖版本升级后请及时执行检查验证。
 * 切勿将私有 API 密钥与内部服务端点提交至公开配置中。
 
+## Token 基准自动化
+
+仓库内置了覆盖 6 个公开 Lean 扩展的集中式基准工具。每个 Lean 扩展及其精确锁定的上游依赖都会在相互隔离的 Pi 临时进程中测量。
+
+```bash
+npm run benchmark          # 测量、展示变化并更新 JSON 与 README 托管区块
+npm run benchmark:report   # 仅测量和输出，不修改文件
+npm run benchmark:check    # 检查快照与 README 是否为最新
+```
+
+结构化结果保存在 `benchmarks/results.json`。工具只修改 `token-benchmark` 标记区块；数值不变时不会产生文档改动。
+
 ## 初始上下文占用实测
 
-以下数据衡量的是常驻注入到模型 Prompt 中的初始上下文占用，并非运行期内存占用。
-
+<!-- token-benchmark:aggregate:start -->
 ### 测量方式
 
-* 测试环境：Pi `0.85.1`，使用 `measure-plugin-tokens-v3.mjs`。
-* 每个扩展均在全新的隔离会话中单独加载，排除内置工具、Skills、上下文文件与无关扩展。
-* 统计范围为常驻的模型可见初始化上下文，包括工具 Schema 与扩展 Prompt 注入。
-* Token 按 `ceil(字符数 / 4)` 估算。
-* 原版对比基准采用各精简版锁定的上游版本。
-
-### 上下文组件分析
-
-| 组件 | 初始上下文影响 | 说明 |
-| --- | ---: | --- |
-| `billion-context-pi-lean` | **690 tokens** | 原版 `billion-context-pi@0.1.69`: **5,802 tokens**（节省 88.1%）。 |
-| `pi-slim@0.2.1` | **净减少 309 tokens** | 从基础 Prompt 中移除了 1,236 字符的静态文档说明。 |
-| Headroom / noheadroom | **初始 0 tokens** | 属于动态中间件，在运行期动态压缩上下文增长。 |
-| RTK + `pi-rtk-optimizer` | **初始 0 tokens** | 属于运行期 Hook，在命令执行时生效。 |
-| `pi-context-view@0.4.3` | **初始 0 tokens** | 仅注册观测器与 Slash 命令，不向模型注入提示词。 |
+* 测试环境：Pi `0.85.1`，使用仓库内置自动化工具。
+* 每个 Lean 与上游扩展均在独立临时进程、空白 Home 和空白 Pi Agent 目录中测量。
+* 排除内置工具、Skills、上下文文件、消息、无关扩展、运行时 UI 与 Slash Commands。
+* Token 按 `ceil(字符数 / 4)` 估算；上游采用各 Lean 包当前锁定的依赖版本。
 
 ### 精简版工具对比
 
-| 扩展封装 | 精简版 | 锁定原版 | 节省 Token | 降幅 |
+| 扩展封装 | 精简版 | 锁定上游 | 节省 Token | 降幅 |
 | --- | ---: | ---: | ---: | ---: |
 | `billion-context-pi-lean` | **690** | 5,802 | 5,112 | **88.1%** |
-| `pi-subagents-lean` | **268** | 1,416 | 1,148 | **81.1%** |
 | `pi-web-access-lean` | **152** | 2,899 | 2,747 | **94.8%** |
-| `pi-hashline-edit-pro-lean` | **351** | 1,410 | 1,059 | **75.1%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
 | `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
-| **合计** | **1,922** | **13,689** | **11,767** | **86.0%** |
+| `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
+| `pi-hashline-edit-pro-lean` | **423** | 1,503 | 1,080 | **71.9%** |
+| **合计** | **1,994** | **20,906** | **18,912** | **90.5%** |
 
-综合使用这 6 个精简封装，初始工具定义开销相比原版减少约 86%。
-
-### 各工具详细构成
-
-| 扩展 | 精简版工具结构明细 | 原版工具结构明细 |
-| --- | --- | --- |
-| Billion Context | `compress` (231) + `acp_context` (90) + prompt (369) = **690** | `compress` (549) + 上下文操作 (1,095) + prompt (4,158) = **5,802** |
-| Subagents | `subagent` = **268** | `Agent` (1,111) + `get_subagent_result` (149) + `steer_subagent` (156) = **1,416** |
-| Web access | `web_access` = **152** | `web_search` (1,242) + `source_check` (533) + `fetch_content` (712) + `get_search_content` (412) = **2,899** |
-| Hashline edit | `read` (85) + `replace` (203) + `undo_last_replace` (63) = **351** | `read` (247) + `replace` (948) + `undo_last_replace` (215) = **1,410** |
-| Ask user | `ask_user_question` = **215** | `ask_user_question` = **1,258** |
-| Todo | `todo` = **246** | `todo` = **904** |
+综合使用这 6 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **18,912 tokens（90.5%）**。
+<!-- token-benchmark:aggregate:end -->
 
 ## 开源协议与归属声明
 
