@@ -1,9 +1,10 @@
 import { spawn } from "node:child_process";
-import { mkdtemp, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { access, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { writeAtomically } from "./file-transaction.mjs";
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const setupRoot = path.dirname(scriptDir);
 const configPath = path.join(setupRoot, "benchmarks", "config.json");
@@ -19,104 +20,109 @@ const config = JSON.parse(await readFile(configPath, "utf8"));
 const packagesRoot = path.resolve(setupRoot, config.packagesRoot);
 const resultsPath = path.resolve(setupRoot, config.resultsFile);
 let previous;
+let previousText;
 try {
-  previous = JSON.parse(await readFile(resultsPath, "utf8"));
+  previousText = await readFile(resultsPath, "utf8");
+  previous = JSON.parse(previousText);
 } catch (error) {
   if (error.code !== "ENOENT") throw error;
 }
 
 async function main() {
   await preloadReadmes();
-console.log(`\nMeasuring ${config.extensions.length} Lean extensions in isolated Pi sessions...\n`);
+  console.log(`\nMeasuring ${config.extensions.length} Lean extensions in isolated Pi sessions...\n`);
 
-let current;
-try {
-  current = await measureAll(config.extensions);
-} catch (error) {
-  console.error("\n\x1b[31;1mTOKEN BENCHMARK FAILED\x1b[0m");
-  console.error(error instanceof Error ? error.message : String(error));
-  console.error("No benchmark JSON or README files were changed.");
-  process.exitCode = 1;
-  return;
-}
-
-printComparison(current, previous);
-
-const renderedFiles = renderAllReadmes(current, config.extensions);
-const snapshot = {
-  schemaVersion: 1,
-  generatedAt: new Date().toISOString(),
-  estimator: "ceil(characters / 4)",
-  piVersion: current.piVersion,
-  totals: current.totals,
-  extensions: current.extensions,
-};
-if (previous && stableJson(previous) === stableJson(snapshot)) {
-  snapshot.generatedAt = previous.generatedAt;
-}
-const snapshotText = `${JSON.stringify(snapshot, null, 2)}\n`;
-
-if (command === "report") {
-  console.log("\nReport only: no files changed.");
-  return;
-}
-
-if (command === "check") {
-  const stale = [];
-  if (!previous || stableJson(previous) !== stableJson(snapshot)) {
-    stale.push(relativeDisplay(resultsPath));
-  }
-  for (const [filePath, expected] of renderedFiles) {
-    const actual = await readFile(filePath, "utf8");
-    if (actual !== expected) stale.push(relativeDisplay(filePath));
-  }
-  if (stale.length > 0) {
-    console.error("\n\x1b[31;1mBENCHMARK CHECK FAILED\x1b[0m");
-    console.error("Outdated generated files:");
-    for (const file of stale) console.error(`  - ${file}`);
-    console.error("Run: npm run benchmark");
+  let current;
+  try {
+    current = await measureAll(config.extensions);
+  } catch (error) {
+    console.error("\n\x1b[31;1mTOKEN BENCHMARK FAILED\x1b[0m");
+    console.error(error instanceof Error ? error.message : String(error));
+    console.error("No benchmark JSON or README files were changed.");
     process.exitCode = 1;
     return;
   }
-  console.log("\n\x1b[32;1mBenchmark snapshot and README blocks are current.\x1b[0m");
-  return;
-}
 
-const writes = new Map(renderedFiles);
-writes.set(resultsPath, snapshotText);
-const changed = [];
-for (const [filePath, expected] of writes) {
-  let actual;
-  try {
-    actual = await readFile(filePath, "utf8");
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
+  printComparison(current, previous);
+
+  const renderedFiles = renderAllReadmes(current, config.extensions);
+  const snapshot = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    estimator: "fixed character proxy: ceil(characters / 4)",
+    piVersion: current.piVersion,
+    totals: current.totals,
+    extensions: current.extensions,
+  };
+  if (previous && stableJson(previous) === stableJson(snapshot)) {
+    snapshot.generatedAt = previous.generatedAt;
   }
-  if (actual !== expected) changed.push([filePath, expected, actual]);
-}
+  const snapshotText = `${JSON.stringify(snapshot, null, 2)}\n`;
 
-if (changed.length === 0) {
-  console.log("\nNo generated files changed.");
-  return;
-}
+  if (command === "report") {
+    console.log("\nReport only: no files changed.");
+    return;
+  }
 
-await writeAtomically(changed);
-console.log("\nUpdated generated files:");
-for (const [filePath] of changed) console.log(`  - ${relativeDisplay(filePath)}`);
+  if (command === "check") {
+    const stale = [];
+    if (previousText !== snapshotText) {
+      stale.push(relativeDisplay(resultsPath));
+    }
+    for (const [filePath, expected] of renderedFiles) {
+      const actual = await readFile(filePath, "utf8");
+      if (actual !== expected) stale.push(relativeDisplay(filePath));
+    }
+    if (stale.length > 0) {
+      console.error("\n\x1b[31;1mBENCHMARK CHECK FAILED\x1b[0m");
+      console.error("Outdated generated files:");
+      for (const file of stale) console.error(`  - ${file}`);
+      console.error("Run: npm run benchmark");
+      process.exitCode = 1;
+      return;
+    }
+    console.log("\n\x1b[32;1mBenchmark snapshot and README blocks are current.\x1b[0m");
+    return;
+  }
 
+  const writes = new Map(renderedFiles);
+  writes.set(resultsPath, snapshotText);
+  const changed = [];
+  for (const [filePath, expected] of writes) {
+    let actual;
+    try {
+      actual = await readFile(filePath, "utf8");
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    if (actual !== expected) changed.push([filePath, expected, actual]);
+  }
+
+  if (changed.length === 0) {
+    console.log("\nNo generated files changed.");
+    return;
+  }
+
+  await writeAtomically(changed);
+  console.log("\nUpdated generated files:");
+  for (const [filePath] of changed) console.log(`  - ${relativeDisplay(filePath)}`);
 }
 
 async function measureAll(extensionConfigs) {
   const extensions = [];
   let piVersion;
   for (const extensionConfig of extensionConfigs) {
-    const packageRoot = path.join(packagesRoot, extensionConfig.directory);
+    const packageRoot = containedPath(packagesRoot, extensionConfig.directory, `${extensionConfig.id}: directory`);
     const leanPackage = JSON.parse(await readFile(path.join(packageRoot, "package.json"), "utf8"));
-    const upstreamRoot = packageRootForDependency(packageRoot, extensionConfig.upstreamPackage);
-    const upstreamPackage = JSON.parse(await readFile(path.join(upstreamRoot, "package.json"), "utf8"));
+    const dependency = await validateUpstreamDependency(packageRoot, leanPackage, extensionConfig);
+    const { upstreamRoot, upstreamPackage } = dependency;
     const upstreamEntry = upstreamPackage.pi?.extensions?.[0] ?? upstreamPackage.main;
-    if (!upstreamEntry) throw new Error(`${extensionConfig.id}: upstream package has no pi.extensions or main entry.`);
-
+    if (typeof upstreamEntry !== "string" || upstreamEntry.length === 0) {
+      throw new Error(`${extensionConfig.id}: upstream package has no valid pi.extensions or main entry.`);
+    }
+    const upstreamExtensionPath = containedPath(upstreamRoot, upstreamEntry, `${extensionConfig.id}: upstream entry`);
+    await access(path.join(packageRoot, "index.ts"));
+    await access(upstreamExtensionPath);
     console.log(`  ${extensionConfig.displayName}`);
     const profiles = [];
     for (const profile of extensionConfig.profiles) {
@@ -130,7 +136,7 @@ async function measureAll(extensionConfigs) {
         extensionId: extensionConfig.id,
         variant: "upstream",
         profile,
-        extensionPath: path.resolve(upstreamRoot, upstreamEntry),
+        extensionPath: upstreamExtensionPath,
         adapterFactory: extensionConfig.upstreamFactory,
       });
       piVersion ??= lean.piVersion;
@@ -200,14 +206,7 @@ async function runMeasurement({ extensionId, variant, profile, extensionPath, ad
       await writeFile(measuredExtensionPath, source, "utf8");
     }
     await writeFile(inputPath, `${JSON.stringify({ extensionPath: measuredExtensionPath, cwd, agentDir, resultPath }, null, 2)}\n`, "utf8");
-    const result = await spawnWorker(inputPath, {
-      ...process.env,
-      HOME: home,
-      USERPROFILE: home,
-      XDG_CONFIG_HOME: path.join(home, ".config"),
-      NO_UPDATE_NOTIFIER: "1",
-      PI_SKIP_UPDATE_CHECK: "1",
-    });
+    const result = await spawnWorker(inputPath, isolatedEnvironment(home, agentDir), cwd);
     if (result.code !== 0) {
       throw new Error(`${extensionId}/${variant}/${profile.id} exited ${result.code}.\n${result.stderr || result.stdout}`);
     }
@@ -217,29 +216,48 @@ async function runMeasurement({ extensionId, variant, profile, extensionPath, ad
   }
 }
 
-function spawnWorker(inputPath, env) {
+function isolatedEnvironment(home, agentDir) {
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (/^ACP_/i.test(key) || /^(BILLION_CONTEXT|HASHLINE|RPIV_|SUBAGENTS_|WEB_ACCESS)/i.test(key)) delete env[key];
+    if (/^PI_/i.test(key) && !["PI_GLOBAL_NODE_MODULES", "PI_CODING_AGENT_MODULE"].includes(key)) delete env[key];
+  }
+  return {
+    ...env,
+    HOME: home,
+    USERPROFILE: home,
+    XDG_CONFIG_HOME: path.join(home, ".config"),
+    PI_CODING_AGENT_DIR: agentDir,
+    PI_AGENT_DIR: agentDir,
+    NO_UPDATE_NOTIFIER: "1",
+    PI_SKIP_UPDATE_CHECK: "1",
+  };
+}
+
+function spawnWorker(inputPath, env, cwd) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [workerPath, inputPath], {
-      cwd: setupRoot,
+      cwd,
       env,
       windowsHide: true,
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";
     let stderr = "";
+    let timedOut = false;
+    let spawnError;
     const timer = setTimeout(() => {
-      child.kill();
-      reject(new Error(`Measurement timed out after 60 seconds: ${inputPath}`));
+      timedOut = true;
+      child.kill("SIGKILL");
     }, 60_000);
     child.stdout.on("data", (chunk) => { stdout += chunk; });
     child.stderr.on("data", (chunk) => { stderr += chunk; });
-    child.on("error", (error) => {
-      clearTimeout(timer);
-      reject(error);
-    });
+    child.on("error", (error) => { spawnError = error; });
     child.on("close", (code) => {
       clearTimeout(timer);
-      resolve({ code, stdout, stderr });
+      if (spawnError) reject(spawnError);
+      else if (timedOut) reject(new Error(`Measurement timed out after 60 seconds: ${inputPath}`));
+      else resolve({ code, stdout, stderr });
     });
   });
 }
@@ -250,6 +268,7 @@ function compactMeasurement(measurement) {
     toolTokens: measurement.toolTokens,
     promptDeltaTokens: measurement.promptDeltaTokens,
     promptDeltaChars: measurement.promptDeltaChars,
+    eventMessageChars: measurement.eventMessageChars,
     activeToolNames: measurement.activeToolNames,
     tools: measurement.tools.map(({ name, chars, tokens, descriptionChars, schemaChars, snippetChars, guidelineChars }) => ({
       name,
@@ -383,9 +402,9 @@ function aggregateBenchmark(result, language) {
       "### 测量方式",
       "",
       `* 测试环境：Pi \`${result.piVersion}\`，使用仓库内置自动化工具。`,
-      "* 每个 Lean 与上游扩展均在独立临时进程、空白 Home 和空白 Pi Agent 目录中测量。",
-      "* 排除内置工具、Skills、上下文文件、消息、无关扩展、运行时 UI 与 Slash Commands。",
-      "* Token 按 `ceil(字符数 / 4)` 估算；上游采用各 Lean 包当前锁定的依赖版本。",
+      "* 每个 Lean 与上游扩展均在独立临时进程、空白工作目录、空白 Home 和空白 Pi Agent 目录中测量。",
+      "* 排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。",
+      "* Token 是固定字符代理估算，按 `ceil(字符数 / 4)` 计算，并非特定模型 tokenizer 的实际计费值；上游采用各 Lean 包经 lockfile 和已安装包共同校验的精确版本。",
       "",
       "### 精简版工具对比",
       "",
@@ -401,9 +420,9 @@ function aggregateBenchmark(result, language) {
     "### Methodology",
     "",
     `* Test environment: Pi \`${result.piVersion}\` using the repository's automated benchmark tool.`,
-    "* Every Lean and upstream extension is measured in a separate process with an empty temporary home and Pi agent directory.",
-    "* Built-in tools, skills, context files, messages, unrelated extensions, runtime UI, and slash commands are excluded.",
-    "* Tokens use `ceil(characters / 4)`; upstream baselines are the exact dependency versions pinned by each Lean package.",
+    "* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.",
+    "* Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.",
+    "* Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.",
     "",
     "### Lean Tool Comparison",
     "",
@@ -418,9 +437,9 @@ function aggregateBenchmark(result, language) {
 
 function methodLine(piVersion, language) {
   if (language === "zh") {
-    return `测量环境为 Pi ${piVersion} 的独立临时进程与空白配置。排除内置工具、Skills、上下文文件、消息、无关扩展、运行时 UI 与 Slash Commands；Token 按 \`ceil(字符数 / 4)\` 估算。`;
+    return `测量环境为 Pi ${piVersion} 的独立临时进程、空白工作目录与空白配置。排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展的 \`before_agent_start\` 注入。Token 是按 \`ceil(字符数 / 4)\` 计算的固定字符代理估算，并非模型 tokenizer 实际计费值。`;
   }
-  return `Measured with Pi ${piVersion} in separate temporary processes with empty configuration. Built-in tools, skills, context files, messages, unrelated extensions, runtime UI, and slash commands are excluded. Tokens use \`ceil(characters / 4)\`.`;
+  return `Measured with Pi ${piVersion} in separate temporary processes with empty working directories and configuration. Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; \`before_agent_start\` additions are included. Tokens are a fixed character-proxy estimate using \`ceil(characters / 4)\`, not provider tokenizer billing.`;
 }
 
 function profileDisplayLabel(profile, language) {
@@ -441,10 +460,14 @@ function breakdown(measurement, language) {
 function replaceManagedBlock(content, id, body, filePath) {
   const start = `<!-- token-benchmark:${id}:start -->`;
   const end = `<!-- token-benchmark:${id}:end -->`;
+  const startCount = content.split(start).length - 1;
+  const endCount = content.split(end).length - 1;
   const startIndex = content.indexOf(start);
   const endIndex = content.indexOf(end);
-  if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
-    throw new Error(`${relativeDisplay(filePath)} is missing managed markers for ${id}.`);
+  if (startCount !== 1 || endCount !== 1 || endIndex < startIndex + start.length) {
+    throw new Error(
+      `${relativeDisplay(filePath)} must contain exactly one ordered marker pair for ${id}; found ${startCount} start and ${endCount} end markers.`,
+    );
   }
   const before = content.slice(0, startIndex + start.length);
   const after = content.slice(endIndex);
@@ -473,25 +496,43 @@ async function preloadReadmes() {
   globalThis.__benchmarkReadCache = cache;
 }
 
-async function writeAtomically(changed) {
-  const backups = new Map(changed.map(([filePath, , actual]) => [filePath, actual]));
-  const written = [];
-  try {
-    for (const [filePath, content] of changed) {
-      await mkdir(path.dirname(filePath), { recursive: true });
-      const tempPath = `${filePath}.token-benchmark-${process.pid}.tmp`;
-      await writeFile(tempPath, content, "utf8");
-      await rename(tempPath, filePath);
-      written.push(filePath);
-    }
-  } catch (error) {
-    for (const filePath of written.reverse()) {
-      const original = backups.get(filePath);
-      if (original === undefined) await rm(filePath, { force: true });
-      else await writeFile(filePath, original, "utf8");
-    }
-    throw error;
+
+async function validateUpstreamDependency(packageRoot, leanPackage, extensionConfig) {
+  const packageName = extensionConfig.upstreamPackage;
+  const declaredVersion = leanPackage.dependencies?.[packageName];
+  if (typeof declaredVersion !== "string" || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(declaredVersion)) {
+    throw new Error(`${extensionConfig.id}: ${packageName} must be pinned to an exact version; found ${JSON.stringify(declaredVersion)}.`);
   }
+
+  const lockfile = JSON.parse(await readFile(path.join(packageRoot, "package-lock.json"), "utf8"));
+  const lockKey = `node_modules/${packageName}`;
+  const lockEntry = lockfile.packages?.[lockKey];
+  if (!lockEntry) throw new Error(`${extensionConfig.id}: package-lock.json is missing ${lockKey}.`);
+  if (lockEntry.version !== declaredVersion) {
+    throw new Error(`${extensionConfig.id}: lockfile has ${packageName}@${lockEntry.version}, expected ${declaredVersion}.`);
+  }
+  if (typeof lockEntry.integrity !== "string" || lockEntry.integrity.length === 0) {
+    throw new Error(`${extensionConfig.id}: lockfile entry for ${packageName}@${declaredVersion} has no integrity hash.`);
+  }
+
+  const upstreamRoot = packageRootForDependency(packageRoot, packageName);
+  const upstreamPackage = JSON.parse(await readFile(path.join(upstreamRoot, "package.json"), "utf8"));
+  if (upstreamPackage.name !== packageName || upstreamPackage.version !== declaredVersion) {
+    throw new Error(
+      `${extensionConfig.id}: installed dependency is ${upstreamPackage.name}@${upstreamPackage.version}; expected ${packageName}@${declaredVersion}.`,
+    );
+  }
+  return { upstreamRoot, upstreamPackage };
+}
+
+function containedPath(root, relativePath, label) {
+  if (typeof relativePath !== "string" || path.isAbsolute(relativePath)) {
+    throw new Error(`${label} must be a relative path.`);
+  }
+  const resolved = path.resolve(root, relativePath);
+  const relative = path.relative(root, resolved);
+  if (relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative))) return resolved;
+  throw new Error(`${label} escapes its allowed root: ${relativePath}`);
 }
 
 function packageRootForDependency(packageRoot, packageName) {

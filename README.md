@@ -132,9 +132,9 @@ Structured results are stored in `benchmarks/results.json`. Generated README con
 ### Methodology
 
 * Test environment: Pi `0.85.1` using the repository's automated benchmark tool.
-* Every Lean and upstream extension is measured in a separate process with an empty temporary home and Pi agent directory.
-* Built-in tools, skills, context files, messages, unrelated extensions, runtime UI, and slash commands are excluded.
-* Tokens use `ceil(characters / 4)`; upstream baselines are the exact dependency versions pinned by each Lean package.
+* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
+* Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
+* Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
 
 ### Lean Tool Comparison
 

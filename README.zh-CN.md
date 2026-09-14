@@ -134,9 +134,9 @@ npm run benchmark:check    # 检查快照与 README 是否为最新
 ### 测量方式
 
 * 测试环境：Pi `0.85.1`，使用仓库内置自动化工具。
-* 每个 Lean 与上游扩展均在独立临时进程、空白 Home 和空白 Pi Agent 目录中测量。
-* 排除内置工具、Skills、上下文文件、消息、无关扩展、运行时 UI 与 Slash Commands。
-* Token 按 `ceil(字符数 / 4)` 估算；上游采用各 Lean 包当前锁定的依赖版本。
+* 每个 Lean 与上游扩展均在独立临时进程、空白工作目录、空白 Home 和空白 Pi Agent 目录中测量。
+* 排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。
+* Token 是固定字符代理估算，按 `ceil(字符数 / 4)` 计算，并非特定模型 tokenizer 的实际计费值；上游采用各 Lean 包经 lockfile 和已安装包共同校验的精确版本。
 
 ### 精简版工具对比
 

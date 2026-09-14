@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T23:12:11.410Z",
-  "estimator": "ceil(characters / 4)",
+  "generatedAt": "2026-09-13T23:51:50.337Z",
+  "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "0.85.1",
   "totals": {
     "leanTokens": 1994,
@@ -27,6 +27,7 @@
             "toolTokens": 321,
             "promptDeltaTokens": 369,
             "promptDeltaChars": 1473,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "compress",
               "acp_context"
@@ -57,6 +58,7 @@
             "toolTokens": 1644,
             "promptDeltaTokens": 4158,
             "promptDeltaChars": 16631,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "compress",
               "decompress",
@@ -124,6 +126,7 @@
             "toolTokens": 152,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "web_access"
             ],
@@ -144,6 +147,7 @@
             "toolTokens": 2899,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "web_search",
               "source_check",
@@ -211,6 +215,7 @@
             "toolTokens": 215,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "ask_user_question"
             ],
@@ -231,6 +236,7 @@
             "toolTokens": 1258,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "ask_user_question"
             ],
@@ -268,6 +274,7 @@
             "toolTokens": 246,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "todo"
             ],
@@ -288,6 +295,7 @@
             "toolTokens": 904,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "todo"
             ],
@@ -325,6 +333,7 @@
             "toolTokens": 268,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "subagent"
             ],
@@ -345,6 +354,7 @@
             "toolTokens": 8540,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "Agent",
               "SubagentWorkflow",
@@ -412,6 +422,7 @@
             "toolTokens": 423,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "read",
               "replace",
@@ -462,6 +473,7 @@
             "toolTokens": 1503,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "read",
               "replace",
@@ -518,6 +530,7 @@
             "toolTokens": 538,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "read",
               "replace",
@@ -578,6 +591,7 @@
             "toolTokens": 1991,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
+            "eventMessageChars": 0,
             "activeToolNames": [
               "read",
               "replace",
