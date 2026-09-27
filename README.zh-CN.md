@@ -85,7 +85,7 @@ Pi 的一大优点是上下文很干净、可控。但不少好用的扩展会�
 
 用这份规则之前，建议先装 Matt Pocock 的 Skills：
 
-* [mattpocock/skills](https://github.com/mattpocock/skills)：一组给 coding agent 用的工程工作流。这份 `AGENTS.md` 里的需求对齐，就是配合其中的 `/grill-me` 等 skill 使用的。
+* [mattpocock/skills](https://github.com/mattpocock/skills)：一组给 coding agent 用的工程工作流。这份 `AGENTS.md` 里的需求对齐，用的就是其中的 `grilling` skill。
 * 安装：
 
 ```bash
@@ -96,12 +96,12 @@ npx skills@latest add mattpocock/skills
 
 这份 `AGENTS.md` 参考了两个开源 Prompt 项目，再精简而成：
 
-* [i-have-adhd](https://github.com/ayghri/i-have-adhd)：先给结果，多步骤编号推进，给出明确的下一步，不说客套话。
-* [ponytail](https://github.com/DietrichGebert/ponytail)：防止过度设计。按顺序往下选，第一个够用的方案就停：不写代码 → 复用现有代码 → 用平台自带能力 → 小改动。
+* [i-have-adhd](https://github.com/ayghri/i-have-adhd)：先给结果，给出明确的下一步，不说客套话。
+* [ponytail](https://github.com/DietrichGebert/ponytail)：防止过度设计。按顺序往下选，第一个够用的方案就停：直接用现有命令或配置 → 复用现有代码 → 用平台自带能力 → 小改动。
 
 ### 子代理部分要自己改
 
-`AGENTS.md` 里的 `Subagents Delegation` 一节，只按上游的标准类型（`Explore`、`Plan`、`general-purpose`）写了默认用法。每个人的工作流和自定义代理都不一样，建议按自己的需要改、加或删。
+`AGENTS.md` 里的 `Subagents Delegation` 一节，是我配合子代理扩展（比如 [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean)）写的使用建议，只用了上游的标准类型（`Explore`、`Plan`、`general-purpose`）。每个人的工作流和自定义代理都不一样，请按自己的需要改、加或删；没装子代理扩展的话，整节删掉就行。
 
 ### 放在哪里
 

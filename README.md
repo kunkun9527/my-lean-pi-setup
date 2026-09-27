@@ -85,7 +85,7 @@ This repo includes the `AGENTS.md` I use, in [English](agents/en/AGENTS.md) and 
 
 Before using these rules, I recommend installing Matt Pocock's skills:
 
-* [mattpocock/skills](https://github.com/mattpocock/skills): a set of engineering workflows for coding agents. The requirement-alignment rule in this `AGENTS.md` relies on skills like `/grill-me`.
+* [mattpocock/skills](https://github.com/mattpocock/skills): a set of engineering workflows for coding agents. The requirement-alignment rule in this `AGENTS.md` uses its `grilling` skill.
 * Install:
 
 ```bash
@@ -96,12 +96,12 @@ npx skills@latest add mattpocock/skills
 
 This `AGENTS.md` borrows from two open-source prompt projects and trims them down:
 
-* [i-have-adhd](https://github.com/ayghri/i-have-adhd): lead with the result, number multi-step work, end with a concrete next step, skip the small talk.
-* [ponytail](https://github.com/DietrichGebert/ponytail): avoid over-engineering. Go down the list and stop at the first option that's enough: no code → reuse existing code → use what the platform provides → make a small change.
+* [i-have-adhd](https://github.com/ayghri/i-have-adhd): lead with the result, end with a concrete next step, skip the small talk.
+* [ponytail](https://github.com/DietrichGebert/ponytail): avoid over-engineering. Go down the list and stop at the first option that's enough: use an existing command or config → reuse existing code → use what the platform provides → make a small change.
 
 ### Adjust the subagent section
 
-The `Subagents Delegation` section in `AGENTS.md` only covers upstream's standard types (`Explore`, `Plan`, `general-purpose`). Everyone's workflow and custom agents are different, so change, add, or remove entries to fit yours.
+The `Subagents Delegation` section in `AGENTS.md` is my suggestion for using a subagent extension (for example [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean)), and it only covers upstream's standard types (`Explore`, `Plan`, `general-purpose`). Everyone's workflow and custom agents are different, so change, add, or remove entries to fit yours. If you don't use a subagent extension, delete the whole section.
 
 ### Where to put it
 
