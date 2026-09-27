@@ -4,43 +4,52 @@
   "resultsFile": "benchmarks/results.json",
   "extensions": [
     {
-      "id": "billion-context",
-      "directory": "billion-context-pi-lean",
-      "displayName": "Billion Context",
-      "upstreamPackage": "billion-context-pi",
-      "upstreamFactory": {
-        "exportName": "createAcpExtension",
-        "options": { "delegate": false, "autoUpdate": false }
-      },
-      "profiles": [{ "id": "default", "label": "Default" }]
-    },
-    {
       "id": "web-access",
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "upstreamPackage": "pi-web-access",
-      "profiles": [{ "id": "default", "label": "Default" }]
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default"
+        }
+      ]
     },
     {
       "id": "ask-user-question",
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
-      "profiles": [{ "id": "default", "label": "Default" }]
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default"
+        }
+      ]
     },
     {
       "id": "todo",
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "upstreamPackage": "@juicesharp/rpiv-todo",
-      "profiles": [{ "id": "default", "label": "Default" }]
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default"
+        }
+      ]
     },
     {
       "id": "subagents",
       "directory": "pi-subagents-lean",
       "displayName": "Subagents",
       "upstreamPackage": "@tintinweb/pi-subagents",
-      "profiles": [{ "id": "default", "label": "Default" }]
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default"
+        }
+      ]
     },
     {
       "id": "hashline-edit",

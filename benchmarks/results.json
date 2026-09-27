@@ -1,122 +1,23 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T13:26:42.910Z",
+  "generatedAt": "2026-09-27T14:27:02.376Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
-  "piVersion": "0.85.1",
+  "piVersion": "0.87.1",
   "totals": {
-    "leanTokens": 2108,
-    "upstreamTokens": 21337,
-    "savedTokens": 19229,
-    "reductionPercent": 90.1
+    "leanTokens": 1420,
+    "upstreamTokens": 15695,
+    "savedTokens": 14275,
+    "reductionPercent": 91
   },
   "extensions": [
-    {
-      "id": "billion-context",
-      "directory": "billion-context-pi-lean",
-      "displayName": "Billion Context",
-      "leanPackage": "billion-context-pi-lean",
-      "leanVersion": "0.1.69-lean.1",
-      "upstreamPackage": "billion-context-pi",
-      "upstreamVersion": "0.1.69",
-      "profiles": [
-        {
-          "id": "default",
-          "label": "Default",
-          "lean": {
-            "totalTokens": 690,
-            "toolTokens": 321,
-            "promptDeltaTokens": 369,
-            "promptDeltaChars": 1473,
-            "eventMessageChars": 0,
-            "activeToolNames": [
-              "compress",
-              "acp_context"
-            ],
-            "tools": [
-              {
-                "name": "compress",
-                "chars": 921,
-                "tokens": 231,
-                "descriptionChars": 91,
-                "schemaChars": 819,
-                "snippetChars": 0,
-                "guidelineChars": 0
-              },
-              {
-                "name": "acp_context",
-                "chars": 359,
-                "tokens": 90,
-                "descriptionChars": 160,
-                "schemaChars": 185,
-                "snippetChars": 0,
-                "guidelineChars": 0
-              }
-            ]
-          },
-          "upstream": {
-            "totalTokens": 5802,
-            "toolTokens": 1644,
-            "promptDeltaTokens": 4158,
-            "promptDeltaChars": 16631,
-            "eventMessageChars": 0,
-            "activeToolNames": [
-              "compress",
-              "decompress",
-              "search_context",
-              "acp_status"
-            ],
-            "tools": [
-              {
-                "name": "compress",
-                "chars": 2196,
-                "tokens": 549,
-                "descriptionChars": 243,
-                "schemaChars": 1495,
-                "snippetChars": 90,
-                "guidelineChars": 357
-              },
-              {
-                "name": "decompress",
-                "chars": 2184,
-                "tokens": 546,
-                "descriptionChars": 655,
-                "schemaChars": 928,
-                "snippetChars": 172,
-                "guidelineChars": 416
-              },
-              {
-                "name": "search_context",
-                "chars": 839,
-                "tokens": 210,
-                "descriptionChars": 212,
-                "schemaChars": 246,
-                "snippetChars": 58,
-                "guidelineChars": 306
-              },
-              {
-                "name": "acp_status",
-                "chars": 1356,
-                "tokens": 339,
-                "descriptionChars": 232,
-                "schemaChars": 831,
-                "snippetChars": 88,
-                "guidelineChars": 192
-              }
-            ]
-          },
-          "savedTokens": 5112,
-          "reductionPercent": 88.1
-        }
-      ]
-    },
     {
       "id": "web-access",
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.29.0",
+      "leanVersion": "0.32.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.29.0",
+      "upstreamVersion": "0.32.0",
       "profiles": [
         {
           "id": "default",
@@ -143,8 +44,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 2899,
-            "toolTokens": 2899,
+            "totalTokens": 2953,
+            "toolTokens": 2953,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -157,44 +58,44 @@
             "tools": [
               {
                 "name": "web_search",
-                "chars": 4968,
-                "tokens": 1242,
-                "descriptionChars": 1968,
-                "schemaChars": 2786,
+                "chars": 4682,
+                "tokens": 1171,
+                "descriptionChars": 1399,
+                "schemaChars": 3069,
                 "snippetChars": 201,
                 "guidelineChars": 0
               },
               {
                 "name": "source_check",
-                "chars": 2131,
-                "tokens": 533,
-                "descriptionChars": 119,
-                "schemaChars": 1905,
-                "snippetChars": 92,
+                "chars": 2433,
+                "tokens": 609,
+                "descriptionChars": 134,
+                "schemaChars": 2167,
+                "snippetChars": 117,
                 "guidelineChars": 0
               },
               {
                 "name": "fetch_content",
-                "chars": 2848,
-                "tokens": 712,
-                "descriptionChars": 369,
-                "schemaChars": 2303,
-                "snippetChars": 160,
+                "chars": 2921,
+                "tokens": 731,
+                "descriptionChars": 465,
+                "schemaChars": 2356,
+                "snippetChars": 84,
                 "guidelineChars": 0
               },
               {
                 "name": "get_search_content",
-                "chars": 1645,
-                "tokens": 412,
-                "descriptionChars": 120,
-                "schemaChars": 1313,
+                "chars": 1768,
+                "tokens": 442,
+                "descriptionChars": 164,
+                "schemaChars": 1392,
                 "snippetChars": 191,
                 "guidelineChars": 0
               }
             ]
           },
-          "savedTokens": 2747,
-          "reductionPercent": 94.8
+          "savedTokens": 2801,
+          "reductionPercent": 94.9
         }
       ]
     },
@@ -203,9 +104,9 @@
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
-      "leanVersion": "2.10.1",
+      "leanVersion": "2.11.0",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
-      "upstreamVersion": "2.10.1",
+      "upstreamVersion": "2.11.0",
       "profiles": [
         {
           "id": "default",
@@ -262,16 +163,16 @@
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "leanPackage": "@ssk_dev/rpiv-todo-lean",
-      "leanVersion": "2.10.1",
+      "leanVersion": "2.11.0",
       "upstreamPackage": "@juicesharp/rpiv-todo",
-      "upstreamVersion": "2.10.1",
+      "upstreamVersion": "2.11.0",
       "profiles": [
         {
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 246,
-            "toolTokens": 246,
+            "totalTokens": 248,
+            "toolTokens": 248,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -281,12 +182,12 @@
             "tools": [
               {
                 "name": "todo",
-                "chars": 984,
-                "tokens": 246,
+                "chars": 992,
+                "tokens": 248,
                 "descriptionChars": 119,
                 "schemaChars": 631,
                 "snippetChars": 0,
-                "guidelineChars": 227
+                "guidelineChars": 235
               }
             ]
           },
@@ -311,8 +212,8 @@
               }
             ]
           },
-          "savedTokens": 658,
-          "reductionPercent": 72.8
+          "savedTokens": 656,
+          "reductionPercent": 72.6
         }
       ]
     },
@@ -410,9 +311,9 @@
       "directory": "pi-hashline-edit-pro-lean",
       "displayName": "Hashline Edit",
       "leanPackage": "pi-hashline-edit-pro-lean",
-      "leanVersion": "4.3.5-lean.1",
+      "leanVersion": "4.4.3-lean.1",
       "upstreamPackage": "pi-hashline-edit-pro",
-      "upstreamVersion": "4.3.5",
+      "upstreamVersion": "4.4.3",
       "profiles": [
         {
           "id": "default",
@@ -479,8 +380,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 1934,
-            "toolTokens": 1934,
+            "totalTokens": 2040,
+            "toolTokens": 2040,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -494,27 +395,27 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 1086,
-                "tokens": 272,
-                "descriptionChars": 493,
+                "chars": 1102,
+                "tokens": 276,
+                "descriptionChars": 509,
                 "schemaChars": 330,
                 "snippetChars": 58,
                 "guidelineChars": 198
               },
               {
                 "name": "replace",
-                "chars": 2514,
-                "tokens": 629,
-                "descriptionChars": 706,
+                "chars": 2960,
+                "tokens": 740,
+                "descriptionChars": 838,
                 "schemaChars": 754,
                 "snippetChars": 144,
-                "guidelineChars": 900
+                "guidelineChars": 1214
               },
               {
                 "name": "insert",
-                "chars": 1549,
-                "tokens": 388,
-                "descriptionChars": 622,
+                "chars": 1513,
+                "tokens": 379,
+                "descriptionChars": 586,
                 "schemaChars": 729,
                 "snippetChars": 126,
                 "guidelineChars": 63
@@ -539,8 +440,8 @@
               }
             ]
           },
-          "savedTokens": 1397,
-          "reductionPercent": 72.2
+          "savedTokens": 1503,
+          "reductionPercent": 73.7
         },
         {
           "id": "anchor-grep",
@@ -607,8 +508,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 1934,
-            "toolTokens": 1934,
+            "totalTokens": 2040,
+            "toolTokens": 2040,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -622,27 +523,27 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 1086,
-                "tokens": 272,
-                "descriptionChars": 493,
+                "chars": 1102,
+                "tokens": 276,
+                "descriptionChars": 509,
                 "schemaChars": 330,
                 "snippetChars": 58,
                 "guidelineChars": 198
               },
               {
                 "name": "replace",
-                "chars": 2514,
-                "tokens": 629,
-                "descriptionChars": 706,
+                "chars": 2960,
+                "tokens": 740,
+                "descriptionChars": 838,
                 "schemaChars": 754,
                 "snippetChars": 144,
-                "guidelineChars": 900
+                "guidelineChars": 1214
               },
               {
                 "name": "insert",
-                "chars": 1549,
-                "tokens": 388,
-                "descriptionChars": 622,
+                "chars": 1513,
+                "tokens": 379,
+                "descriptionChars": 586,
                 "schemaChars": 729,
                 "snippetChars": 126,
                 "guidelineChars": 63
@@ -667,8 +568,8 @@
               }
             ]
           },
-          "savedTokens": 1397,
-          "reductionPercent": 72.2
+          "savedTokens": 1503,
+          "reductionPercent": 73.7
         }
       ]
     }

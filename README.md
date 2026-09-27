@@ -16,9 +16,19 @@ Keeping them up to date is easy. When upstream releases a new version, look at w
 
 ## Tools that save context
 
-### 1. billion-context-pi-lean
+### 1. Billion Context
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) is a lean version of [Billion Context](https://github.com/ranxianglei/billion-context-pi) that exposes just two tools: `compress` and `acp_context`. It turns older conversation into summaries, brings details back when you need them, and nudges the model to compress stale content. Most useful for models with small context windows.
+[Billion Context](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when to compress and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
+
+**Use the official version.** I used to maintain a lean version, [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean). It's now just a historical version and is no longer maintained. The official version already uses my trimmed-down prompts, so there's no reason to install the lean one.
+
+How to use it:
+
+* Install with `pi install npm:billion-context-pi` and restart Pi. It loads automatically and needs no configuration. It takes over context management and turns off Pi's built-in auto-compaction.
+* You don't need to do anything day to day: the model calls `compress` to summarize old turns, `decompress` to restore them, and `search_context` to search inside summaries.
+* Type `/acp` to see current usage and what has been compressed.
+* If you already use another sub-agent extension (for example `pi-subagents-lean`), put `{ "delegate": false }` in `~/.pi/acp.json` to turn off its built-in `acp_delegate`, so the model doesn't see two sets of sub-agent tools.
+* Install only one conversation-compression extension. Two of them will overwrite each other's work.
 
 ### 2. pi-slim
 
@@ -98,7 +108,7 @@ Pi reads `AGENTS.md` automatically at startup from:
 | Base prompt | `pi-slim` | Drops the built-in documentation guidance. |
 | Command output | RTK + `pi-rtk-optimizer` | Filters long terminal output. |
 | Current context | Headroom / noheadroom | Compresses tool output and messages while you work. |
-| Conversation history | `billion-context-pi-lean` | Summarizes old turns and brings details back when needed. |
+| Conversation history | `billion-context-pi` (official) | Summarizes old turns and brings details back when needed. |
 | Usage view | `pi-context-view` | Shows how many tokens each part uses. |
 
 ## Getting started
@@ -109,7 +119,7 @@ Pi reads `AGENTS.md` automatically at startup from:
 2. Install `pi-slim` to shorten the base prompt.
 3. If your commands produce lots of output, add RTK and `pi-rtk-optimizer`.
 4. Add Headroom to compress tool output.
-5. Add `billion-context-pi-lean` for long conversations.
+5. Add the official `billion-context-pi` for long conversations.
 6. Swap in lean versions only for the tools you actually use.
 7. Measure again with `pi-context-view` to see what you saved.
 
@@ -122,7 +132,7 @@ Pi reads `AGENTS.md` automatically at startup from:
 
 ## Measuring tokens
 
-The repo has one script that measures all six public lean versions. Each lean version and its pinned upstream version run in their own isolated, temporary Pi process.
+The repo has one script that measures the public lean versions I still maintain (billion-context-pi-lean is no longer maintained, so it's no longer measured). Each lean version and its pinned upstream version run in their own isolated, temporary Pi process.
 
 ```bash
 npm run benchmark          # measure, show what changed, update the JSON and README numbers
@@ -137,7 +147,7 @@ Results are saved to `benchmarks/results.json`. The script only edits text betwe
 <!-- token-benchmark:aggregate:start -->
 ### Methodology
 
-* Test environment: Pi `0.85.1` using the repository's automated benchmark tool.
+* Test environment: Pi `0.87.1` using the repository's automated benchmark tool.
 * Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
 * Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
 * Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
@@ -146,15 +156,14 @@ Results are saved to `benchmarks/results.json`. The script only edits text betwe
 
 | Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
-| `billion-context-pi-lean` | **690** | 5,802 | 5,112 | **88.1%** |
-| `pi-web-access-lean` | **152** | 2,899 | 2,747 | **94.8%** |
+| `pi-web-access-lean` | **152** | 2,953 | 2,801 | **94.9%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
-| `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
+| `rpiv-todo-lean` | **248** | 904 | 656 | **72.6%** |
 | `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
-| `pi-hashline-edit-pro-lean` | **537** | 1,934 | 1,397 | **72.2%** |
-| **Total** | **2,108** | **21,337** | **19,229** | **90.1%** |
+| `pi-hashline-edit-pro-lean` | **537** | 2,040 | 1,503 | **73.7%** |
+| **Total** | **1,420** | **15,695** | **14,275** | **91.0%** |
 
-Across all six wrappers, recurring initialization context is reduced by **19,229 tokens (90.1%)** versus their pinned upstream versions.
+Across all 5 wrappers, recurring initialization context is reduced by **14,275 tokens (91.0%)** versus their pinned upstream versions.
 <!-- token-benchmark:aggregate:end -->
 
 ## License and credits

@@ -16,9 +16,19 @@ Pi 的一大优点是上下文很干净、可控。但不少好用的扩展会�
 
 ## 省上下文的几个组件
 
-### 1. billion-context-pi-lean
+### 1. Billion Context
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 是 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 的精简版，只保留 `compress` 和 `acp_context` 两个接口。它会把较早的对话压成摘要，需要时再把细节找回来，同时提醒模型主动压缩过时的内容。上下文窗口小的模型最用得上。
+[Billion Context](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长对话、上下文窗口小的模型最用得上。
+
+**请直接用官方版。** 我以前做过一个精简版 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean)，现在只是历史版本，已经不再维护。官方版已经用上了我那版精简过的提示词，没必要再装精简版。
+
+用法：
+
+* 安装：`pi install npm:billion-context-pi`，重启 Pi 就会自动加载，不需要配置。它会接管上下文管理，Pi 自带的自动压缩会被关掉。
+* 平时不用管它：模型会自己调用 `compress` 把旧对话压成摘要，需要时用 `decompress` 还原、用 `search_context` 在摘要里搜。
+* 想看当前用量和压缩情况，输入 `/acp`。
+* 如果你已经装了别的子代理扩展（比如 `pi-subagents-lean`），在 `~/.pi/acp.json` 里写 `{ "delegate": false }`，关掉它自带的 `acp_delegate`，免得模型面前有两套子代理工具。
+* 压缩对话的扩展只装一个，装两个会互相覆盖。
 
 ### 2. pi-slim
 
@@ -98,7 +108,7 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 | 基础 Prompt | `pi-slim` | 去掉默认附带的文档说明。 |
 | 命令输出 | RTK + `pi-rtk-optimizer` | 过滤很长的终端输出。 |
 | 当前上下文 | Headroom / noheadroom | 压缩运行中的工具输出和对话。 |
-| 历史对话 | `billion-context-pi-lean` | 把旧对话压成摘要，需要时找回细节。 |
+| 历史对话 | `billion-context-pi`（官方版） | 把旧对话压成摘要，需要时找回细节。 |
 | 查看用量 | `pi-context-view` | 看各部分分别占多少 token。 |
 
 ## 怎么上手
@@ -109,7 +119,7 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 2. 装 `pi-slim`，缩短基础 Prompt。
 3. 如果命令输出经常很长，装 RTK 和 `pi-rtk-optimizer`。
 4. 装 Headroom，压缩工具输出。
-5. 装 `billion-context-pi-lean`，处理长对话。
+5. 装官方的 `billion-context-pi`，处理长对话。
 6. 只把你真正常用的工具换成精简版。
 7. 再用 `pi-context-view` 测一次，看省了多少。
 
@@ -122,7 +132,7 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 
 ## Token 测量
 
-仓库里有一个测量脚本，覆盖 6 个公开的精简版。每个精简版和它锁定的上游版本，都在各自独立的临时 Pi 进程里测。
+仓库里有一个测量脚本，覆盖还在维护的几个公开精简版（billion-context-pi-lean 已不再维护，不再测量）。每个精简版和它锁定的上游版本，都在各自独立的临时 Pi 进程里测。
 
 ```bash
 npm run benchmark          # 测量，显示变化，并更新 JSON 和 README 里的数字
@@ -137,7 +147,7 @@ npm run benchmark:check    # 检查结果和 README 是不是最新的
 <!-- token-benchmark:aggregate:start -->
 ### 测量方式
 
-* 测试环境：Pi `0.85.1`，使用仓库内置自动化工具。
+* 测试环境：Pi `0.87.1`，使用仓库内置自动化工具。
 * 每个 Lean 与上游扩展均在独立临时进程、空白工作目录、空白 Home 和空白 Pi Agent 目录中测量。
 * 排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。
 * Token 是固定字符代理估算，按 `ceil(字符数 / 4)` 计算，并非特定模型 tokenizer 的实际计费值；上游采用各 Lean 包经 lockfile 和已安装包共同校验的精确版本。
@@ -146,15 +156,14 @@ npm run benchmark:check    # 检查结果和 README 是不是最新的
 
 | 扩展封装 | 精简版 | 锁定上游 | 节省 Token | 降幅 |
 | --- | ---: | ---: | ---: | ---: |
-| `billion-context-pi-lean` | **690** | 5,802 | 5,112 | **88.1%** |
-| `pi-web-access-lean` | **152** | 2,899 | 2,747 | **94.8%** |
+| `pi-web-access-lean` | **152** | 2,953 | 2,801 | **94.9%** |
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
-| `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
+| `rpiv-todo-lean` | **248** | 904 | 656 | **72.6%** |
 | `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
-| `pi-hashline-edit-pro-lean` | **537** | 1,934 | 1,397 | **72.2%** |
-| **合计** | **2,108** | **21,337** | **19,229** | **90.1%** |
+| `pi-hashline-edit-pro-lean` | **537** | 2,040 | 1,503 | **73.7%** |
+| **合计** | **1,420** | **15,695** | **14,275** | **91.0%** |
 
-综合使用这 6 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **19,229 tokens（90.1%）**。
+综合使用这 5 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **14,275 tokens（91.0%）**。
 <!-- token-benchmark:aggregate:end -->
 
 ## 许可与署名

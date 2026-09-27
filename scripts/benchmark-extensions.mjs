@@ -413,7 +413,7 @@ function aggregateBenchmark(result, language) {
       ...rows,
       `| **合计** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
       "",
-      `综合使用这 6 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **${format(totals.savedTokens)} tokens（${totals.reductionPercent.toFixed(1)}%）**。`,
+      `综合使用这 ${config.extensions.length} 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **${format(totals.savedTokens)} tokens（${totals.reductionPercent.toFixed(1)}%）**。`,
     ].join("\n");
   }
   return [
@@ -431,7 +431,7 @@ function aggregateBenchmark(result, language) {
     ...rows,
     `| **Total** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
     "",
-    `Across all six wrappers, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions.`,
+    `Across all ${config.extensions.length} wrappers, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions.`,
   ].join("\n");
 }
 
