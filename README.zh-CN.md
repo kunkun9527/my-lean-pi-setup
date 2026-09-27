@@ -2,133 +2,137 @@
 
 [English](README.md)
 
-一套面向 [Pi coding agent](https://github.com/earendil-works/pi) 的上下文优化配置方案，包含多个经过深度精简的常用工具封装。
+这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。里面有几个常用扩展的精简版，以及我搭配使用的其他省 token 工具。
 
-## 为什么制作这些精简版扩展
+## 为什么要做精简版
 
-这套精简包装最初是我为了日常自用编写的；后来觉得对其他关注上下文开销的 Pi 用户也会有帮助，于是整理开源。
+一开始只是给自己用的，后来觉得别的 Pi 用户可能也用得上，就开源了。
 
-Pi 最突出的优势之一是轻量、可控的上下文。然而，许多优秀的社区扩展在每次请求时都会注入冗长详尽的工具说明，导致在对话尚未正式开始前就占用了大量 Token。
+Pi 的一大优点是上下文很干净、可控。但不少好用的扩展会带很长的工具说明，每次请求都要发一遍，对话还没开始就占掉不少 token。
 
-这套精简版在完整保留上游核心逻辑与功能特性的前提下，将面向模型的 Schema 和描述精简到核心要点。现代大语言模型已经具备很强的理解能力，只要 Schema 结构清晰，无需在 Prompt 中堆砌冗余啰嗦的说明也能稳定执行。
+精简版只改模型看到的那部分：把工具的 Schema 和说明缩短到够用为止，功能和底层逻辑都直接用上游的，没有改。现在的模型看懂一个清楚的 Schema 就够了，不需要反复叮嘱。
 
-日常维护也很清晰：当上游版本更新时，对比上游变更与精简封装，确认 API、Schema 或运行时是否存在破坏性改动，按需调整依赖与适配代码，最后运行测试并重新测量上下文占用即可。
+维护起来也不麻烦：上游发新版时，看看改了什么、有没有破坏 API 或 Schema，需要的话升级依赖、调整适配代码，然后跑测试、重新测一下 token 就行。
 
-## 上下文优化组件方案
+## 省上下文的几个组件
 
 ### 1. billion-context-pi-lean
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 基于 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 封装，提供精简的 `compress` 与 `acp_context` 接口。它负责总结历史对话区间并按需恢复细节，使活动上下文始终保持轻量，并提示模型主动压缩过时信息。对于可用上下文窗口较小的模型尤其有效。
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 是 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 的精简版，只保留 `compress` 和 `acp_context` 两个接口。它会把较早的对话压成摘要，需要时再把细节找回来，同时提醒模型主动压缩过时的内容。上下文窗口小的模型最用得上。
 
 ### 2. pi-slim
 
-[pi-slim](https://github.com/robzolkos/pi-slim) 将 Pi 默认注入的文档说明改为按需启用，直接削减基础 Prompt 的静态开销。
+[pi-slim](https://github.com/robzolkos/pi-slim) 让 Pi 默认附带的文档说明改成需要时才加载，基础 Prompt 因此变短。
 
 ### 3. Headroom / noheadroom
 
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 动态压缩庞大的工具执行结果与运行时上下文。根据我的日常使用体验，通常能减少约 **20% 到 30%** 的 Token 消耗（此为个人工作流实测观察，非单一基准测试）。Billion Context 则负责较早会话区间的归档与召回。
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 会压缩很长的工具输出和运行中的上下文。我日常用下来，大概能省 **20% 到 30%** 的 token（这是平时使用的感受，不是专门测出来的）。更早的历史记录交给 Billion Context 处理。
 
 ### 4. RTK 与 pi-rtk-optimizer
 
-[RTK](https://github.com/rtk-ai/rtk) 与 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 在终端命令输出进入会话前进行针对性过滤与压缩。
+[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 会在命令输出进入对话前先过滤、压缩一遍。
 
 ### 5. pi-context-view
 
-[pi-context-view](https://github.com/dimk90/pi-context-view) 用于实时监测基础 Prompt、工具、扩展和会话上下文的 Token 分布。它是用于观测分析的度量工具，不执行压缩。
+[pi-context-view](https://github.com/dimk90/pi-context-view) 用来查看 token 都花在哪：基础 Prompt、工具、扩展、对话各占多少。它只负责看，不负责压缩。
 
-## 精简版常用工具
+## 精简版工具
 
 ### pi-subagents-lean
 
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 支持将复杂任务分派给专业 Subagent，具备后台运行与动态引导能力。精简版将任务启动、结果获取和引导整合为单个 `subagent` 工具，完整保留上游的 Agent 发现与生命周期管理机制。
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) 可以把任务交给子代理去做，支持后台运行和中途调整方向。精简版把启动、取结果、调整方向合成一个 `subagent` 工具，上游的代理发现和生命周期管理都保留。
 
 ### pi-web-access-lean
 
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 支持网页搜索、事实核验、页面全文抓取与结果续取。精简版将原版的 4 个工具整合为统一的 `web_access` 入口，高级参数转为按需帮助展开。
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) 能搜索网页、核实说法、抓取页面，结果太长时可以分页继续读。精简版把原来的 4 个工具合成一个 `web_access`，高级参数要用时再查帮助。
 
 ### pi-hashline-edit-pro-lean
 
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 基于稳定的 HASH 行锚点实现精确的文件编辑与一键回滚。精简版精简了 `read`、`replace` 和 `undo_last_replace` 的 Prompt 描述，同时完整保留 Hashline 的安全校验。
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) 用每行的 HASH 锚点来定位和修改文件，改错了可以一步撤回。精简版缩短了 `read`、`replace`、`undo_last_replace` 的说明，Hashline 的安全校验都还在。
 
 ### rpiv-ask-user-question-lean
 
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 在需求或决策不明确时向用户发起结构化提问。精简版去除了工具说明中的重复描述，完整保留问卷 UI 与选项校验。
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) 在需求或决定不明确时，用选择题的方式问用户。精简版删掉了说明里重复的话，提问界面和选项校验都没动。
 
 ### rpiv-todo-lean
 
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 提供任务拆解、依赖追踪与状态流转管理。精简版以紧凑的原生扁平 Schema 保留了完整的任务生命周期。
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) 用来拆任务、记依赖、跟进度。精简版换成了更短、更平的 Schema，任务管理功能一个没少。
 
-## 精选 AGENTS.md 规则模板
+## AGENTS.md 规则模板
 
-本仓库提供了一套开箱即用且经过深度提炼的 `AGENTS.md` 指令模板，包含 [简体中文版](agents/zh-CN/AGENTS.md) 与 [英文版](agents/en/AGENTS.md)。
+仓库里附了一份我自己在用的 `AGENTS.md`，有[中文版](agents/zh-CN/AGENTS.md)和[英文版](agents/en/AGENTS.md)。
 
-### 前置推荐：安装 Skills 仓库
+### 建议先装 Skills
 
-在应用本指令配置前，推荐先安装 Matt Pocock 的 Skills 技能库：
-* [mattpocock/skills](https://github.com/mattpocock/skills)：为 Coding Agent 提供了规范化的工程工作流规范。本配置中的需求对齐机制深度配合其中的 `/grill-me` 等技能使用。
-* 安装命令：
+用这份规则之前，建议先装 Matt Pocock 的 Skills：
+
+* [mattpocock/skills](https://github.com/mattpocock/skills)：一组给 coding agent 用的工程工作流。这份 `AGENTS.md` 里的需求对齐，就是配合其中的 `/grill-me` 等 skill 使用的。
+* 安装：
+
 ```bash
 npx skills@latest add mattpocock/skills
 ```
 
-### 设计理念与来源
+### 规则从哪来
 
-该 `AGENTS.md` 是我结合两个优秀的开源 Prompt 规范并再次精简重构的版本：
-* [i-have-adhd](https://github.com/ayghri/i-have-adhd)：强调结果先行、多步骤编号推进、给出明确下一步行动并剔除客套废话，降低认知负担。
-* [ponytail](https://github.com/DietrichGebert/ponytail)：贯彻拒绝过度工程的决策天梯（按顺序选择第一个足够解决问题的层级：不写代码、代码复用、原生能力、小改动）。
+这份 `AGENTS.md` 参考了两个开源 Prompt 项目，再精简而成：
 
-### 子代理分派定制建议
+* [i-have-adhd](https://github.com/ayghri/i-have-adhd)：先给结果，多步骤编号推进，给出明确的下一步，不说客套话。
+* [ponytail](https://github.com/DietrichGebert/ponytail)：防止过度设计。按顺序往下选，第一个够用的方案就停：不写代码 → 复用现有代码 → 用平台自带能力 → 小改动。
 
-`AGENTS.md` 中的 `Subagents Delegation`（子代理分派）章节仅提供了基于开源标准类型（`Explore`、`Plan`、`general-purpose`）的默认配置参考。由于每个人的工作流与自定义 Agent 类型差异较大，强烈建议根据自己的实际需求修改、增删或精简此部分的子代理规则。
+### 子代理部分要自己改
 
-### 放置位置
+`AGENTS.md` 里的 `Subagents Delegation` 一节，只按上游的标准类型（`Explore`、`Plan`、`general-purpose`）写了默认用法。每个人的工作流和自定义代理都不一样，建议按自己的需要改、加或删。
 
-Pi 在启动时会自动读取并加载 `AGENTS.md`：
-* 全局生效路径：`~/.pi/agent/AGENTS.md`
-* 项目级生效路径：项目根目录 `./AGENTS.md`（或上级目录）
+### 放在哪里
 
-## 方案架构概览
+Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 
-| 环节 | 组件 | 功能职责 |
+* 全局：`~/.pi/agent/AGENTS.md`
+* 项目：项目根目录的 `./AGENTS.md`（或更上层的目录）
+
+## 各组件分工
+
+| 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 静态 Prompt | `pi-slim` | 移除常驻的基础文档说明。 |
-| 命令与工具输出 | RTK + `pi-rtk-optimizer` | 拦截并过滤冗长的终端命令输出。 |
-| 活动上下文 | Headroom / noheadroom | 动态压缩运行期的工具输出与会话膨胀。 |
-| 长会话历史 | `billion-context-pi-lean` | 压缩已读历史轮次，支持按需精准恢复。 |
-| 观测度量 | `pi-context-view` | 量化并呈现各模块的 Token 占用。 |
+| 基础 Prompt | `pi-slim` | 去掉默认附带的文档说明。 |
+| 命令输出 | RTK + `pi-rtk-optimizer` | 过滤很长的终端输出。 |
+| 当前上下文 | Headroom / noheadroom | 压缩运行中的工具输出和对话。 |
+| 历史对话 | `billion-context-pi-lean` | 把旧对话压成摘要，需要时找回细节。 |
+| 查看用量 | `pi-context-view` | 看各部分分别占多少 token。 |
 
-## 安装与配置建议
+## 怎么上手
 
-### 推荐启用顺序
+### 建议的顺序
 
-1. 使用 `pi-context-view` 测量当前环境的基础 Token 开销。
-2. 安装 `pi-slim` 缩减基础 Prompt。
-3. 如果终端输出频繁冗长，接入 RTK 与 `pi-rtk-optimizer`。
-4. 接入 Headroom 压缩活动工具结果。
-5. 接入 `billion-context-pi-lean` 负责长会话压缩与召回。
-6. 根据实际需要，将常用工具逐一替换为对应精简版本。
-7. 再次测量对比优化效果。
+1. 用 `pi-context-view` 看一下现在的 token 占用，作为对比基准。
+2. 装 `pi-slim`，缩短基础 Prompt。
+3. 如果命令输出经常很长，装 RTK 和 `pi-rtk-optimizer`。
+4. 装 Headroom，压缩工具输出。
+5. 装 `billion-context-pi-lean`，处理长对话。
+6. 只把你真正常用的工具换成精简版。
+7. 再用 `pi-context-view` 测一次，看省了多少。
 
-### 注意事项
+### 注意
 
-* 请参考各仓库内的说明进行具体安装。
-* 切勿同时加载原版扩展与其对应的精简版，以免重复注册工具。
-* 依赖版本升级后请及时执行检查验证。
-* 切勿将私有 API 密钥与内部服务端点提交至公开配置中。
+* 具体安装步骤看各个仓库的说明。
+* 原版扩展和它的精简版只能装一个，同时装会重复注册工具。
+* 升级依赖后记得跑一遍检查。
+* 不要把 API 密钥和内部服务地址提交到公开配置里。
 
-## Token 基准自动化
+## Token 测量
 
-仓库内置了覆盖 6 个公开 Lean 扩展的集中式基准工具。每个 Lean 扩展及其精确锁定的上游依赖都会在相互隔离的 Pi 临时进程中测量。
+仓库里有一个测量脚本，覆盖 6 个公开的精简版。每个精简版和它锁定的上游版本，都在各自独立的临时 Pi 进程里测。
 
 ```bash
-npm run benchmark          # 测量、展示变化并更新 JSON 与 README 托管区块
-npm run benchmark:report   # 仅测量和输出，不修改文件
-npm run benchmark:check    # 检查快照与 README 是否为最新
+npm run benchmark          # 测量，显示变化，并更新 JSON 和 README 里的数字
+npm run benchmark:report   # 只测量、只输出，不改文件
+npm run benchmark:check    # 检查结果和 README 是不是最新的
 ```
 
-结构化结果保存在 `benchmarks/results.json`。工具只修改 `token-benchmark` 标记区块；数值不变时不会产生文档改动。
+结果保存在 `benchmarks/results.json`。脚本只改 README 里 `token-benchmark` 标记之间的内容；数字没变就不会改文件。
 
-## 初始上下文占用实测
+## 启动时的上下文占用
 
 <!-- token-benchmark:aggregate:start -->
 ### 测量方式
@@ -147,12 +151,12 @@ npm run benchmark:check    # 检查快照与 README 是否为最新
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
 | `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
 | `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
-| `pi-hashline-edit-pro-lean` | **423** | 1,503 | 1,080 | **71.9%** |
-| **合计** | **1,994** | **20,906** | **18,912** | **90.5%** |
+| `pi-hashline-edit-pro-lean` | **537** | 1,934 | 1,397 | **72.2%** |
+| **合计** | **2,108** | **21,337** | **19,229** | **90.1%** |
 
-综合使用这 6 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **18,912 tokens（90.5%）**。
+综合使用这 6 个精简封装，常驻初始化上下文相比锁定的上游版本减少 **19,229 tokens（90.1%）**。
 <!-- token-benchmark:aggregate:end -->
 
-## 开源协议与归属声明
+## 许可与署名
 
-各链接引用的开源项目均保留其原作者版权与授权协议。所有精简版封装均在其仓库及 Package 元数据中完整保留了上游归属信息。
+文中提到的各个项目，版权和许可证都归原作者所有。每个精简版都在自己的仓库和 npm 包信息里注明了上游来源。

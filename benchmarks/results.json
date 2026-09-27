@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T23:51:50.337Z",
+  "generatedAt": "2026-09-18T13:26:42.910Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "0.85.1",
   "totals": {
-    "leanTokens": 1994,
-    "upstreamTokens": 20906,
-    "savedTokens": 18912,
-    "reductionPercent": 90.5
+    "leanTokens": 2108,
+    "upstreamTokens": 21337,
+    "savedTokens": 19229,
+    "reductionPercent": 90.1
   },
   "extensions": [
     {
@@ -410,16 +410,16 @@
       "directory": "pi-hashline-edit-pro-lean",
       "displayName": "Hashline Edit",
       "leanPackage": "pi-hashline-edit-pro-lean",
-      "leanVersion": "3.0.4-lean.1",
+      "leanVersion": "4.3.5-lean.1",
       "upstreamPackage": "pi-hashline-edit-pro",
-      "upstreamVersion": "3.0.4",
+      "upstreamVersion": "4.3.5",
       "profiles": [
         {
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 423,
-            "toolTokens": 423,
+            "totalTokens": 537,
+            "toolTokens": 537,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -427,50 +427,60 @@
               "read",
               "replace",
               "insert",
+              "anchor_grep",
               "undo_last_change"
             ],
             "tools": [
               {
                 "name": "read",
-                "chars": 345,
-                "tokens": 87,
-                "descriptionChars": 95,
+                "chars": 343,
+                "tokens": 86,
+                "descriptionChars": 65,
                 "schemaChars": 156,
                 "snippetChars": 0,
-                "guidelineChars": 87
+                "guidelineChars": 115
               },
               {
                 "name": "replace",
-                "chars": 517,
-                "tokens": 130,
-                "descriptionChars": 58,
-                "schemaChars": 270,
+                "chars": 588,
+                "tokens": 147,
+                "descriptionChars": 64,
+                "schemaChars": 244,
                 "snippetChars": 0,
-                "guidelineChars": 179
+                "guidelineChars": 270
               },
               {
                 "name": "insert",
-                "chars": 550,
-                "tokens": 138,
-                "descriptionChars": 68,
-                "schemaChars": 299,
+                "chars": 499,
+                "tokens": 125,
+                "descriptionChars": 63,
+                "schemaChars": 273,
                 "snippetChars": 0,
-                "guidelineChars": 174
+                "guidelineChars": 154
+              },
+              {
+                "name": "anchor_grep",
+                "chars": 463,
+                "tokens": 116,
+                "descriptionChars": 64,
+                "schemaChars": 302,
+                "snippetChars": 0,
+                "guidelineChars": 83
               },
               {
                 "name": "undo_last_change",
-                "chars": 272,
-                "tokens": 68,
-                "descriptionChars": 50,
+                "chars": 251,
+                "tokens": 63,
+                "descriptionChars": 62,
                 "schemaChars": 77,
                 "snippetChars": 0,
-                "guidelineChars": 126
+                "guidelineChars": 93
               }
             ]
           },
           "upstream": {
-            "totalTokens": 1503,
-            "toolTokens": 1503,
+            "totalTokens": 1934,
+            "toolTokens": 1934,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -478,56 +488,66 @@
               "read",
               "replace",
               "insert",
+              "anchor_grep",
               "undo_last_change"
             ],
             "tools": [
               {
                 "name": "read",
-                "chars": 1104,
-                "tokens": 276,
-                "descriptionChars": 450,
+                "chars": 1086,
+                "tokens": 272,
+                "descriptionChars": 493,
                 "schemaChars": 330,
                 "snippetChars": 58,
-                "guidelineChars": 259
+                "guidelineChars": 198
               },
               {
                 "name": "replace",
-                "chars": 2498,
-                "tokens": 625,
-                "descriptionChars": 580,
-                "schemaChars": 845,
-                "snippetChars": 184,
-                "guidelineChars": 879
+                "chars": 2514,
+                "tokens": 629,
+                "descriptionChars": 706,
+                "schemaChars": 754,
+                "snippetChars": 144,
+                "guidelineChars": 900
               },
               {
                 "name": "insert",
-                "chars": 1596,
-                "tokens": 399,
-                "descriptionChars": 259,
-                "schemaChars": 846,
-                "snippetChars": 136,
-                "guidelineChars": 346
+                "chars": 1549,
+                "tokens": 388,
+                "descriptionChars": 622,
+                "schemaChars": 729,
+                "snippetChars": 126,
+                "guidelineChars": 63
+              },
+              {
+                "name": "anchor_grep",
+                "chars": 1695,
+                "tokens": 424,
+                "descriptionChars": 531,
+                "schemaChars": 792,
+                "snippetChars": 133,
+                "guidelineChars": 225
               },
               {
                 "name": "undo_last_change",
-                "chars": 812,
-                "tokens": 203,
-                "descriptionChars": 381,
+                "chars": 882,
+                "tokens": 221,
+                "descriptionChars": 457,
                 "schemaChars": 118,
-                "snippetChars": 116,
-                "guidelineChars": 178
+                "snippetChars": 83,
+                "guidelineChars": 205
               }
             ]
           },
-          "savedTokens": 1080,
-          "reductionPercent": 71.9
+          "savedTokens": 1397,
+          "reductionPercent": 72.2
         },
         {
           "id": "anchor-grep",
           "label": "With anchor_grep",
           "lean": {
-            "totalTokens": 538,
-            "toolTokens": 538,
+            "totalTokens": 537,
+            "toolTokens": 537,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -541,54 +561,54 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 345,
-                "tokens": 87,
-                "descriptionChars": 95,
+                "chars": 343,
+                "tokens": 86,
+                "descriptionChars": 65,
                 "schemaChars": 156,
                 "snippetChars": 0,
-                "guidelineChars": 87
+                "guidelineChars": 115
               },
               {
                 "name": "replace",
-                "chars": 517,
-                "tokens": 130,
-                "descriptionChars": 58,
-                "schemaChars": 270,
+                "chars": 588,
+                "tokens": 147,
+                "descriptionChars": 64,
+                "schemaChars": 244,
                 "snippetChars": 0,
-                "guidelineChars": 179
+                "guidelineChars": 270
               },
               {
                 "name": "insert",
-                "chars": 550,
-                "tokens": 138,
-                "descriptionChars": 68,
-                "schemaChars": 299,
+                "chars": 499,
+                "tokens": 125,
+                "descriptionChars": 63,
+                "schemaChars": 273,
                 "snippetChars": 0,
-                "guidelineChars": 174
+                "guidelineChars": 154
               },
               {
                 "name": "anchor_grep",
-                "chars": 457,
-                "tokens": 115,
-                "descriptionChars": 70,
-                "schemaChars": 303,
+                "chars": 463,
+                "tokens": 116,
+                "descriptionChars": 64,
+                "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 70
+                "guidelineChars": 83
               },
               {
                 "name": "undo_last_change",
-                "chars": 272,
-                "tokens": 68,
-                "descriptionChars": 50,
+                "chars": 251,
+                "tokens": 63,
+                "descriptionChars": 62,
                 "schemaChars": 77,
                 "snippetChars": 0,
-                "guidelineChars": 126
+                "guidelineChars": 93
               }
             ]
           },
           "upstream": {
-            "totalTokens": 1991,
-            "toolTokens": 1991,
+            "totalTokens": 1934,
+            "toolTokens": 1934,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -602,53 +622,53 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 1104,
-                "tokens": 276,
-                "descriptionChars": 450,
+                "chars": 1086,
+                "tokens": 272,
+                "descriptionChars": 493,
                 "schemaChars": 330,
                 "snippetChars": 58,
-                "guidelineChars": 259
+                "guidelineChars": 198
               },
               {
                 "name": "replace",
-                "chars": 2498,
-                "tokens": 625,
-                "descriptionChars": 580,
-                "schemaChars": 845,
-                "snippetChars": 184,
-                "guidelineChars": 879
+                "chars": 2514,
+                "tokens": 629,
+                "descriptionChars": 706,
+                "schemaChars": 754,
+                "snippetChars": 144,
+                "guidelineChars": 900
               },
               {
                 "name": "insert",
-                "chars": 1596,
-                "tokens": 399,
-                "descriptionChars": 259,
-                "schemaChars": 846,
-                "snippetChars": 136,
-                "guidelineChars": 346
+                "chars": 1549,
+                "tokens": 388,
+                "descriptionChars": 622,
+                "schemaChars": 729,
+                "snippetChars": 126,
+                "guidelineChars": 63
               },
               {
                 "name": "anchor_grep",
-                "chars": 1951,
-                "tokens": 488,
-                "descriptionChars": 628,
-                "schemaChars": 793,
+                "chars": 1695,
+                "tokens": 424,
+                "descriptionChars": 531,
+                "schemaChars": 792,
                 "snippetChars": 133,
-                "guidelineChars": 383
+                "guidelineChars": 225
               },
               {
                 "name": "undo_last_change",
-                "chars": 812,
-                "tokens": 203,
-                "descriptionChars": 381,
+                "chars": 882,
+                "tokens": 221,
+                "descriptionChars": 457,
                 "schemaChars": 118,
-                "snippetChars": 116,
-                "guidelineChars": 178
+                "snippetChars": 83,
+                "guidelineChars": 205
               }
             ]
           },
-          "savedTokens": 1453,
-          "reductionPercent": 73
+          "savedTokens": 1397,
+          "reductionPercent": 72.2
         }
       ]
     }

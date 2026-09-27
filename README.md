@@ -2,131 +2,137 @@
 
 [简体中文](README.zh-CN.md)
 
-A curated, context-efficient [Pi coding agent](https://github.com/earendil-works/pi) configuration featuring lightweight tool wrappers that minimize prompt overhead.
+This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. It includes slimmed-down versions of a few popular extensions, plus the other token-saving tools I pair them with.
 
-## Why I Built These Lean Wrappers
+## Why lean versions?
 
-I initially created these wrappers for my own daily workflow and later open-sourced them for other Pi users focused on context efficiency.
+I built these for myself, then open-sourced them in case other Pi users find them useful.
 
-One of Pi's greatest strengths is its lean, controllable context. However, many excellent extensions introduce lengthy tool definitions that consume substantial tokens on every request, working against that advantage. These wrappers condense the model-facing schemas to their essentials while keeping the complete upstream engine and feature set intact. Modern LLMs handle clean, concise schemas reliably without requiring verbose, repetitive instructions in the prompt.
+One of Pi's best traits is a small, controllable context. But many great extensions ship long tool descriptions, and those get sent with every single request, eating tokens before the conversation even starts.
 
-Maintaining these wrappers is straightforward: when upstream updates arrive, compare the changes against the lean wrapper, check for breaking API or schema modifications, bump the pinned dependency and adapter if needed, and re-run tests and footprint measurements.
+The lean versions only change what the model sees: tool schemas and descriptions are cut down to what's actually needed. The features and the underlying code come straight from upstream, unchanged. Modern models understand a clear schema just fine without being told the same thing three times.
 
-## Context Optimization Stack
+Keeping them up to date is easy. When upstream releases a new version, look at what changed and whether it breaks the API or schema, bump the dependency and adjust the adapter if needed, then run the tests and re-measure the token count.
+
+## Tools that save context
 
 ### 1. billion-context-pi-lean
 
-[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) wraps [Billion Context](https://github.com/ranxianglei/billion-context-pi) with a streamlined `compress` and `acp_context` interface. It summarizes older conversation turns and restores fine-grained context on demand, keeping active memory clean and prompting the model to compress stale information. This is particularly valuable for models with smaller context windows.
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) is a lean version of [Billion Context](https://github.com/ranxianglei/billion-context-pi) that exposes just two tools: `compress` and `acp_context`. It turns older conversation into summaries, brings details back when you need them, and nudges the model to compress stale content. Most useful for models with small context windows.
 
 ### 2. pi-slim
 
-[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi documentation guidance opt-in, directly reducing base prompt overhead.
+[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi's built-in documentation guidance load only when needed, so the base prompt gets shorter.
 
 ### 3. Headroom / noheadroom
 
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) dynamically compresses bulky tool outputs and runtime context. In daily usage, this typically saves around **20% to 30%** in token consumption (based on regular workflow observations rather than isolated benchmarks). Billion Context handles older history and long-term recovery.
+[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses long tool output and the running context. In my daily use it saves roughly **20% to 30%** of tokens (that's what I see in normal work, not a formal benchmark). Older history is handled by Billion Context.
 
 ### 4. RTK and pi-rtk-optimizer
 
-[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) compress shell command output before it enters the conversation context.
+[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) filter and shrink shell command output before it reaches the conversation.
 
 ### 5. pi-context-view
 
-[pi-context-view](https://github.com/dimk90/pi-context-view) provides observability into base prompt, tool, extension, and message token costs. It serves as an inspection tool rather than a compressor.
+[pi-context-view](https://github.com/dimk90/pi-context-view) shows where your tokens go: base prompt, tools, extensions, and messages. It only measures; it doesn't compress anything.
 
-## Lean Tool Wrappers
+## Lean tool versions
 
 ### pi-subagents-lean
 
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) enables delegating tasks to specialized subagents with background execution and dynamic steering. The lean wrapper unifies spawning, result fetching, and steering under a single `subagent` tool while preserving upstream discovery and lifecycle handling.
+[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) hands tasks off to subagents, which can run in the background and be redirected mid-task. The lean version merges starting, fetching results, and redirecting into one `subagent` tool, and keeps upstream's agent discovery and lifecycle handling.
 
 ### pi-web-access-lean
 
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) supports web search, source verification, page fetching, and result pagination. The lean wrapper combines four separate tools into a single `web_access` entrypoint, moving advanced parameters to on-demand help.
+[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) searches the web, checks claims, fetches pages, and lets you page through long results. The lean version merges the original four tools into a single `web_access` tool; advanced options live in on-demand help.
 
 ### pi-hashline-edit-pro-lean
 
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) enables line-safe file editing and instant rollback using stable HASH line anchors. The lean wrapper shortens the tool schemas for `read`, `replace`, and `undo_last_replace` while preserving full Hashline safety validation.
+[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) edits files by pointing at lines with stable HASH anchors, and can undo a bad edit in one step. The lean version shortens the descriptions for `read`, `replace`, and `undo_last_replace`; all of Hashline's safety checks are still there.
 
 ### rpiv-ask-user-question-lean
 
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) provides interactive questionnaire prompts for clarifying ambiguous requirements. The lean wrapper strips repetitive prompt verbiage while retaining full UI and validation capabilities.
+[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) asks you multiple-choice questions when a requirement or decision is unclear. The lean version drops the repeated wording from the tool description; the question UI and option validation are unchanged.
 
 ### rpiv-todo-lean
 
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) manages structured tasks, dependencies, and execution status. The lean wrapper preserves the complete task lifecycle with a clean, flat schema.
+[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) breaks work into tasks, tracks dependencies, and follows progress. The lean version uses a shorter, flatter schema without dropping any task features.
 
-## Curated AGENTS.md Rules
+## AGENTS.md template
 
-This repository includes a lean, production-ready `AGENTS.md` instruction file available in both [English](agents/en/AGENTS.md) and [简体中文](agents/zh-CN/AGENTS.md).
+This repo includes the `AGENTS.md` I use, in [English](agents/en/AGENTS.md) and [简体中文](agents/zh-CN/AGENTS.md).
 
-### Recommended Prerequisites
+### Install the skills first
 
-Before applying this configuration, it is recommended to install Matt Pocock's skills repository:
-* [mattpocock/skills](https://github.com/mattpocock/skills): A collection of structured engineering workflows. This `AGENTS.md` integrates with workflows such as the `/grill-me` skill for requirement alignment.
-* Installation:
+Before using these rules, I recommend installing Matt Pocock's skills:
+
+* [mattpocock/skills](https://github.com/mattpocock/skills): a set of engineering workflows for coding agents. The requirement-alignment rule in this `AGENTS.md` relies on skills like `/grill-me`.
+* Install:
+
 ```bash
 npx skills@latest add mattpocock/skills
 ```
 
-### Design Rationale
+### Where the rules come from
 
-This `AGENTS.md` is a streamlined distillation synthesized from two community prompt philosophies:
-* [i-have-adhd](https://github.com/ayghri/i-have-adhd): Enforces action-first communication, numbered multi-step execution, and concrete next actions while eliminating conversational fluff.
-* [ponytail](https://github.com/DietrichGebert/ponytail): Implements an anti-overengineering decision ladder (stop at the first sufficient rung: no code, reuse, platform native, minimal change).
+This `AGENTS.md` borrows from two open-source prompt projects and trims them down:
 
-### Customizing Subagents Delegation
+* [i-have-adhd](https://github.com/ayghri/i-have-adhd): lead with the result, number multi-step work, end with a concrete next step, skip the small talk.
+* [ponytail](https://github.com/DietrichGebert/ponytail): avoid over-engineering. Go down the list and stop at the first option that's enough: no code → reuse existing code → use what the platform provides → make a small change.
 
-The `Subagents Delegation` section in `AGENTS.md` provides sensible defaults based on standard upstream types (`Explore`, `Plan`, `general-purpose`). Because subagent workflows and custom agent definitions vary across individual environments, it is strongly recommended to adapt, add, or remove subagent types to match your own development needs.
+### Adjust the subagent section
 
-### Placement
+The `Subagents Delegation` section in `AGENTS.md` only covers upstream's standard types (`Explore`, `Plan`, `general-purpose`). Everyone's workflow and custom agents are different, so change, add, or remove entries to fit yours.
 
-Pi automatically loads `AGENTS.md` at session startup from:
-* Global configuration: `~/.pi/agent/AGENTS.md`
-* Project configuration: `./AGENTS.md` (or parent directories)
+### Where to put it
 
-## Architecture Overview
+Pi reads `AGENTS.md` automatically at startup from:
 
-| Layer | Component | Function |
+* Global: `~/.pi/agent/AGENTS.md`
+* Project: `./AGENTS.md` in the project root (or a parent directory)
+
+## Who does what
+
+| Area | Component | What it does |
 | --- | --- | --- |
-| Base Prompt | `pi-slim` | Removes static documentation guidance. |
-| Command Output | RTK + `pi-rtk-optimizer` | Filters verbose terminal outputs. |
-| Active Context | Headroom / noheadroom | Compresses runtime tool results and message bloat. |
-| Session History | `billion-context-pi-lean` | Compresses older conversation turns and recovers context on demand. |
-| Observability | `pi-context-view` | Measures token consumption across extensions and prompts. |
+| Base prompt | `pi-slim` | Drops the built-in documentation guidance. |
+| Command output | RTK + `pi-rtk-optimizer` | Filters long terminal output. |
+| Current context | Headroom / noheadroom | Compresses tool output and messages while you work. |
+| Conversation history | `billion-context-pi-lean` | Summarizes old turns and brings details back when needed. |
+| Usage view | `pi-context-view` | Shows how many tokens each part uses. |
 
-## Installation & Adoption Guide
+## Getting started
 
-### Recommended Setup Order
+### Suggested order
 
-1. Measure baseline context usage with `pi-context-view`.
-2. Install `pi-slim` to reduce base prompt size.
-3. Add RTK and `pi-rtk-optimizer` if working with verbose command lines.
-4. Add Headroom to compress active tool results.
-5. Add `billion-context-pi-lean` for long-session compression.
-6. Swap in only the lean tool wrappers relevant to your workflow.
-7. Re-measure to verify context savings.
+1. Check your current token usage with `pi-context-view` so you have something to compare against.
+2. Install `pi-slim` to shorten the base prompt.
+3. If your commands produce lots of output, add RTK and `pi-rtk-optimizer`.
+4. Add Headroom to compress tool output.
+5. Add `billion-context-pi-lean` for long conversations.
+6. Swap in lean versions only for the tools you actually use.
+7. Measure again with `pi-context-view` to see what you saved.
 
-### Best Practices
+### Keep in mind
 
-* Follow individual repository instructions for installation commands.
-* Never load an upstream extension and its lean wrapper simultaneously.
-* Verify pinned dependency versions when updating.
-* Keep API keys and private endpoints out of public configurations.
+* Follow each repo's own install instructions.
+* Install either the original extension or its lean version, not both; loading both registers the same tools twice.
+* Run the checks again after upgrading dependencies.
+* Don't commit API keys or private endpoints to a public config.
 
-## Automated Token Benchmarks
+## Measuring tokens
 
-The repository includes a centralized benchmark tool for all six public Lean wrappers. It measures each wrapper and its exact pinned upstream dependency in separate isolated Pi processes.
+The repo has one script that measures all six public lean versions. Each lean version and its pinned upstream version run in their own isolated, temporary Pi process.
 
 ```bash
-npm run benchmark          # measure, show changes, update JSON and README blocks
-npm run benchmark:report   # measure and print only
-npm run benchmark:check    # verify the snapshot and generated README blocks
+npm run benchmark          # measure, show what changed, update the JSON and README numbers
+npm run benchmark:report   # measure and print only; no files change
+npm run benchmark:check    # check that the results and READMEs are up to date
 ```
 
-Structured results are stored in `benchmarks/results.json`. Generated README content is limited to `token-benchmark` marker blocks; if values do not change, files are left untouched.
+Results are saved to `benchmarks/results.json`. The script only edits text between the `token-benchmark` markers in the READMEs, and leaves files alone if the numbers haven't changed.
 
-## Measured Initialization Context Footprint
+## Context used at startup
 
 <!-- token-benchmark:aggregate:start -->
 ### Methodology
@@ -145,12 +151,12 @@ Structured results are stored in `benchmarks/results.json`. Generated README con
 | `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
 | `rpiv-todo-lean` | **246** | 904 | 658 | **72.8%** |
 | `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
-| `pi-hashline-edit-pro-lean` | **423** | 1,503 | 1,080 | **71.9%** |
-| **Total** | **1,994** | **20,906** | **18,912** | **90.5%** |
+| `pi-hashline-edit-pro-lean` | **537** | 1,934 | 1,397 | **72.2%** |
+| **Total** | **2,108** | **21,337** | **19,229** | **90.1%** |
 
-Across all six wrappers, recurring initialization context is reduced by **18,912 tokens (90.5%)** versus their pinned upstream versions.
+Across all six wrappers, recurring initialization context is reduced by **19,229 tokens (90.1%)** versus their pinned upstream versions.
 <!-- token-benchmark:aggregate:end -->
 
-## License & Attribution
+## License and credits
 
-Each referenced project retains its respective open-source license, authorship, and terms. All wrappers preserve original upstream attribution in their repositories and package metadata.
+Every project mentioned here keeps its own license, authorship, and terms. Each lean version credits its upstream project in its repo and npm package metadata.
