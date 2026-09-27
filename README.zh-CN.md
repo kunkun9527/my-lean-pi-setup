@@ -39,9 +39,13 @@ Pi 的一大优点是上下文很干净、可控。但不少好用的扩展会�
 
 `lean` 包里有意保留了比较详细的 `howToCompress` 规则，弱一点的模型靠这些规则才不会压出幻觉。如果你用的是前沿模型，还想再压，可以在同一个文件里用 `promptSections` / `prompts` 覆盖对应段落，具体见官方的 [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md)。
 
-### 2. pi-slim
+### 2. pi-docs-slim
 
-[pi-slim](https://github.com/robzolkos/pi-slim) 让 Pi 默认附带的文档说明改成需要时才加载，基础 Prompt 因此变短。
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。它是我从 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim) fork 出来的，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
+
+```bash
+pi install npm:@ssk_dev/pi-docs-slim
+```
 
 ### 3. Headroom / noheadroom
 
@@ -114,7 +118,7 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 基础 Prompt | `pi-slim` | 去掉默认附带的文档说明。 |
+| 基础 Prompt | `pi-docs-slim` | 去掉默认附带的文档说明。 |
 | 命令输出 | RTK + `pi-rtk-optimizer` | 过滤很长的终端输出。 |
 | 当前上下文 | Headroom / noheadroom | 压缩运行中的工具输出和对话。 |
 | 历史对话 | `billion-context-pi`（官方版） | 把旧对话压成摘要，需要时找回细节。 |
@@ -125,7 +129,7 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 ### 建议的顺序
 
 1. 用 `pi-context-view` 看一下现在的 token 占用，作为对比基准。
-2. 装 `pi-slim`，缩短基础 Prompt。
+2. 装 `pi-docs-slim`，缩短基础 Prompt。
 3. 如果命令输出经常很长，装 RTK 和 `pi-rtk-optimizer`。
 4. 装 Headroom，压缩工具输出。
 5. 装官方的 `billion-context-pi` 并打开 `lean` 提示词包，处理长对话。

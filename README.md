@@ -39,9 +39,13 @@ How to use it:
 
 The `lean` pack deliberately keeps the detailed `howToCompress` rules, because weaker models need them to avoid hallucinated summaries. If you run frontier models and want to trim further, override those sections in the same file with `promptSections` / `prompts`; see upstream [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md).
 
-### 2. pi-slim
+### 2. pi-docs-slim
 
-[pi-slim](https://github.com/robzolkos/pi-slim) makes Pi's built-in documentation guidance load only when needed, so the base prompt gets shorter.
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. It's my fork of [pi-slim](https://github.com/robzolkos/pi-slim) by Rob Zolkos, updated to work on Pi 0.87.1; the original no longer removes the docs there.
+
+```bash
+pi install npm:@ssk_dev/pi-docs-slim
+```
 
 ### 3. Headroom / noheadroom
 
@@ -114,7 +118,7 @@ Pi reads `AGENTS.md` automatically at startup from:
 
 | Area | Component | What it does |
 | --- | --- | --- |
-| Base prompt | `pi-slim` | Drops the built-in documentation guidance. |
+| Base prompt | `pi-docs-slim` | Drops the built-in documentation guidance. |
 | Command output | RTK + `pi-rtk-optimizer` | Filters long terminal output. |
 | Current context | Headroom / noheadroom | Compresses tool output and messages while you work. |
 | Conversation history | `billion-context-pi` (official) | Summarizes old turns and brings details back when needed. |
@@ -125,7 +129,7 @@ Pi reads `AGENTS.md` automatically at startup from:
 ### Suggested order
 
 1. Check your current token usage with `pi-context-view` so you have something to compare against.
-2. Install `pi-slim` to shorten the base prompt.
+2. Install `pi-docs-slim` to shorten the base prompt.
 3. If your commands produce lots of output, add RTK and `pi-rtk-optimizer`.
 4. Add Headroom to compress tool output.
 5. Add the official `billion-context-pi` with its `lean` prompt pack for long conversations.
