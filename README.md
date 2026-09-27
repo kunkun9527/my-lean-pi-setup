@@ -20,15 +20,24 @@ Keeping them up to date is easy. When upstream releases a new version, look at w
 
 [Billion Context](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when to compress and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
 
-**Use the official version.** I used to maintain a lean version, [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean). It's now just a historical version and is no longer maintained. The official version already uses my trimmed-down prompts, so there's no reason to install the lean one.
+**Use the official version and turn on its `lean` prompt pack.** My old [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) is now just a historical version and is no longer maintained. Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` prompt pack (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)). It's off by default, so you have to turn it on yourself.
 
 How to use it:
 
-* Install with `pi install npm:billion-context-pi` and restart Pi. It loads automatically and needs no configuration. It takes over context management and turns off Pi's built-in auto-compaction.
-* You don't need to do anything day to day: the model calls `compress` to summarize old turns, `decompress` to restore them, and `search_context` to search inside summaries.
-* Type `/acp` to see current usage and what has been compressed.
-* If you already use another sub-agent extension (for example `pi-subagents-lean`), put `{ "delegate": false }` in `~/.pi/acp.json` to turn off its built-in `acp_delegate`, so the model doesn't see two sets of sub-agent tools.
-* Install only one conversation-compression extension. Two of them will overwrite each other's work.
+1. Install the official version: `pi install npm:billion-context-pi`.
+2. In `~/.pi/acp.json` (global) or `<project>/.pi/acp.json` (one project), add:
+
+   ```json
+   {
+     "compress": { "promptPack": "lean" },
+     "delegate": false
+   }
+   ```
+
+   `promptPack: "lean"` switches to the trimmed prompts. `delegate: false` turns off its built-in sub-agent tools, which my lean version also removed. If you want its sub-agents, leave that line out and don't install another sub-agent extension.
+3. Start a new session for it to take effect.
+
+The `lean` pack deliberately keeps the detailed `howToCompress` rules, because weaker models need them to avoid hallucinated summaries. If you run frontier models and want to trim further, override those sections in the same file with `promptSections` / `prompts`; see upstream [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md).
 
 ### 2. pi-slim
 
@@ -119,7 +128,7 @@ Pi reads `AGENTS.md` automatically at startup from:
 2. Install `pi-slim` to shorten the base prompt.
 3. If your commands produce lots of output, add RTK and `pi-rtk-optimizer`.
 4. Add Headroom to compress tool output.
-5. Add the official `billion-context-pi` for long conversations.
+5. Add the official `billion-context-pi` with its `lean` prompt pack for long conversations.
 6. Swap in lean versions only for the tools you actually use.
 7. Measure again with `pi-context-view` to see what you saved.
 

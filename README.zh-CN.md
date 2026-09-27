@@ -20,15 +20,24 @@ Pi 的一大优点是上下文很干净、可控。但不少好用的扩展会�
 
 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长对话、上下文窗口小的模型最用得上。
 
-**请直接用官方版。** 我以前做过一个精简版 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean)，现在只是历史版本，已经不再维护。官方版已经用上了我那版精简过的提示词，没必要再装精简版。
+**请直接用官方版，并打开它的 `lean` 提示词包。** 我以前做的 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 现在只是历史版本，已经不再维护。官方把我那版精简提示词（保留了大约九成）做成了内置的 `lean` 提示词包（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)），但默认不启用，要自己在配置里打开。
 
 用法：
 
-* 安装：`pi install npm:billion-context-pi`，重启 Pi 就会自动加载，不需要配置。它会接管上下文管理，Pi 自带的自动压缩会被关掉。
-* 平时不用管它：模型会自己调用 `compress` 把旧对话压成摘要，需要时用 `decompress` 还原、用 `search_context` 在摘要里搜。
-* 想看当前用量和压缩情况，输入 `/acp`。
-* 如果你已经装了别的子代理扩展（比如 `pi-subagents-lean`），在 `~/.pi/acp.json` 里写 `{ "delegate": false }`，关掉它自带的 `acp_delegate`，免得模型面前有两套子代理工具。
-* 压缩对话的扩展只装一个，装两个会互相覆盖。
+1. 安装官方版：`pi install npm:billion-context-pi`。
+2. 在 `~/.pi/acp.json`（全局）或 `<项目>/.pi/acp.json`（单个项目）里写：
+
+   ```json
+   {
+     "compress": { "promptPack": "lean" },
+     "delegate": false
+   }
+   ```
+
+   `promptPack: "lean"` 用上精简提示词。`delegate: false` 关掉它自带的子代理工具，我的精简版本来也去掉了这部分；如果你想用它的子代理，就不要写这一行，同时别再装其他子代理扩展。
+3. 新开一个会话就生效。
+
+`lean` 包里有意保留了比较详细的 `howToCompress` 规则，弱一点的模型靠这些规则才不会压出幻觉。如果你用的是前沿模型，还想再压，可以在同一个文件里用 `promptSections` / `prompts` 覆盖对应段落，具体见官方的 [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md)。
 
 ### 2. pi-slim
 
@@ -119,7 +128,7 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 2. 装 `pi-slim`，缩短基础 Prompt。
 3. 如果命令输出经常很长，装 RTK 和 `pi-rtk-optimizer`。
 4. 装 Headroom，压缩工具输出。
-5. 装官方的 `billion-context-pi`，处理长对话。
+5. 装官方的 `billion-context-pi` 并打开 `lean` 提示词包，处理长对话。
 6. 只把你真正常用的工具换成精简版。
 7. 再用 `pi-context-view` 测一次，看省了多少。
 
