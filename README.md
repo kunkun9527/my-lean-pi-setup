@@ -47,15 +47,7 @@ The `lean` pack deliberately keeps the detailed `howToCompress` rules, because w
 pi install npm:@ssk_dev/pi-docs-slim
 ```
 
-### 3. Headroom / noheadroom
-
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) compresses long tool output and the running context. In my daily use it saves roughly **20% to 30%** of tokens (that's what I see in normal work, not a formal benchmark). Older history is handled by Billion Context.
-
-### 4. RTK and pi-rtk-optimizer
-
-[RTK](https://github.com/rtk-ai/rtk) and [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) filter and shrink shell command output before it reaches the conversation.
-
-### 5. pi-context-view
+### 3. pi-context-view
 
 [pi-context-view](https://github.com/dimk90/pi-context-view) shows where your tokens go: base prompt, tools, extensions, and messages. It only measures; it doesn't compress anything.
 
@@ -119,8 +111,6 @@ Pi reads `AGENTS.md` automatically at startup from:
 | Area | Component | What it does |
 | --- | --- | --- |
 | Base prompt | `pi-docs-slim` | Drops the built-in documentation guidance. |
-| Command output | RTK + `pi-rtk-optimizer` | Filters long terminal output. |
-| Current context | Headroom / noheadroom | Compresses tool output and messages while you work. |
 | Conversation history | `billion-context-pi` (official) | Summarizes old turns and brings details back when needed. |
 | Usage view | `pi-context-view` | Shows how many tokens each part uses. |
 
@@ -130,11 +120,9 @@ Pi reads `AGENTS.md` automatically at startup from:
 
 1. Check your current token usage with `pi-context-view` so you have something to compare against.
 2. Install `pi-docs-slim` to shorten the base prompt.
-3. If your commands produce lots of output, add RTK and `pi-rtk-optimizer`.
-4. Add Headroom to compress tool output.
-5. Add the official `billion-context-pi` with its `lean` prompt pack for long conversations.
-6. Swap in lean versions only for the tools you actually use.
-7. Measure again with `pi-context-view` to see what you saved.
+3. Add the official `billion-context-pi` with its `lean` prompt pack for long conversations.
+4. Swap in lean versions only for the tools you actually use.
+5. Measure again with `pi-context-view` to see what you saved.
 
 ### Keep in mind
 

@@ -47,15 +47,7 @@ Pi 的一大优点是上下文很干净、可控。但不少好用的扩展会�
 pi install npm:@ssk_dev/pi-docs-slim
 ```
 
-### 3. Headroom / noheadroom
-
-[Headroom / noheadroom](https://www.npmjs.com/package/@raquezha/noheadroom) 会压缩很长的工具输出和运行中的上下文。我日常用下来，大概能省 **20% 到 30%** 的 token（这是平时使用的感受，不是专门测出来的）。更早的历史记录交给 Billion Context 处理。
-
-### 4. RTK 与 pi-rtk-optimizer
-
-[RTK](https://github.com/rtk-ai/rtk) 和 [pi-rtk-optimizer](https://github.com/MasuRii/pi-rtk-optimizer) 会在命令输出进入对话前先过滤、压缩一遍。
-
-### 5. pi-context-view
+### 3. pi-context-view
 
 [pi-context-view](https://github.com/dimk90/pi-context-view) 用来查看 token 都花在哪：基础 Prompt、工具、扩展、对话各占多少。它只负责看，不负责压缩。
 
@@ -119,8 +111,6 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
 | 基础 Prompt | `pi-docs-slim` | 去掉默认附带的文档说明。 |
-| 命令输出 | RTK + `pi-rtk-optimizer` | 过滤很长的终端输出。 |
-| 当前上下文 | Headroom / noheadroom | 压缩运行中的工具输出和对话。 |
 | 历史对话 | `billion-context-pi`（官方版） | 把旧对话压成摘要，需要时找回细节。 |
 | 查看用量 | `pi-context-view` | 看各部分分别占多少 token。 |
 
@@ -130,11 +120,9 @@ Pi 启动时会自动读取这两个位置的 `AGENTS.md`：
 
 1. 用 `pi-context-view` 看一下现在的 token 占用，作为对比基准。
 2. 装 `pi-docs-slim`，缩短基础 Prompt。
-3. 如果命令输出经常很长，装 RTK 和 `pi-rtk-optimizer`。
-4. 装 Headroom，压缩工具输出。
-5. 装官方的 `billion-context-pi` 并打开 `lean` 提示词包，处理长对话。
-6. 只把你真正常用的工具换成精简版。
-7. 再用 `pi-context-view` 测一次，看省了多少。
+3. 装官方的 `billion-context-pi` 并打开 `lean` 提示词包，处理长对话。
+4. 只把你真正常用的工具换成精简版。
+5. 再用 `pi-context-view` 测一次，看省了多少。
 
 ### 注意
 
