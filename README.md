@@ -2,29 +2,78 @@
 
 [简体中文](README.zh-CN.md)
 
-This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. It includes slimmed-down versions of a few popular extensions, plus the other token-saving tools I pair them with.
+This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. The repo has three parts:
 
-## Why lean versions?
+* **Lean versions of 5 popular extensions**: same features, about 91% less always-on context combined.
+* **3 companion tools**: for long conversations, the base prompt, and seeing where tokens go.
+* **An `AGENTS.md` template**.
 
-I built these for myself, then open-sourced them in case other Pi users find them useful.
+## Getting started
 
-One of Pi's best traits is a small, controllable context. But many great extensions ship long tool descriptions, and those get sent with every single request, eating tokens before the conversation even starts.
+1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
+2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
+3. Add the official [`billion-context-pi`](#billion-context) with its `lean` prompt pack for long conversations.
+4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
+5. Measure again with `pi-context-view` to see what you saved.
 
-The lean versions only change what the model sees: tool schemas and descriptions are cut down to what's actually needed. The features and the underlying code come straight from upstream, unchanged. Modern models understand a clear schema just fine without being told the same thing three times.
+Keep in mind:
 
-Keeping them up to date is easy. When upstream releases a new version, look at what changed and whether it breaks the API or schema, bump the dependency and adjust the adapter if needed, then run the tests and re-measure the token count.
+* Follow each repo's own install instructions.
+* Install either the original extension or its lean version, not both; loading both registers the same tools twice.
+* Don't commit API keys or private endpoints to a public config.
 
-## Tools that save context
+## Lean extensions
 
-### 1. Billion Context
+Many great Pi extensions ship long tool descriptions that get sent with every request, eating tokens before the conversation even starts. The lean versions only change what the model sees: tool schemas and descriptions are cut down to what's actually needed. Features and underlying code come straight from upstream, unchanged.
 
-[Billion Context](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when to compress and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
+| Extension | What it does | What was trimmed |
+| --- | --- | --- |
+| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | Hands tasks to subagents that can run in the background and be redirected mid-task | Start, fetch results, and redirect merged into one `subagent` tool; agent discovery and lifecycle kept |
+| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | Searches the web, checks claims, fetches pages, pages through long results | Four tools merged into one `web_access`; advanced options in on-demand help |
+| [pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) | Edits files via stable per-line HASH anchors, with one-step undo | Shorter `read`, `replace`, `undo_last_replace` descriptions; all safety checks kept |
+| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | Asks multiple-choice questions when a requirement or decision is unclear | Repeated wording removed; question UI and option validation unchanged |
+| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | Breaks work into tasks, tracks dependencies and progress | Shorter, flatter schema; no task features dropped |
 
-**Use the official version and turn on its `lean` prompt pack.** My old [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) is now just a historical version and is no longer maintained. Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` prompt pack (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)). It's off by default, so you have to turn it on yourself.
+### Context used at startup
 
-How to use it:
+<!-- token-benchmark:aggregate:start -->
+| Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
+| --- | ---: | ---: | ---: | ---: |
+| `pi-web-access-lean` | **152** | 2,953 | 2,801 | **94.9%** |
+| `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
+| `rpiv-todo-lean` | **248** | 904 | 656 | **72.6%** |
+| `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
+| `pi-hashline-edit-pro-lean` | **537** | 2,040 | 1,503 | **73.7%** |
+| **Total** | **1,420** | **15,695** | **14,275** | **91.0%** |
 
-1. Install the official version: `pi install npm:billion-context-pi`.
+Across all 5 wrappers, recurring initialization context is reduced by **14,275 tokens (91.0%)** versus their pinned upstream versions.
+
+<details>
+<summary>Methodology</summary>
+
+* Test environment: Pi `0.87.1` using the repository's automated benchmark tool.
+* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
+* Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
+* Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
+
+</details>
+<!-- token-benchmark:aggregate:end -->
+
+## Companion tools
+
+| Area | Tool | What it does |
+| --- | --- | --- |
+| Conversation history | [Billion Context](#billion-context) (official) | Summarizes old turns and brings details back when needed |
+| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
+| Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
+
+### Billion Context
+
+[Billion Context](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
+
+**Use the official version and turn on its `lean` prompt pack.** Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` pack, but it's off by default:
+
+1. Install: `pi install npm:billion-context-pi`.
 2. In `~/.pi/acp.json` (global) or `<project>/.pi/acp.json` (one project), add:
 
    ```json
@@ -34,28 +83,54 @@ How to use it:
    }
    ```
 
-   `promptPack: "lean"` switches to the trimmed prompts. `delegate: false` turns off its built-in sub-agent tools, which my lean version also removed. If you want its sub-agents, leave that line out and don't install another sub-agent extension.
+   `delegate: false` turns off its built-in sub-agent tools. If you want its sub-agents, leave that line out and don't install another sub-agent extension.
 3. Start a new session for it to take effect.
 
 The `lean` pack deliberately keeps the detailed `howToCompress` rules, because weaker models need them to avoid hallucinated summaries. If you run frontier models and want to trim further, override those sections in the same file with `promptSections` / `prompts`; see upstream [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md).
 
-### 2. pi-docs-slim
+> My old [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) has been merged upstream (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)) and is no longer maintained.
 
-[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. It's my fork of [pi-slim](https://github.com/robzolkos/pi-slim) by Rob Zolkos, updated to work on Pi 0.87.1; the original no longer removes the docs there.
+### pi-docs-slim
+
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. It's my fork of Rob Zolkos's [pi-slim](https://github.com/robzolkos/pi-slim), updated to work on Pi 0.87.1; the original no longer removes the docs there.
 
 ```bash
 pi install npm:@ssk_dev/pi-docs-slim
 ```
 
-### 3. pi-context-view
+### pi-context-view
 
 [pi-context-view](https://github.com/dimk90/pi-context-view) shows where your tokens go: base prompt, tools, extensions, and messages. It only measures; it doesn't compress anything.
 
-## Tools I used to recommend, and dropped after measuring
+## AGENTS.md template
 
-This README used to recommend RTK and Headroom. When I later went through my own Pi session logs and did the math, they saved very little and caused real problems, so I removed them. The numbers below come only from my setup (Windows + Git Bash + Pi, a single user). If you want to try them, measure on your own sessions first.
+This repo includes the `AGENTS.md` I use, in [English](agents/en/AGENTS.md) and [简体中文](agents/zh-CN/AGENTS.md).
 
-### RTK + pi-rtk-optimizer
+* **Where to put it**: `~/.pi/agent/AGENTS.md` for global rules, or `AGENTS.md` in a project root (or a parent directory). Pi reads it automatically at startup.
+* **Install the skills first**: the requirement-alignment rule uses the `grilling` skill from [mattpocock/skills](https://github.com/mattpocock/skills). Install with `npx skills@latest add mattpocock/skills`.
+* **Adjust the subagent section**: `Subagents Delegation` is written for a subagent extension and only covers upstream's standard types (`Explore`, `Plan`, `general-purpose`). Change it to fit your workflow, or delete it if you don't use a subagent extension.
+* **Where the rules come from**: trimmed down from [i-have-adhd](https://github.com/ayghri/i-have-adhd) (lead with the result, end with a next step, skip small talk) and [ponytail](https://github.com/DietrichGebert/ponytail) (avoid over-engineering; stop at the first option that's enough).
+
+## Maintenance and measuring
+
+When upstream releases a new version, check what changed and whether it breaks the API or schema, bump the dependency and adjust the adapter if needed, then run the tests and re-measure tokens.
+
+The benchmark script runs each lean version and its pinned upstream version in their own isolated, temporary Pi process:
+
+```bash
+npm run benchmark          # measure, show what changed, update the JSON and README numbers
+npm run benchmark:report   # measure and print only; no files change
+npm run benchmark:check    # check that the results and READMEs are up to date
+```
+
+Results are saved to `benchmarks/results.json`. The script only edits text between the `token-benchmark` markers in the READMEs, and leaves files alone if the numbers haven't changed.
+
+## Appendix: tools I dropped after measuring
+
+This README used to recommend RTK and Headroom. When I went through my own Pi session logs and did the math, they saved very little and caused real problems, so I removed them. The numbers come only from my setup (Windows + Git Bash + Pi, a single user). If you want to try them, measure on your own sessions first.
+
+<details>
+<summary><b>RTK + pi-rtk-optimizer</b>: only 9.7% real savings, and silently wrong results</summary>
 
 Scope: 10 days, about 5,800 bash calls, about 2,600 of them rewritten to rtk.
 
@@ -67,7 +142,10 @@ Scope: 10 days, about 5,800 bash calls, about 2,600 of them rewritten to rtk.
 
 Pi already caps each output at 50KB. For the occasional over-broad search, one line in `AGENTS.md` ("check scope with `rg -l` / `rg -c` before searching large directories") is enough.
 
-### Headroom / noheadroom
+</details>
+
+<details>
+<summary><b>Headroom / noheadroom</b>: no savings visible from Pi, about 12 hours of added waiting</summary>
 
 Scope: 30 days, about 37,700 requests.
 
@@ -77,121 +155,7 @@ Scope: 30 days, about 37,700 requests.
 * **It slows requests down.** The extension waits for compression before sending the request. 5,321 compressions averaged 8.2 s each, 1,565 took over 5 s, about 12 hours of waiting in total.
 * I later switched to lossless-only compression. It then fired just 78 times in 10 days (under 1% of turns) and saved less than 0.05% of total input, about the same as not having it.
 
-## Lean tool versions
-
-### pi-subagents-lean
-
-[pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) hands tasks off to subagents, which can run in the background and be redirected mid-task. The lean version merges starting, fetching results, and redirecting into one `subagent` tool, and keeps upstream's agent discovery and lifecycle handling.
-
-### pi-web-access-lean
-
-[pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) searches the web, checks claims, fetches pages, and lets you page through long results. The lean version merges the original four tools into a single `web_access` tool; advanced options live in on-demand help.
-
-### pi-hashline-edit-pro-lean
-
-[pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) edits files by pointing at lines with stable HASH anchors, and can undo a bad edit in one step. The lean version shortens the descriptions for `read`, `replace`, and `undo_last_replace`; all of Hashline's safety checks are still there.
-
-### rpiv-ask-user-question-lean
-
-[rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) asks you multiple-choice questions when a requirement or decision is unclear. The lean version drops the repeated wording from the tool description; the question UI and option validation are unchanged.
-
-### rpiv-todo-lean
-
-[rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) breaks work into tasks, tracks dependencies, and follows progress. The lean version uses a shorter, flatter schema without dropping any task features.
-
-## AGENTS.md template
-
-This repo includes the `AGENTS.md` I use, in [English](agents/en/AGENTS.md) and [简体中文](agents/zh-CN/AGENTS.md).
-
-### Install the skills first
-
-Before using these rules, I recommend installing Matt Pocock's skills:
-
-* [mattpocock/skills](https://github.com/mattpocock/skills): a set of engineering workflows for coding agents. The requirement-alignment rule in this `AGENTS.md` uses its `grilling` skill.
-* Install:
-
-```bash
-npx skills@latest add mattpocock/skills
-```
-
-### Where the rules come from
-
-This `AGENTS.md` borrows from two open-source prompt projects and trims them down:
-
-* [i-have-adhd](https://github.com/ayghri/i-have-adhd): lead with the result, end with a concrete next step, skip the small talk.
-* [ponytail](https://github.com/DietrichGebert/ponytail): avoid over-engineering. Go down the list and stop at the first option that's enough: use an existing command or config → reuse existing code → use what the platform provides → make a small change.
-
-### Adjust the subagent section
-
-The `Subagents Delegation` section in `AGENTS.md` is my suggestion for using a subagent extension (for example [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean)), and it only covers upstream's standard types (`Explore`, `Plan`, `general-purpose`). Everyone's workflow and custom agents are different, so change, add, or remove entries to fit yours. If you don't use a subagent extension, delete the whole section.
-
-### Where to put it
-
-Pi reads `AGENTS.md` automatically at startup from:
-
-* Global: `~/.pi/agent/AGENTS.md`
-* Project: `./AGENTS.md` in the project root (or a parent directory)
-
-## Who does what
-
-| Area | Component | What it does |
-| --- | --- | --- |
-| Base prompt | `pi-docs-slim` | Drops the built-in documentation guidance. |
-| Conversation history | `billion-context-pi` (official) | Summarizes old turns and brings details back when needed. |
-| Usage view | `pi-context-view` | Shows how many tokens each part uses. |
-
-## Getting started
-
-### Suggested order
-
-1. Check your current token usage with `pi-context-view` so you have something to compare against.
-2. Install `pi-docs-slim` to shorten the base prompt.
-3. Add the official `billion-context-pi` with its `lean` prompt pack for long conversations.
-4. Swap in lean versions only for the tools you actually use.
-5. Measure again with `pi-context-view` to see what you saved.
-
-### Keep in mind
-
-* Follow each repo's own install instructions.
-* Install either the original extension or its lean version, not both; loading both registers the same tools twice.
-* Run the checks again after upgrading dependencies.
-* Don't commit API keys or private endpoints to a public config.
-
-## Measuring tokens
-
-The repo has one script that measures the public lean versions I still maintain (billion-context-pi-lean is no longer maintained, so it's no longer measured). Each lean version and its pinned upstream version run in their own isolated, temporary Pi process.
-
-```bash
-npm run benchmark          # measure, show what changed, update the JSON and README numbers
-npm run benchmark:report   # measure and print only; no files change
-npm run benchmark:check    # check that the results and READMEs are up to date
-```
-
-Results are saved to `benchmarks/results.json`. The script only edits text between the `token-benchmark` markers in the READMEs, and leaves files alone if the numbers haven't changed.
-
-## Context used at startup
-
-<!-- token-benchmark:aggregate:start -->
-### Methodology
-
-* Test environment: Pi `0.87.1` using the repository's automated benchmark tool.
-* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
-* Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
-* Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
-
-### Lean Tool Comparison
-
-| Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
-| --- | ---: | ---: | ---: | ---: |
-| `pi-web-access-lean` | **152** | 2,953 | 2,801 | **94.9%** |
-| `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
-| `rpiv-todo-lean` | **248** | 904 | 656 | **72.6%** |
-| `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
-| `pi-hashline-edit-pro-lean` | **537** | 2,040 | 1,503 | **73.7%** |
-| **Total** | **1,420** | **15,695** | **14,275** | **91.0%** |
-
-Across all 5 wrappers, recurring initialization context is reduced by **14,275 tokens (91.0%)** versus their pinned upstream versions.
-<!-- token-benchmark:aggregate:end -->
+</details>
 
 ## License and credits
 
