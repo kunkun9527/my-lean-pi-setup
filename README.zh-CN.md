@@ -59,6 +59,16 @@
 </details>
 <!-- token-benchmark:aggregate:end -->
 
+### 原理和自己动手做
+
+精简主要靠三种方法：
+
+1. **说明写短**：同一件事只说一遍；schema 已经表达的类型、枚举、长度不再用文字重复；去掉只对人有用的界面说明和 MUST 这类狠话。代码能处理的交给代码，比如缺了能确定补全的参数就直接补。
+2. **合并工具**：多个工具合成一个，用 `op` 区分操作，冷门参数放进 `op: help`，要用时再查。
+3. **会话中途不改工具列表**：工具定义在请求最前面，中途增减工具会让之前的 prompt 缓存全部失效。所以 `pi-web-access-lean` 拦掉了上游的 `web_enable`。
+
+原理、原文对比和 Anthropic 的相关说法，见文章：[中文（知乎）](https://zhuanlan.zhihu.com/p/2087689382069383746) · [English (dev.to)](https://dev.to/shengkai_su/cut-91-of-your-tool-prompts-a-practical-guide-for-pi-agent-users-and-extension-authors-4jo9)。想给别的扩展做 lean 版，可以直接用[这两段提示词](docs/make-your-own-lean.zh-CN.md)交给 agent：一段用来做，一段用来跟进上游更新。
+
 ## 搭配使用的组件
 
 | 管哪部分 | 组件 | 做什么 |

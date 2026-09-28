@@ -59,6 +59,16 @@ Across all 5 wrappers, recurring initialization context is reduced by **14,275 t
 </details>
 <!-- token-benchmark:aggregate:end -->
 
+### How it works, and making your own
+
+The trimming comes down to three methods:
+
+1. **Shorter descriptions**: say each thing once; don't repeat types, enums, or lengths the schema already expresses; drop UI notes meant for humans and aggressive MUST-style wording. Let code handle what code can, such as filling in a missing parameter when the guess can't be wrong.
+2. **Merge tools**: combine several tools into one with an `op` parameter, and move rarely used options behind `op: help`.
+3. **Keep the tool list fixed for the session**: tool definitions sit at the front of the request, so adding or removing tools mid-session invalidates the whole prompt cache. That's why `pi-web-access-lean` blocks upstream's `web_enable`.
+
+For the reasoning, before/after examples, and what Anthropic says about it, see the article: [English (dev.to)](https://dev.to/shengkai_su/cut-91-of-your-tool-prompts-a-practical-guide-for-pi-agent-users-and-extension-authors-4jo9) · [中文（知乎）](https://zhuanlan.zhihu.com/p/2087689382069383746). To make a lean version of another extension, hand [these two prompts](docs/make-your-own-lean.md) to your agent: one to build it, one to keep it in sync with upstream.
+
 ## Companion tools
 
 | Area | Tool | What it does |
