@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-27T14:27:02.376Z",
+  "generatedAt": "2026-10-02T13:29:15.148Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
-  "piVersion": "0.87.1",
+  "piVersion": "1.0.0",
   "totals": {
-    "leanTokens": 1420,
+    "leanTokens": 1450,
     "upstreamTokens": 15695,
-    "savedTokens": 14275,
-    "reductionPercent": 91
+    "savedTokens": 14245,
+    "reductionPercent": 90.8
   },
   "extensions": [
     {
@@ -23,8 +23,8 @@
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 152,
-            "toolTokens": 152,
+            "totalTokens": 153,
+            "toolTokens": 153,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -34,12 +34,12 @@
             "tools": [
               {
                 "name": "web_access",
-                "chars": 608,
-                "tokens": 152,
+                "chars": 609,
+                "tokens": 153,
                 "descriptionChars": 121,
                 "schemaChars": 266,
                 "snippetChars": 0,
-                "guidelineChars": 208
+                "guidelineChars": 209
               }
             ]
           },
@@ -94,8 +94,8 @@
               }
             ]
           },
-          "savedTokens": 2801,
-          "reductionPercent": 94.9
+          "savedTokens": 2800,
+          "reductionPercent": 94.8
         }
       ]
     },
@@ -112,8 +112,8 @@
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 215,
-            "toolTokens": 215,
+            "totalTokens": 220,
+            "toolTokens": 220,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -123,12 +123,12 @@
             "tools": [
               {
                 "name": "ask_user_question",
-                "chars": 860,
-                "tokens": 215,
+                "chars": 879,
+                "tokens": 220,
                 "descriptionChars": 70,
                 "schemaChars": 546,
                 "snippetChars": 0,
-                "guidelineChars": 224
+                "guidelineChars": 243
               }
             ]
           },
@@ -153,8 +153,8 @@
               }
             ]
           },
-          "savedTokens": 1043,
-          "reductionPercent": 82.9
+          "savedTokens": 1038,
+          "reductionPercent": 82.5
         }
       ]
     },
@@ -171,8 +171,8 @@
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 248,
-            "toolTokens": 248,
+            "totalTokens": 250,
+            "toolTokens": 250,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -182,12 +182,12 @@
             "tools": [
               {
                 "name": "todo",
-                "chars": 992,
-                "tokens": 248,
+                "chars": 998,
+                "tokens": 250,
                 "descriptionChars": 119,
                 "schemaChars": 631,
                 "snippetChars": 0,
-                "guidelineChars": 235
+                "guidelineChars": 241
               }
             ]
           },
@@ -212,8 +212,8 @@
               }
             ]
           },
-          "savedTokens": 656,
-          "reductionPercent": 72.6
+          "savedTokens": 654,
+          "reductionPercent": 72.3
         }
       ]
     },
@@ -230,8 +230,8 @@
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 268,
-            "toolTokens": 268,
+            "totalTokens": 275,
+            "toolTokens": 275,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -241,12 +241,12 @@
             "tools": [
               {
                 "name": "subagent",
-                "chars": 1070,
-                "tokens": 268,
+                "chars": 1100,
+                "tokens": 275,
                 "descriptionChars": 86,
                 "schemaChars": 543,
                 "snippetChars": 0,
-                "guidelineChars": 430
+                "guidelineChars": 460
               }
             ]
           },
@@ -301,8 +301,8 @@
               }
             ]
           },
-          "savedTokens": 8272,
-          "reductionPercent": 96.9
+          "savedTokens": 8265,
+          "reductionPercent": 96.8
         }
       ]
     },
@@ -319,8 +319,8 @@
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 537,
-            "toolTokens": 537,
+            "totalTokens": 552,
+            "toolTokens": 552,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -334,48 +334,48 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 343,
-                "tokens": 86,
+                "chars": 349,
+                "tokens": 88,
                 "descriptionChars": 65,
                 "schemaChars": 156,
                 "snippetChars": 0,
-                "guidelineChars": 115
+                "guidelineChars": 121
               },
               {
                 "name": "replace",
-                "chars": 588,
-                "tokens": 147,
+                "chars": 597,
+                "tokens": 150,
                 "descriptionChars": 64,
                 "schemaChars": 244,
                 "snippetChars": 0,
-                "guidelineChars": 270
+                "guidelineChars": 279
               },
               {
                 "name": "insert",
-                "chars": 499,
-                "tokens": 125,
+                "chars": 507,
+                "tokens": 127,
                 "descriptionChars": 63,
                 "schemaChars": 273,
                 "snippetChars": 0,
-                "guidelineChars": 154
+                "guidelineChars": 162
               },
               {
                 "name": "anchor_grep",
-                "chars": 463,
-                "tokens": 116,
+                "chars": 476,
+                "tokens": 119,
                 "descriptionChars": 64,
                 "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 83
+                "guidelineChars": 96
               },
               {
                 "name": "undo_last_change",
-                "chars": 251,
-                "tokens": 63,
+                "chars": 269,
+                "tokens": 68,
                 "descriptionChars": 62,
                 "schemaChars": 77,
                 "snippetChars": 0,
-                "guidelineChars": 93
+                "guidelineChars": 111
               }
             ]
           },
@@ -440,15 +440,15 @@
               }
             ]
           },
-          "savedTokens": 1503,
-          "reductionPercent": 73.7
+          "savedTokens": 1488,
+          "reductionPercent": 72.9
         },
         {
           "id": "anchor-grep",
           "label": "With anchor_grep",
           "lean": {
-            "totalTokens": 537,
-            "toolTokens": 537,
+            "totalTokens": 552,
+            "toolTokens": 552,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -462,48 +462,48 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 343,
-                "tokens": 86,
+                "chars": 349,
+                "tokens": 88,
                 "descriptionChars": 65,
                 "schemaChars": 156,
                 "snippetChars": 0,
-                "guidelineChars": 115
+                "guidelineChars": 121
               },
               {
                 "name": "replace",
-                "chars": 588,
-                "tokens": 147,
+                "chars": 597,
+                "tokens": 150,
                 "descriptionChars": 64,
                 "schemaChars": 244,
                 "snippetChars": 0,
-                "guidelineChars": 270
+                "guidelineChars": 279
               },
               {
                 "name": "insert",
-                "chars": 499,
-                "tokens": 125,
+                "chars": 507,
+                "tokens": 127,
                 "descriptionChars": 63,
                 "schemaChars": 273,
                 "snippetChars": 0,
-                "guidelineChars": 154
+                "guidelineChars": 162
               },
               {
                 "name": "anchor_grep",
-                "chars": 463,
-                "tokens": 116,
+                "chars": 476,
+                "tokens": 119,
                 "descriptionChars": 64,
                 "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 83
+                "guidelineChars": 96
               },
               {
                 "name": "undo_last_change",
-                "chars": 251,
-                "tokens": 63,
+                "chars": 269,
+                "tokens": 68,
                 "descriptionChars": 62,
                 "schemaChars": 77,
                 "snippetChars": 0,
-                "guidelineChars": 93
+                "guidelineChars": 111
               }
             ]
           },
@@ -568,8 +568,8 @@
               }
             ]
           },
-          "savedTokens": 1503,
-          "reductionPercent": 73.7
+          "savedTokens": 1488,
+          "reductionPercent": 72.9
         }
       ]
     }

@@ -39,19 +39,19 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 <!-- token-benchmark:aggregate:start -->
 | Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
-| `pi-web-access-lean` | **152** | 2,953 | 2,801 | **94.9%** |
-| `rpiv-ask-user-question-lean` | **215** | 1,258 | 1,043 | **82.9%** |
-| `rpiv-todo-lean` | **248** | 904 | 656 | **72.6%** |
-| `pi-subagents-lean` | **268** | 8,540 | 8,272 | **96.9%** |
-| `pi-hashline-edit-pro-lean` | **537** | 2,040 | 1,503 | **73.7%** |
-| **Total** | **1,420** | **15,695** | **14,275** | **91.0%** |
+| `pi-web-access-lean` | **153** | 2,953 | 2,800 | **94.8%** |
+| `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
+| `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
+| `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
+| `pi-hashline-edit-pro-lean` | **552** | 2,040 | 1,488 | **72.9%** |
+| **Total** | **1,450** | **15,695** | **14,245** | **90.8%** |
 
-Across all 5 wrappers, recurring initialization context is reduced by **14,275 tokens (91.0%)** versus their pinned upstream versions.
+Across all 5 wrappers, recurring initialization context is reduced by **14,245 tokens (90.8%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
 
-* Test environment: Pi `0.87.1` using the repository's automated benchmark tool.
+* Test environment: Pi `1.0.0` using the repository's automated benchmark tool.
 * Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
 * Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
 * Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
