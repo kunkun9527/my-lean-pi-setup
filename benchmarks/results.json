@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T14:27:19.673Z",
+  "generatedAt": "2026-10-02T14:41:39.018Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.0.0",
   "totals": {
     "leanTokens": 1450,
-    "upstreamTokens": 15695,
-    "savedTokens": 14245,
+    "upstreamTokens": 15721,
+    "savedTokens": 14271,
     "reductionPercent": 90.8
   },
   "extensions": [
@@ -15,9 +15,9 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.32.1",
+      "leanVersion": "0.35.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.32.0",
+      "upstreamVersion": "0.35.0",
       "profiles": [
         {
           "id": "default",
@@ -44,8 +44,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 2953,
-            "toolTokens": 2953,
+            "totalTokens": 2979,
+            "toolTokens": 2979,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -58,19 +58,19 @@
             "tools": [
               {
                 "name": "web_search",
-                "chars": 4682,
-                "tokens": 1171,
-                "descriptionChars": 1399,
-                "schemaChars": 3069,
+                "chars": 4751,
+                "tokens": 1188,
+                "descriptionChars": 1429,
+                "schemaChars": 3108,
                 "snippetChars": 201,
                 "guidelineChars": 0
               },
               {
                 "name": "source_check",
-                "chars": 2433,
-                "tokens": 609,
+                "chars": 2472,
+                "tokens": 618,
                 "descriptionChars": 134,
-                "schemaChars": 2167,
+                "schemaChars": 2206,
                 "snippetChars": 117,
                 "guidelineChars": 0
               },
@@ -94,8 +94,8 @@
               }
             ]
           },
-          "savedTokens": 2800,
-          "reductionPercent": 94.8
+          "savedTokens": 2826,
+          "reductionPercent": 94.9
         }
       ]
     },
@@ -104,9 +104,9 @@
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
-      "leanVersion": "2.11.1",
+      "leanVersion": "2.12.0",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
-      "upstreamVersion": "2.11.0",
+      "upstreamVersion": "2.12.0",
       "profiles": [
         {
           "id": "default",
@@ -163,9 +163,9 @@
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "leanPackage": "@ssk_dev/rpiv-todo-lean",
-      "leanVersion": "2.11.1",
+      "leanVersion": "2.12.0",
       "upstreamPackage": "@juicesharp/rpiv-todo",
-      "upstreamVersion": "2.11.0",
+      "upstreamVersion": "2.12.0",
       "profiles": [
         {
           "id": "default",
