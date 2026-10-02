@@ -12,7 +12,7 @@
 
 1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
 2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 装官方的 [`billion-context-pi`](#billion-context) 并打开 `lean` 提示词包，处理长对话。
+3. 处理长对话：[`billion-context-pi`](#billion-context) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#历史对话二选一)。
 4. 只把你真正常用的工具换成[精简版](#精简版扩展)。
 5. 再用 `pi-context-view` 测一次，看省了多少。
 
@@ -73,9 +73,26 @@
 
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 历史对话 | [Billion Context](#billion-context)（官方版） | 把旧对话压成摘要，需要时找回细节 |
+| 历史对话 | [Billion Context](#billion-context) 或 [pi-blackhole](#pi-blackhole)（二选一） | 长对话的上下文压缩与回溯 |
 | 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
 | 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
+
+### 历史对话：二选一
+
+Billion Context 和 pi-blackhole 都管长对话的上下文，但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
+
+| | Billion Context | pi-blackhole |
+| --- | --- | --- |
+| 谁来压缩 | 模型自己决定什么时候压、压哪一段，写出摘要 | 程序按规则提取目标、文件、提交、偏好等，不调用模型 |
+| 压缩成本 | 模型要输出摘要，花输出 token | 压缩本身零成本 |
+| 找回原文 | `decompress` 把原文还原回上下文 | `recall` 搜原始会话记录，按需取回片段 |
+| 缓存 | 对缓存友好 | 压缩后用提取的信息和记忆重写前缀，要重新写一次缓存，但量不大 |
+| 额外要求 | 无 | 自带的记忆功能靠后台 worker 运行，要配一个便宜的模型 |
+
+**怎么选：**
+
+* **有便宜的模型可用**（比如 GPT Luna，或者本地模型）：用 **pi-blackhole**。压缩不花主模型的钱，记忆交给便宜模型在后台做。
+* **只用一个模型**：用 **Billion Context**。不用额外配模型，摘要由模型自己写，质量更稳。
 
 ### Billion Context
 
@@ -99,6 +116,34 @@
 `lean` 包有意保留了比较详细的 `howToCompress` 规则，弱一点的模型靠这些规则才不会压出幻觉。用前沿模型还想再压的话，可以在同一个文件里用 `promptSections` / `prompts` 覆盖对应段落，见官方的 [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md)。
 
 > 我以前做的 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 已经合入官方（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)），不再维护。
+
+### pi-blackhole
+
+[pi-blackhole](https://github.com/k0valik/pi-blackhole) 用算法压缩替代 Pi 自带的 `/compact`，从旧对话里提取结构化信息，不调用模型。它自带观察式记忆：后台 worker 持续记下关键事实和决策，压缩时一起带上。
+
+1. 安装：`pi install npm:pi-blackhole`。装过单独的 `pi-vcc` 或 `pi-observational-memory` 的话，先卸掉。
+2. **给记忆 worker 配便宜的模型。** 在 `~/.pi/agent/pi-blackhole/pi-blackhole-config.json` 里写：
+
+   ```json
+   {
+     "observerModel":  { "provider": "...", "id": "..." },
+     "reflectorModel": { "provider": "...", "id": "..." },
+     "dropperModel":   { "provider": "...", "id": "..." }
+   }
+   ```
+
+   这一步一定要做。不配的话，worker 会默认改用你的主模型，照样花主模型的钱。想彻底避免这种情况，可以再加 `"sessionFallback": false`，这样没有可用的便宜模型时就跳过记忆。也可以用 `/blackhole settings` 在界面里配置，详见官方的 [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md)。
+3. `/reload` 或重启 Pi 后生效。
+
+默认情况下，压缩后只保留最近一条用户消息及之后的内容，更早的细节靠摘要、记忆和 `recall` 找回。
+
+> **非英语用户注意**：原版对中文等非英语内容支持一般，比如 token 估算偏低、`recall` 搜不准中文关键词。我维护了一个[增强中文支持的 fork](https://github.com/kunkun9527/pi-blackhole)，**目前仍处于非常实验性的阶段**，愿意尝鲜可以这样装：
+>
+> ```bash
+> pi install git:github.com/kunkun9527/pi-blackhole
+> ```
+>
+> 用 git 安装需要先在 `~/.pi/agent/settings.json` 里设置 `"npmCommand": ["npm"]`。原版和 fork 只能装一个。
 
 ### pi-docs-slim
 

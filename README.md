@@ -12,7 +12,7 @@ This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use 
 
 1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
 2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
-3. Add the official [`billion-context-pi`](#billion-context) with its `lean` prompt pack for long conversations.
+3. For long conversations, pick one: [`billion-context-pi`](#billion-context) or [`pi-blackhole`](#pi-blackhole). See [which one](#conversation-history-pick-one).
 4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
 5. Measure again with `pi-context-view` to see what you saved.
 
@@ -73,9 +73,26 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 
 | Area | Tool | What it does |
 | --- | --- | --- |
-| Conversation history | [Billion Context](#billion-context) (official) | Summarizes old turns and brings details back when needed |
+| Conversation history | [Billion Context](#billion-context) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts long conversations and brings details back |
 | Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
 | Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
+
+### Conversation history: pick one
+
+Billion Context and pi-blackhole both manage long-conversation context, but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
+
+| | Billion Context | pi-blackhole |
+| --- | --- | --- |
+| Who compacts | The model decides when and what to compress, and writes the summary | Code extracts goals, files, commits, preferences, etc. by rule; no model call |
+| Compaction cost | The model spends output tokens on summaries | Compaction itself is free |
+| Getting originals back | `decompress` restores the original content into context | `recall` searches the raw session log and returns snippets on demand |
+| Cache | Cache-friendly | After compaction, the extracted info and memory form a new prefix that has to be cached again, but it's small |
+| Extra requirement | None | Its built-in memory runs as background workers that need a cheap model |
+
+**Which one:**
+
+* **You have a cheap model** (e.g. GPT Luna, or a local model): use **pi-blackhole**. Compaction costs nothing on your main model, and the cheap model handles memory in the background.
+* **You use a single model**: use **Billion Context**. No extra model to set up, and the model writes its own summaries, so quality is steadier.
 
 ### Billion Context
 
@@ -99,6 +116,34 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 The `lean` pack deliberately keeps the detailed `howToCompress` rules, because weaker models need them to avoid hallucinated summaries. If you run frontier models and want to trim further, override those sections in the same file with `promptSections` / `prompts`; see upstream [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md).
 
 > My old [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) has been merged upstream (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)) and is no longer maintained.
+
+### pi-blackhole
+
+[pi-blackhole](https://github.com/k0valik/pi-blackhole) replaces Pi's built-in `/compact` with algorithmic compaction: it extracts structured information from older turns without calling a model. It also has observational memory: background workers keep recording key facts and decisions, which are carried into each compaction.
+
+1. Install: `pi install npm:pi-blackhole`. If you have standalone `pi-vcc` or `pi-observational-memory` installed, remove them first.
+2. **Point the memory workers at a cheap model.** In `~/.pi/agent/pi-blackhole/pi-blackhole-config.json`:
+
+   ```json
+   {
+     "observerModel":  { "provider": "...", "id": "..." },
+     "reflectorModel": { "provider": "...", "id": "..." },
+     "dropperModel":   { "provider": "...", "id": "..." }
+   }
+   ```
+
+   Don't skip this. Without it, the workers fall back to your main model by default and you pay main-model prices. To rule that out entirely, also set `"sessionFallback": false`, so memory is skipped when no cheap model is available. You can also configure it in `/blackhole settings`; see upstream [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md).
+3. `/reload` or restart Pi.
+
+By default, compaction keeps only your latest message and what follows it; earlier details come back through the summary, memory, and `recall`.
+
+> **Non-English users**: upstream's support for Chinese and other non-English text is limited (token estimates run low, and `recall` struggles with Chinese keywords). I maintain a [fork with better Chinese support](https://github.com/kunkun9527/pi-blackhole). **It's still highly experimental.** To try it:
+>
+> ```bash
+> pi install git:github.com/kunkun9527/pi-blackhole
+> ```
+>
+> Installing from git requires `"npmCommand": ["npm"]` in `~/.pi/agent/settings.json`. Install either upstream or the fork, not both.
 
 ### pi-docs-slim
 
