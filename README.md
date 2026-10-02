@@ -128,7 +128,7 @@ The `lean` pack deliberately keeps the detailed `howToCompress` rules, because w
 [pi-blackhole](https://github.com/k0valik/pi-blackhole) replaces Pi's built-in `/compact` with algorithmic compaction: it extracts structured information from older turns without calling a model. It also has observational memory: background workers keep recording key facts and decisions, which are carried into each compaction.
 
 1. Install: `pi install npm:pi-blackhole`. If you have standalone `pi-vcc` or `pi-observational-memory` installed, remove them first.
-2. **Point the memory workers at a cheap model.** In `~/.pi/agent/pi-blackhole/pi-blackhole-config.json`:
+2. **Recommended: point the memory workers at a cheap model.** In `~/.pi/agent/pi-blackhole/pi-blackhole-config.json`:
 
    ```json
    {
@@ -138,7 +138,7 @@ The `lean` pack deliberately keeps the detailed `howToCompress` rules, because w
    }
    ```
 
-   Don't skip this. Without it, the workers fall back to your main model by default and you pay main-model prices. To rule that out entirely, also set `"sessionFallback": false`, so memory is skipped when no cheap model is available. You can also configure it in `/blackhole settings`; see upstream [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md).
+   I'd suggest doing this: without it, the workers fall back to your main model by default and you pay main-model prices. To rule that out entirely, also set `"sessionFallback": false`, so memory is skipped when no cheap model is available. You can also configure it in `/blackhole settings`; see upstream [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md).
 3. **Recommended: lower the compaction threshold.** By default, a 1M window isn't compacted until it's 40% full (about 419k). This is the curve I use, which keeps 1M models around 200k; add it to the same config file:
 
    ```json

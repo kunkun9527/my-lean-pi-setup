@@ -128,7 +128,7 @@ billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个�
 [pi-blackhole](https://github.com/k0valik/pi-blackhole) 用算法压缩替代 Pi 自带的 `/compact`，从旧对话里提取结构化信息，不调用模型。它自带观察式记忆：后台 worker 持续记下关键事实和决策，压缩时一起带上。
 
 1. 安装：`pi install npm:pi-blackhole`。装过单独的 `pi-vcc` 或 `pi-observational-memory` 的话，先卸掉。
-2. **给记忆 worker 配便宜的模型。** 在 `~/.pi/agent/pi-blackhole/pi-blackhole-config.json` 里写：
+2. **推荐：给记忆 worker 配便宜的模型。** 在 `~/.pi/agent/pi-blackhole/pi-blackhole-config.json` 里写：
 
    ```json
    {
@@ -138,7 +138,7 @@ billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个�
    }
    ```
 
-   这一步一定要做。不配的话，worker 会默认改用你的主模型，照样花主模型的钱。想彻底避免这种情况，可以再加 `"sessionFallback": false`，这样没有可用的便宜模型时就跳过记忆。也可以用 `/blackhole settings` 在界面里配置，详见官方的 [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md)。
+   我建议配上。不配的话，worker 会默认改用你的主模型，照样花主模型的钱。想彻底避免这种情况，可以再加 `"sessionFallback": false`，这样没有可用的便宜模型时就跳过记忆。也可以用 `/blackhole settings` 在界面里配置，详见官方的 [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md)。
 3. **推荐：调低压缩阈值。** 默认 1M 窗口要用到 40%（约 419k）才压缩。这是我在用的曲线，把 1M 模型控制在 200k 左右，同样写在上面那个配置文件里：
 
    ```json
