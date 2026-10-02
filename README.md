@@ -81,6 +81,8 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 
 Billion Context and pi-blackhole both manage long-conversation context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
 
+The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). Billion Context does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
+
 | | Billion Context | pi-blackhole |
 | --- | --- | --- |
 | Who compacts | The model decides when and what to compress, and writes the summary | Code extracts goals, files, commits, preferences, etc. by rule; no model call |
@@ -97,6 +99,8 @@ Billion Context and pi-blackhole both manage long-conversation context (say, one
 ### Billion Context
 
 [Billion Context](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
+
+By default it nudges the model to compress each time context grows by about 50k, which usually keeps context under 150k with no tuning.
 
 **Use the official version and turn on its `lean` prompt pack.** Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` pack, but it's off by default:
 
@@ -133,7 +137,23 @@ The `lean` pack deliberately keeps the detailed `howToCompress` rules, because w
    ```
 
    Don't skip this. Without it, the workers fall back to your main model by default and you pay main-model prices. To rule that out entirely, also set `"sessionFallback": false`, so memory is skipped when no cheap model is available. You can also configure it in `/blackhole settings`; see upstream [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md).
-3. `/reload` or restart Pi.
+3. **Recommended: lower the compaction threshold.** By default, a 1M window isn't compacted until it's 40% full (about 419k). This is the curve I use, which keeps 1M models around 200k; add it to the same config file:
+
+   ```json
+   {
+     "compactAfterPreset": "smart-zone",
+     "compactAfterPresets": {
+       "smart-zone": [
+         { "window": 131072,  "ratio": 0.8 },
+         { "window": 272000,  "ratio": 0.7 },
+         { "window": 1000000, "ratio": 0.175 }
+       ]
+     }
+   }
+   ```
+
+   `ratio` is the fraction of the window at which compaction fires. Between points it changes linearly; past the last point it stays constant. For example, a 128k window compacts at about 102k, 272k at about 190k, and 1M at about 175k.
+4. `/reload` or restart Pi.
 
 By default, compaction keeps only your latest message and what follows it; earlier details come back through the summary, memory, and `recall`.
 

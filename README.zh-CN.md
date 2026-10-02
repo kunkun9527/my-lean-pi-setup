@@ -81,6 +81,8 @@
 
 Billion Context 和 pi-blackhole 都管长对话的上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
+两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。Billion Context 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
+
 | | Billion Context | pi-blackhole |
 | --- | --- | --- |
 | 谁来压缩 | 模型自己决定什么时候压、压哪一段，写出摘要 | 程序按规则提取目标、文件、提交、偏好等，不调用模型 |
@@ -97,6 +99,8 @@ Billion Context 和 pi-blackhole 都管长对话的上下文（比如一个会�
 ### Billion Context
 
 [Billion Context](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长对话、上下文窗口小的模型最用得上。
+
+默认上下文每增长约 50k，就会提醒模型压缩一次，通常能把上下文维持在 150k 以内，不需要额外调。
 
 **请直接用官方版，并打开它的 `lean` 提示词包。** 官方把我那版精简提示词（保留了大约九成）做成了内置的 `lean` 提示词包，但默认不启用：
 
@@ -133,7 +137,23 @@ Billion Context 和 pi-blackhole 都管长对话的上下文（比如一个会�
    ```
 
    这一步一定要做。不配的话，worker 会默认改用你的主模型，照样花主模型的钱。想彻底避免这种情况，可以再加 `"sessionFallback": false`，这样没有可用的便宜模型时就跳过记忆。也可以用 `/blackhole settings` 在界面里配置，详见官方的 [CONFIG.md](https://github.com/k0valik/pi-blackhole/blob/main/docs/CONFIG.md)。
-3. `/reload` 或重启 Pi 后生效。
+3. **推荐：调低压缩阈值。** 默认 1M 窗口要用到 40%（约 419k）才压缩。这是我在用的曲线，把 1M 模型控制在 200k 左右，同样写在上面那个配置文件里：
+
+   ```json
+   {
+     "compactAfterPreset": "smart-zone",
+     "compactAfterPresets": {
+       "smart-zone": [
+         { "window": 131072,  "ratio": 0.8 },
+         { "window": 272000,  "ratio": 0.7 },
+         { "window": 1000000, "ratio": 0.175 }
+       ]
+     }
+   }
+   ```
+
+   `ratio` 表示用到窗口的多少比例时压缩，两个点之间按比例过渡，超出最后一个点后比例不变。比如 128k 窗口约 102k 时压缩，272k 窗口约 190k，1M 窗口约 175k。
+4. `/reload` 或重启 Pi 后生效。
 
 默认情况下，压缩后只保留最近一条用户消息及之后的内容，更早的细节靠摘要、记忆和 `recall` 找回。
 
