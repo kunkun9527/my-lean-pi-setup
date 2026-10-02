@@ -5,14 +5,14 @@
 这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。仓库里有三样东西：
 
 * **5 个常用扩展的精简版**：功能不变，常驻上下文合计少约 91%。
-* **3 个搭配使用的组件**：分别处理长对话、基础 Prompt 和用量查看。
+* **3 个搭配使用的组件**：分别负责长上下文管理、基础 Prompt 和用量查看。
 * **一份 `AGENTS.md` 规则模板**。
 
 ## 快速开始
 
 1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
 2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 处理长对话：[`billion-context-pi`](#billion-context) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#历史对话二选一)。
+3. 长上下文管理：[`billion-context-pi`](#billion-context) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#长上下文管理二选一)。
 4. 只把你真正常用的工具换成[精简版](#精简版扩展)。
 5. 再用 `pi-context-view` 测一次，看省了多少。
 
@@ -73,13 +73,13 @@
 
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 历史对话 | [Billion Context](#billion-context) 或 [pi-blackhole](#pi-blackhole)（二选一） | 长对话的上下文压缩与回溯 |
+| 长上下文管理 | [Billion Context](#billion-context) 或 [pi-blackhole](#pi-blackhole)（二选一） | 压缩较早的上下文，需要时找回细节 |
 | 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
 | 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
 
-### 历史对话：二选一
+### 长上下文管理：二选一
 
-Billion Context 和 pi-blackhole 都管长对话的上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
+Billion Context 和 pi-blackhole 都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
 两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。Billion Context 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
 
@@ -100,7 +100,7 @@ Billion Context 和 pi-blackhole 都管长对话的上下文（比如一个会�
 
 ### Billion Context
 
-[Billion Context](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长对话、上下文窗口小的模型最用得上。
+[Billion Context](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长会话、上下文窗口小的模型最用得上。
 
 默认上下文每增长约 50k，就会提醒模型压缩一次，通常能把上下文维持在 150k 以内，不需要额外调。
 

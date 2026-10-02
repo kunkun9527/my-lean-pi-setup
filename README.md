@@ -5,14 +5,14 @@
 This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. The repo has three parts:
 
 * **Lean versions of 5 popular extensions**: same features, about 91% less always-on context combined.
-* **3 companion tools**: for long conversations, the base prompt, and seeing where tokens go.
+* **3 companion tools**: for long-context management, the base prompt, and seeing where tokens go.
 * **An `AGENTS.md` template**.
 
 ## Getting started
 
 1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
 2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
-3. For long conversations, pick one: [`billion-context-pi`](#billion-context) or [`pi-blackhole`](#pi-blackhole). See [which one](#conversation-history-pick-one).
+3. For long-context management, pick one: [`billion-context-pi`](#billion-context) or [`pi-blackhole`](#pi-blackhole). See [which one](#long-context-management-pick-one).
 4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
 5. Measure again with `pi-context-view` to see what you saved.
 
@@ -73,13 +73,13 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 
 | Area | Tool | What it does |
 | --- | --- | --- |
-| Conversation history | [Billion Context](#billion-context) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts long conversations and brings details back |
+| Long-context management | [Billion Context](#billion-context) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts older context and brings details back |
 | Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
 | Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
 
-### Conversation history: pick one
+### Long-context management: pick one
 
-Billion Context and pi-blackhole both manage long-conversation context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
+Billion Context and pi-blackhole both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
 
 The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). Billion Context does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
 
