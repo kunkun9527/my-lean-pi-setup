@@ -83,6 +83,8 @@ Billion Context and pi-blackhole both manage long-conversation context (say, one
 
 The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). Billion Context does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
 
+**Why around 200k: quality, and also cost.** Every turn resends the whole context to the model. Even with cheap cache reads, each turn costs more as the context grows. Compacting also has a fixed cost: the cache has to be rewritten, and Billion Context also has the model write a summary. Compact too often and you keep paying that fixed cost; compact too late and every turn pays for a long tail of old context. In between there is a cheapest point, which you can work out from your model's pricing and how you work. Using Opus 5.5 pricing with pi-blackhole (compaction needs no output tokens, and I ignore the cost of the cheap background model), I estimate that point at about 150k–200k, right inside the smart zone. With Billion Context you also need to count the output tokens for the summary, which pushes the cheapest point a bit later, but the method is the same.
+
 | | Billion Context | pi-blackhole |
 | --- | --- | --- |
 | Who compacts | The model decides when and what to compress, and writes the summary | Code extracts goals, files, commits, preferences, etc. by rule; no model call |
