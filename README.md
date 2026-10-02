@@ -12,7 +12,7 @@ This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use 
 
 1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
 2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
-3. For long-context management, pick one: [`billion-context-pi`](#billion-context) or [`pi-blackhole`](#pi-blackhole). See [which one](#long-context-management-pick-one).
+3. For long-context management, pick one: [`billion-context-pi`](#billion-context-pi) or [`pi-blackhole`](#pi-blackhole). See [which one](#long-context-management-pick-one).
 4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
 5. Measure again with `pi-context-view` to see what you saved.
 
@@ -73,19 +73,19 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 
 | Area | Tool | What it does |
 | --- | --- | --- |
-| Long-context management | [Billion Context](#billion-context) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts older context and brings details back |
+| Long-context management | [billion-context-pi](#billion-context-pi) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts older context and brings details back |
 | Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
 | Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
 
 ### Long-context management: pick one
 
-Billion Context and pi-blackhole both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
+billion-context-pi and pi-blackhole both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
 
-The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). Billion Context does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
+The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). billion-context-pi does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
 
-**Why around 200k: quality, and also cost.** Every turn resends the whole context to the model. Even with cheap cache reads, each turn costs more as the context grows. Compacting also has a fixed cost: the cache has to be rewritten, and Billion Context also has the model write a summary. Compact too often and you keep paying that fixed cost; compact too late and every turn pays for a long tail of old context. In between there is a cheapest point, which you can work out from your model's pricing and how you work. Using Opus 5.5 pricing with pi-blackhole (compaction needs no output tokens, and I ignore the cost of the cheap background model), I estimate that point at about 150k–200k, right inside the smart zone. With Billion Context you also need to count the output tokens for the summary, which pushes the cheapest point a bit later, but the method is the same.
+**Why around 200k: quality, and also cost.** Every turn resends the whole context to the model. Even with cheap cache reads, each turn costs more as the context grows. Compacting also has a fixed cost: the cache has to be rewritten, and billion-context-pi also has the model write a summary. Compact too often and you keep paying that fixed cost; compact too late and every turn pays for a long tail of old context. In between there is a cheapest point, which you can work out from your model's pricing and how you work. Using Opus 5.5 pricing with pi-blackhole (compaction needs no output tokens, and I ignore the cost of the cheap background model), I estimate that point at about 150k–200k, right inside the smart zone. With billion-context-pi you also need to count the output tokens for the summary, which pushes the cheapest point a bit later, but the method is the same.
 
-| | Billion Context | pi-blackhole |
+| | billion-context-pi | pi-blackhole |
 | --- | --- | --- |
 | Who compacts | The model decides when and what to compress, and writes the summary | Code extracts goals, files, commits, preferences, etc. by rule; no model call |
 | Compaction cost | The model spends output tokens on summaries | Compaction itself is free |
@@ -96,11 +96,11 @@ The core job of both is to keep context within a set range: even on a 1M-window 
 **Which one:**
 
 * **You have a cheap model** (e.g. GPT Luna, or a local model): use **pi-blackhole**. Compaction costs nothing on your main model, and the cheap model handles memory in the background.
-* **You use a single model**: use **Billion Context**. No extra model to set up, and the model writes its own summaries, so quality is steadier.
+* **You use a single model**: use **billion-context-pi**. No extra model to set up, and the model writes its own summaries, so quality is steadier.
 
-### Billion Context
+### billion-context-pi
 
-[Billion Context](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
+[billion-context-pi](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
 
 By default it nudges the model to compress each time context grows by about 50k, which usually keeps context under 150k with no tuning.
 

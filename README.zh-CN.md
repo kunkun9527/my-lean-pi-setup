@@ -12,7 +12,7 @@
 
 1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
 2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 长上下文管理：[`billion-context-pi`](#billion-context) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#长上下文管理二选一)。
+3. 长上下文管理：[`billion-context-pi`](#billion-context-pi) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#长上下文管理二选一)。
 4. 只把你真正常用的工具换成[精简版](#精简版扩展)。
 5. 再用 `pi-context-view` 测一次，看省了多少。
 
@@ -73,19 +73,19 @@
 
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 长上下文管理 | [Billion Context](#billion-context) 或 [pi-blackhole](#pi-blackhole)（二选一） | 压缩较早的上下文，需要时找回细节 |
+| 长上下文管理 | [billion-context-pi](#billion-context-pi) 或 [pi-blackhole](#pi-blackhole)（二选一） | 压缩较早的上下文，需要时找回细节 |
 | 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
 | 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
 
 ### 长上下文管理：二选一
 
-Billion Context 和 pi-blackhole 都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
+billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
-两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。Billion Context 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
+两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。billion-context-pi 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
 
-**为什么是 200k 左右：除了效果，还有成本。** 每轮对话都要把整个上下文重新发给模型。就算命中缓存、读取很便宜，每轮的花费还是会随上下文变长而增加。压缩一次也有固定成本：要重新写缓存，Billion Context 还要让模型输出摘要。压得太勤，这笔固定成本要反复付；压得太晚，每轮都在为一大段旧内容付钱。两者之间有一个最划算的点，可以按模型价格和自己的使用习惯算出来。我按 Opus 5.5 的价格，配合 pi-blackhole 估算过：它压缩时不用模型输出 token，后台便宜模型的花费可以忽略不计。算出来最划算的点大约在 150k–200k，正好落在 smart zone 里。用 Billion Context 的话，要把写摘要的输出 token 也算进去，最划算的点会往后挪一些，但算法一样。
+**为什么是 200k 左右：除了效果，还有成本。** 每轮对话都要把整个上下文重新发给模型。就算命中缓存、读取很便宜，每轮的花费还是会随上下文变长而增加。压缩一次也有固定成本：要重新写缓存，billion-context-pi 还要让模型输出摘要。压得太勤，这笔固定成本要反复付；压得太晚，每轮都在为一大段旧内容付钱。两者之间有一个最划算的点，可以按模型价格和自己的使用习惯算出来。我按 Opus 5.5 的价格，配合 pi-blackhole 估算过：它压缩时不用模型输出 token，后台便宜模型的花费可以忽略不计。算出来最划算的点大约在 150k–200k，正好落在 smart zone 里。用 billion-context-pi 的话，要把写摘要的输出 token 也算进去，最划算的点会往后挪一些，但算法一样。
 
-| | Billion Context | pi-blackhole |
+| | billion-context-pi | pi-blackhole |
 | --- | --- | --- |
 | 谁来压缩 | 模型自己决定什么时候压、压哪一段，写出摘要 | 程序按规则提取目标、文件、提交、偏好等，不调用模型 |
 | 压缩成本 | 模型要输出摘要，花输出 token | 压缩本身零成本 |
@@ -96,11 +96,11 @@ Billion Context 和 pi-blackhole 都负责管理长上下文（比如一个会�
 **怎么选：**
 
 * **有便宜的模型可用**（比如 GPT Luna，或者本地模型）：用 **pi-blackhole**。压缩不花主模型的钱，记忆交给便宜模型在后台做。
-* **只用一个模型**：用 **Billion Context**。不用额外配模型，摘要由模型自己写，质量更稳。
+* **只用一个模型**：用 **billion-context-pi**。不用额外配模型，摘要由模型自己写，质量更稳。
 
-### Billion Context
+### billion-context-pi
 
-[Billion Context](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长会话、上下文窗口小的模型最用得上。
+[billion-context-pi](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长会话、上下文窗口小的模型最用得上。
 
 默认上下文每增长约 50k，就会提醒模型压缩一次，通常能把上下文维持在 150k 以内，不需要额外调。
 
