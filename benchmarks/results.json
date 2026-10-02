@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T13:29:15.148Z",
+  "generatedAt": "2026-10-02T14:27:19.673Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.0.0",
   "totals": {
@@ -15,7 +15,7 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.32.0",
+      "leanVersion": "0.32.1",
       "upstreamPackage": "pi-web-access",
       "upstreamVersion": "0.32.0",
       "profiles": [
@@ -104,7 +104,7 @@
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
-      "leanVersion": "2.11.0",
+      "leanVersion": "2.11.1",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
       "upstreamVersion": "2.11.0",
       "profiles": [
@@ -163,7 +163,7 @@
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "leanPackage": "@ssk_dev/rpiv-todo-lean",
-      "leanVersion": "2.11.0",
+      "leanVersion": "2.11.1",
       "upstreamPackage": "@juicesharp/rpiv-todo",
       "upstreamVersion": "2.11.0",
       "profiles": [
@@ -222,7 +222,7 @@
       "directory": "pi-subagents-lean",
       "displayName": "Subagents",
       "leanPackage": "@ssk_dev/pi-subagents-lean",
-      "leanVersion": "0.19.0",
+      "leanVersion": "0.19.1",
       "upstreamPackage": "@tintinweb/pi-subagents",
       "upstreamVersion": "0.19.0",
       "profiles": [
@@ -311,7 +311,7 @@
       "directory": "pi-hashline-edit-pro-lean",
       "displayName": "Hashline Edit",
       "leanPackage": "pi-hashline-edit-pro-lean",
-      "leanVersion": "4.4.3-lean.1",
+      "leanVersion": "4.4.3-lean.2",
       "upstreamPackage": "pi-hashline-edit-pro",
       "upstreamVersion": "4.4.3",
       "profiles": [
