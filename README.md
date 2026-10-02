@@ -79,7 +79,7 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 
 ### Conversation history: pick one
 
-Billion Context and pi-blackhole both manage long-conversation context, but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
+Billion Context and pi-blackhole both manage long-conversation context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
 
 | | Billion Context | pi-blackhole |
 | --- | --- | --- |

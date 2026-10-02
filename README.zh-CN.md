@@ -79,7 +79,7 @@
 
 ### 历史对话：二选一
 
-Billion Context 和 pi-blackhole 都管长对话的上下文，但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
+Billion Context 和 pi-blackhole 都管长对话的上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
 | | Billion Context | pi-blackhole |
 | --- | --- | --- |
