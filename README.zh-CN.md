@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。仓库里有三样东西：
+这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。这样 token 更少、成本更低，模型也能把注意力放在真正重要的内容上，表现更聪明。仓库里有三样东西：
 
 * **5 个常用扩展的精简版**：功能不变，常驻上下文合计少约 91%。
 * **3 个搭配使用的组件**：分别负责长上下文管理、基础 Prompt 和用量查看。

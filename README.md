@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. The repo has three parts:
+This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. Fewer tokens means lower cost, and the model can focus on what matters, so it works smarter. The repo has three parts:
 
 * **Lean versions of 5 popular extensions**: same features, about 91% less always-on context combined.
 * **3 companion tools**: for long-context management, the base prompt, and seeing where tokens go.
