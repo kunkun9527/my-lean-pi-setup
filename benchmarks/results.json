@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T21:26:23.854Z",
+  "generatedAt": "2026-10-03T16:32:16.969Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.0.0",
   "totals": {
@@ -222,7 +222,7 @@
       "directory": "pi-subagents-lean",
       "displayName": "Subagents",
       "leanPackage": "@ssk_dev/pi-subagents-lean",
-      "leanVersion": "0.19.3",
+      "leanVersion": "0.19.4",
       "upstreamPackage": "@tintinweb/pi-subagents",
       "upstreamVersion": "0.19.0",
       "profiles": [
