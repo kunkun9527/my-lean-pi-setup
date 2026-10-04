@@ -42,16 +42,16 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | `pi-web-access-lean` | **153** | 2,979 | 2,826 | **94.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
-| `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
+| `pi-subagents-lean` | **275** | 8,553 | 8,278 | **96.8%** |
 | `pi-hashline-edit-pro-lean` | **552** | 2,040 | 1,488 | **72.9%** |
-| **Total** | **1,450** | **15,721** | **14,271** | **90.8%** |
+| **Total** | **1,450** | **15,734** | **14,284** | **90.8%** |
 
-Across all 5 wrappers, recurring initialization context is reduced by **14,271 tokens (90.8%)** versus their pinned upstream versions.
+Across all 5 wrappers, recurring initialization context is reduced by **14,284 tokens (90.8%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
 
-* Test environment: Pi `1.0.0` using the repository's automated benchmark tool.
+* Test environment: Pi `1.0.2` using the repository's automated benchmark tool.
 * Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
 * Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
 * Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
@@ -104,7 +104,10 @@ The core job of both is to keep context within a set range: even on a 1M-window 
 
 By default it nudges the model to compress each time context grows by about 50k, which usually keeps context under 150k with no tuning.
 
-**Use the official version and turn on its `lean` prompt pack.** Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` pack, but it's off by default:
+**Use the official version and turn on its `lean` prompt pack.** Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` pack, but it's off by default.
+
+<details>
+<summary><b>Setup</b>: install and turn on the <code>lean</code> pack</summary>
 
 1. Install: `pi install npm:billion-context-pi`.
 2. In `~/.pi/acp.json` (global) or `<project>/.pi/acp.json` (one project), add:
@@ -121,11 +124,16 @@ By default it nudges the model to compress each time context grows by about 50k,
 
 The `lean` pack deliberately keeps the detailed `howToCompress` rules, because weaker models need them to avoid hallucinated summaries. If you run frontier models and want to trim further, override those sections in the same file with `promptSections` / `prompts`; see upstream [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md).
 
+</details>
+
 > My old [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) has been merged upstream (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)) and is no longer maintained.
 
 ### pi-blackhole
 
 [pi-blackhole](https://github.com/k0valik/pi-blackhole) replaces Pi's built-in `/compact` with algorithmic compaction: it extracts structured information from older turns without calling a model. It also has observational memory: background workers keep recording key facts and decisions, which are carried into each compaction.
+
+<details>
+<summary><b>Setup</b>: install, give memory a cheap model, lower the compaction threshold</summary>
 
 1. Install: `pi install npm:pi-blackhole`. If you have standalone `pi-vcc` or `pi-observational-memory` installed, remove them first.
 2. **Recommended: point the memory workers at a cheap model.** In `~/.pi/agent/pi-blackhole/pi-blackhole-config.json`:
@@ -159,13 +167,20 @@ The `lean` pack deliberately keeps the detailed `howToCompress` rules, because w
 
 By default, compaction keeps only your latest message and what follows it; earlier details come back through the summary, memory, and `recall`.
 
-> **Non-English users**: upstream's support for Chinese and other non-English text is limited (token estimates run low, and `recall` struggles with Chinese keywords). I maintain a [fork with better Chinese support](https://github.com/kunkun9527/pi-blackhole). **It's still highly experimental.** To try it:
->
-> ```bash
-> pi install git:github.com/kunkun9527/pi-blackhole
-> ```
->
-> Installing from git requires `"npmCommand": ["npm"]` in `~/.pi/agent/settings.json`. Install either upstream or the fork, not both.
+</details>
+
+<details>
+<summary><b>Non-English users</b>: experimental fork with better Chinese support</summary>
+
+Upstream's support for Chinese and other non-English text is limited (token estimates run low, and `recall` struggles with Chinese keywords). I maintain a [fork with better Chinese support](https://github.com/kunkun9527/pi-blackhole). **It's still highly experimental.** To try it:
+
+```bash
+pi install git:github.com/kunkun9527/pi-blackhole
+```
+
+Installing from git requires `"npmCommand": ["npm"]` in `~/.pi/agent/settings.json`. Install either upstream or the fork, not both.
+
+</details>
 
 ### pi-docs-slim
 
@@ -192,6 +207,9 @@ This repo includes the `AGENTS.md` I use, in [English](agents/en/AGENTS.md) and 
 
 When upstream releases a new version, check what changed and whether it breaks the API or schema, bump the dependency and adjust the adapter if needed, then run the tests and re-measure tokens.
 
+<details>
+<summary><b>Benchmark commands</b></summary>
+
 The benchmark script runs each lean version and its pinned upstream version in their own isolated, temporary Pi process:
 
 ```bash
@@ -201,6 +219,8 @@ npm run benchmark:check    # check that the results and READMEs are up to date
 ```
 
 Results are saved to `benchmarks/results.json`. The script only edits text between the `token-benchmark` markers in the READMEs, and leaves files alone if the numbers haven't changed.
+
+</details>
 
 ## Appendix: tools I dropped after measuring
 

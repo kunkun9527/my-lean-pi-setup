@@ -42,16 +42,16 @@
 | `pi-web-access-lean` | **153** | 2,979 | 2,826 | **94.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
-| `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
+| `pi-subagents-lean` | **275** | 8,553 | 8,278 | **96.8%** |
 | `pi-hashline-edit-pro-lean` | **552** | 2,040 | 1,488 | **72.9%** |
-| **合计** | **1,450** | **15,721** | **14,271** | **90.8%** |
+| **合计** | **1,450** | **15,734** | **14,284** | **90.8%** |
 
-5 个精简版合计，常驻的初始上下文比锁定的上游版本少 **14,271 tokens（90.8%）**。
+5 个精简版合计，常驻的初始上下文比锁定的上游版本少 **14,284 tokens（90.8%）**。
 
 <details>
 <summary>测量方式</summary>
 
-* 测试环境：Pi `1.0.0`，使用仓库内置自动化工具。
+* 测试环境：Pi `1.0.2`，使用仓库内置自动化工具。
 * 每个精简版和它的上游版本，都在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。
 * 不计内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 和 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。
 * Token 按 `ceil(字符数 / 4)` 估算，不是某个模型 tokenizer 的实际计费值。上游版本是各精简包锁定的精确版本，已对照 lockfile 和已安装的包校验。
@@ -104,7 +104,10 @@ billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个�
 
 默认上下文每增长约 50k，就会提醒模型压缩一次，通常能把上下文维持在 150k 以内，不需要额外调。
 
-**请直接用官方版，并打开它的 `lean` 提示词包。** 官方把我那版精简提示词（保留了大约九成）做成了内置的 `lean` 提示词包，但默认不启用：
+**请直接用官方版，并打开它的 `lean` 提示词包。** 官方把我那版精简提示词（保留了大约九成）做成了内置的 `lean` 提示词包，但默认不启用。
+
+<details>
+<summary><b>配置方法</b>：安装并打开 <code>lean</code> 提示词包</summary>
 
 1. 安装：`pi install npm:billion-context-pi`。
 2. 在 `~/.pi/acp.json`（全局）或 `<项目>/.pi/acp.json`（单个项目）里写：
@@ -121,11 +124,16 @@ billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个�
 
 `lean` 包有意保留了比较详细的 `howToCompress` 规则，弱一点的模型靠这些规则才不会压出幻觉。用前沿模型还想再压的话，可以在同一个文件里用 `promptSections` / `prompts` 覆盖对应段落，见官方的 [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md)。
 
+</details>
+
 > 我以前做的 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 已经合入官方（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)），不再维护。
 
 ### pi-blackhole
 
 [pi-blackhole](https://github.com/k0valik/pi-blackhole) 用算法压缩替代 Pi 自带的 `/compact`，从旧对话里提取结构化信息，不调用模型。它自带观察式记忆：后台 worker 持续记下关键事实和决策，压缩时一起带上。
+
+<details>
+<summary><b>配置方法</b>：安装、给记忆配便宜模型、调低压缩阈值</summary>
 
 1. 安装：`pi install npm:pi-blackhole`。装过单独的 `pi-vcc` 或 `pi-observational-memory` 的话，先卸掉。
 2. **推荐：给记忆 worker 配便宜的模型。** 在 `~/.pi/agent/pi-blackhole/pi-blackhole-config.json` 里写：
@@ -159,13 +167,20 @@ billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个�
 
 默认情况下，压缩后只保留最近一条用户消息及之后的内容，更早的细节靠摘要、记忆和 `recall` 找回。
 
-> **非英语用户注意**：原版对中文等非英语内容支持一般，比如 token 估算偏低、`recall` 搜不准中文关键词。我维护了一个[增强中文支持的 fork](https://github.com/kunkun9527/pi-blackhole)，**目前仍处于非常实验性的阶段**，愿意尝鲜可以这样装：
->
-> ```bash
-> pi install git:github.com/kunkun9527/pi-blackhole
-> ```
->
-> 用 git 安装需要先在 `~/.pi/agent/settings.json` 里设置 `"npmCommand": ["npm"]`。原版和 fork 只能装一个。
+</details>
+
+<details>
+<summary><b>非英语用户</b>：增强中文支持的实验性 fork</summary>
+
+原版对中文等非英语内容支持一般，比如 token 估算偏低、`recall` 搜不准中文关键词。我维护了一个[增强中文支持的 fork](https://github.com/kunkun9527/pi-blackhole)，**目前仍处于非常实验性的阶段**，愿意尝鲜可以这样装：
+
+```bash
+pi install git:github.com/kunkun9527/pi-blackhole
+```
+
+用 git 安装需要先在 `~/.pi/agent/settings.json` 里设置 `"npmCommand": ["npm"]`。原版和 fork 只能装一个。
+
+</details>
 
 ### pi-docs-slim
 
@@ -192,6 +207,9 @@ pi install npm:@ssk_dev/pi-docs-slim
 
 上游发新版时，看看改了什么、有没有破坏 API 或 Schema，需要的话升级依赖、调整适配代码，然后跑测试、重新测一下 token。
 
+<details>
+<summary><b>测量命令</b></summary>
+
 测量脚本会把每个精简版和它锁定的上游版本，分别放在独立的临时 Pi 进程里测：
 
 ```bash
@@ -201,6 +219,8 @@ npm run benchmark:check    # 检查结果和 README 是不是最新的
 ```
 
 结果保存在 `benchmarks/results.json`。脚本只改 README 里 `token-benchmark` 标记之间的内容；数字没变就不会改文件。
+
+</details>
 
 ## 附录：实测后撤下的工具
 
