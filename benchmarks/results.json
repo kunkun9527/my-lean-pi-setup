@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-04T22:17:38.162Z",
+  "generatedAt": "2026-10-05T16:45:07.574Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
-  "piVersion": "1.0.2",
+  "piVersion": "1.0.3",
   "totals": {
     "leanTokens": 1450,
-    "upstreamTokens": 15734,
-    "savedTokens": 14284,
+    "upstreamTokens": 15721,
+    "savedTokens": 14271,
     "reductionPercent": 90.8
   },
   "extensions": [
@@ -251,8 +251,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 8553,
-            "toolTokens": 8553,
+            "totalTokens": 8540,
+            "toolTokens": 8540,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -265,10 +265,10 @@
             "tools": [
               {
                 "name": "Agent",
-                "chars": 10301,
-                "tokens": 2576,
-                "descriptionChars": 6310,
-                "schemaChars": 2993,
+                "chars": 10251,
+                "tokens": 2563,
+                "descriptionChars": 6287,
+                "schemaChars": 2966,
                 "snippetChars": 67,
                 "guidelineChars": 923
               },
@@ -301,7 +301,7 @@
               }
             ]
           },
-          "savedTokens": 8278,
+          "savedTokens": 8265,
           "reductionPercent": 96.8
         }
       ]

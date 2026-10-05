@@ -42,16 +42,16 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | `pi-web-access-lean` | **153** | 2,979 | 2,826 | **94.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
-| `pi-subagents-lean` | **275** | 8,553 | 8,278 | **96.8%** |
+| `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
 | `pi-hashline-edit-pro-lean` | **552** | 2,040 | 1,488 | **72.9%** |
-| **Total** | **1,450** | **15,734** | **14,284** | **90.8%** |
+| **Total** | **1,450** | **15,721** | **14,271** | **90.8%** |
 
-Across all 5 wrappers, recurring initialization context is reduced by **14,284 tokens (90.8%)** versus their pinned upstream versions.
+Across all 5 wrappers, recurring initialization context is reduced by **14,271 tokens (90.8%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
 
-* Test environment: Pi `1.0.2` using the repository's automated benchmark tool.
+* Test environment: Pi `1.0.3` using the repository's automated benchmark tool.
 * Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
 * Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
 * Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
