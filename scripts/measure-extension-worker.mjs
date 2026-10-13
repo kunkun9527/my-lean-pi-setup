@@ -84,16 +84,26 @@ try {
     });
 
   const initialSystemPrompt = session.systemPrompt;
-  const eventResult = await session._extensionRunner.emitBeforeAgentStart(
-    "",
-    undefined,
-    initialSystemPrompt,
-    session._baseSystemPromptOptions,
-  );
+  const runner = session._extensionRunner;
+  let finalSystemPrompt;
+  let eventResult;
+  if (runner.emitBeforeAgentStart.length >= 4) {
+    // Pi 0.x / 1.0: (prompt, images, systemPrompt, options) -> { systemPrompt?, messages? }
+    eventResult = await runner.emitBeforeAgentStart("", undefined, initialSystemPrompt, session._baseSystemPromptOptions);
+    finalSystemPrompt = eventResult?.systemPrompt ?? initialSystemPrompt;
+  } else {
+    // Pi 1.1+: (prompt, images, options) -> { systemPromptOptions, messages }. Handlers either
+    // add named sections to the options or force a whole prompt; render the result the way
+    // the session does.
+    const { buildSystemPrompt } = await import(
+      pathToFileURL(path.join(path.dirname(piModulePath), "core", "system-prompt.js")).href
+    );
+    eventResult = await runner.emitBeforeAgentStart("", undefined, session._baseSystemPromptOptions);
+    finalSystemPrompt = buildSystemPrompt(eventResult.systemPromptOptions);
+  }
   if (extensionErrors.length > 0) {
     throw new Error(`Extension event failed: ${JSON.stringify(extensionErrors)}`);
   }
-  const finalSystemPrompt = eventResult?.systemPrompt ?? initialSystemPrompt;
   const eventMessagesJson = JSON.stringify(eventResult?.messages ?? []);
   const eventMessageChars = eventResult?.messages?.length ? eventMessagesJson.length : 0;
   const promptDeltaChars = finalSystemPrompt.length - initialSystemPrompt.length + eventMessageChars;

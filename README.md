@@ -126,7 +126,7 @@ The `lean` pack deliberately keeps the detailed `howToCompress` rules, because w
 
 </details>
 
-> My old [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) has been merged upstream (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)) and is no longer maintained.
+> My earlier lean prompts were adopted upstream as the `lean` pack (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)). I now keep [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) as my own fork of v0.1.83, focused on runtime stability and spending fewer tokens (for example, a cheap model can write the summaries).
 
 ### pi-blackhole
 

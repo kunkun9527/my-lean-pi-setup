@@ -126,7 +126,7 @@ billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个�
 
 </details>
 
-> 我以前做的 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 已经合入官方（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)），不再维护。
+> 我以前做的精简提示词已经被官方采纳，成了 `lean` 提示词包（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)）。现在 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 是我自己维护的 v0.1.83 分支，专注于运行稳定性和降低 token 消耗（比如摘要可以交给便宜模型写）。
 
 ### pi-blackhole
 
