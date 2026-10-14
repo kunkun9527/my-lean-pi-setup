@@ -19,6 +19,8 @@ if (!validCommands.has(command)) {
 
 const config = JSON.parse(await readFile(configPath, "utf8"));
 const packagesRoot = path.resolve(setupRoot, config.packagesRoot);
+// Not README.*: npm force-packs README.* files and may pick one as the package page.
+const EXTENSION_ZH_README = "README_zh-CN.md";
 const resultsPath = path.resolve(setupRoot, config.resultsFile);
 let previous;
 let previousText;
@@ -305,7 +307,7 @@ function renderAllReadmes(result, extensionConfigs) {
   for (const extensionConfig of extensionConfigs) {
     const extension = result.extensions.find((item) => item.id === extensionConfig.id);
     const packageRoot = path.join(packagesRoot, extension.directory);
-    for (const [fileName, language] of [["README.md", "en"], ["README.zh-CN.md", "zh"]]) {
+    for (const [fileName, language] of [["README.md", "en"], [EXTENSION_ZH_README, "zh"]]) {
       const filePath = path.join(packageRoot, fileName);
       files.set(filePath, renderExtensionReadme(filePath, extension, result.piVersion, language));
     }
@@ -504,7 +506,7 @@ async function preloadReadmes() {
   const cache = new Map();
   for (const extension of config.extensions) {
     const root = path.join(packagesRoot, extension.directory);
-    for (const fileName of ["README.md", "README.zh-CN.md"]) {
+    for (const fileName of ["README.md", EXTENSION_ZH_README]) {
       const filePath = path.join(root, fileName);
       cache.set(filePath, await readFile(filePath, "utf8"));
     }

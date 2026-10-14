@@ -71,7 +71,7 @@ test("all generated README blocks have exactly one start and end marker", async 
   for (const extension of config.extensions) {
     files.push(
       path.join(packagesRoot, extension.directory, "README.md"),
-      path.join(packagesRoot, extension.directory, "README.zh-CN.md"),
+      path.join(packagesRoot, extension.directory, "README_zh-CN.md"),
     );
   }
 
