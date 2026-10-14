@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import { access, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -147,6 +148,7 @@ async function measureAll(extensionConfigs) {
       profiles.push({
         id: profile.id,
         label: profile.label,
+        ...(profile.labelZh ? { labelZh: profile.labelZh } : {}),
         lean: compactMeasurement(lean),
         upstream: compactMeasurement(upstream),
         savedTokens,
@@ -222,8 +224,10 @@ function isolatedEnvironment(home, agentDir) {
     if (/^ACP_/i.test(key) || /^(BILLION_CONTEXT|HASHLINE|RPIV_|SUBAGENTS_|WEB_ACCESS)/i.test(key)) delete env[key];
     if (/^PI_/i.test(key) && !["PI_GLOBAL_NODE_MODULES", "PI_CODING_AGENT_MODULE"].includes(key)) delete env[key];
   }
+  const piModule = env.PI_CODING_AGENT_MODULE ?? (env.PI_GLOBAL_NODE_MODULES ? undefined : managedPiModule());
   return {
     ...env,
+    ...(piModule ? { PI_CODING_AGENT_MODULE: piModule } : {}),
     HOME: home,
     USERPROFILE: home,
     XDG_CONFIG_HOME: path.join(home, ".config"),
@@ -232,6 +236,20 @@ function isolatedEnvironment(home, agentDir) {
     NO_UPDATE_NOTIFIER: "1",
     PI_SKIP_UPDATE_CHECK: "1",
   };
+}
+
+// Pi's managed installer (~/.pi/agent/install) lives outside npm's global root;
+// use its current release when present, otherwise the worker falls back to npm.
+function managedPiModule() {
+  const agentDir = process.env.PI_CODING_AGENT_DIR ?? path.join(os.homedir(), ".pi", "agent");
+  const installRoot = process.env.PI_MANAGED_INSTALL_ROOT ?? path.join(agentDir, "install");
+  try {
+    const version = readFileSync(path.join(installRoot, "current-version"), "utf8").trim();
+    const modulePath = path.join(installRoot, "releases", version, "node_modules", "@earendil-works", "pi-coding-agent", "dist", "index.js");
+    return existsSync(modulePath) ? modulePath : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function spawnWorker(inputPath, env, cwd) {
@@ -446,8 +464,8 @@ function methodLine(piVersion, language) {
 
 function profileDisplayLabel(profile, language) {
   if (language !== "zh") return profile.label;
+  if (profile.labelZh) return profile.labelZh;
   if (profile.id === "default") return "默认";
-  if (profile.id === "anchor-grep") return "启用 anchor_grep";
   return profile.label;
 }
 

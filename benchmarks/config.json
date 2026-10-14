@@ -59,13 +59,18 @@
       "profiles": [
         {
           "id": "default",
-          "label": "Default"
+          "label": "Default: five core tools",
+          "labelZh": "默认：五个核心工具",
+          "homeFiles": {
+            ".config/pi-hashline-edit-pro/config.json": "{\n  \"copyMoveEnabled\": false,\n  \"replaceMatchEnabled\": false\n}\n"
+          }
         },
         {
-          "id": "anchor-grep",
-          "label": "With anchor_grep",
+          "id": "all-tools",
+          "label": "All eight tools on",
+          "labelZh": "开启全部八个工具",
           "homeFiles": {
-            ".config/pi-hashline-edit-pro/config.json": "{\n  \"autoRead\": true,\n  \"anchorGrepEnabled\": true\n}\n"
+            ".config/pi-hashline-edit-pro/config.json": "{\n  \"copyMoveEnabled\": true,\n  \"replaceMatchEnabled\": true\n}\n"
           }
         }
       ]

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-05T16:45:07.574Z",
+  "generatedAt": "2026-10-14T14:02:58.258Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
-  "piVersion": "1.0.3",
+  "piVersion": "1.2.0",
   "totals": {
-    "leanTokens": 1450,
-    "upstreamTokens": 15721,
-    "savedTokens": 14271,
-    "reductionPercent": 90.8
+    "leanTokens": 1409,
+    "upstreamTokens": 15795,
+    "savedTokens": 14386,
+    "reductionPercent": 91.1
   },
   "extensions": [
     {
@@ -311,16 +311,17 @@
       "directory": "pi-hashline-edit-pro-lean",
       "displayName": "Hashline Edit",
       "leanPackage": "pi-hashline-edit-pro-lean",
-      "leanVersion": "4.4.3-lean.2",
+      "leanVersion": "6.4.5-lean.1",
       "upstreamPackage": "pi-hashline-edit-pro",
-      "upstreamVersion": "4.4.3",
+      "upstreamVersion": "6.4.5",
       "profiles": [
         {
           "id": "default",
-          "label": "Default",
+          "label": "Default: five core tools",
+          "labelZh": "默认：五个核心工具",
           "lean": {
-            "totalTokens": 552,
-            "toolTokens": 552,
+            "totalTokens": 511,
+            "toolTokens": 511,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -328,60 +329,60 @@
               "read",
               "replace",
               "insert",
-              "anchor_grep",
+              "grep",
               "undo_last_change"
             ],
             "tools": [
               {
                 "name": "read",
-                "chars": 349,
-                "tokens": 88,
+                "chars": 323,
+                "tokens": 81,
                 "descriptionChars": 65,
-                "schemaChars": 156,
+                "schemaChars": 186,
                 "snippetChars": 0,
-                "guidelineChars": 121
+                "guidelineChars": 65
               },
               {
-                "name": "replace",
-                "chars": 597,
-                "tokens": 150,
-                "descriptionChars": 64,
-                "schemaChars": 244,
-                "snippetChars": 0,
-                "guidelineChars": 279
-              },
-              {
-                "name": "insert",
-                "chars": 507,
-                "tokens": 127,
-                "descriptionChars": 63,
-                "schemaChars": 273,
-                "snippetChars": 0,
-                "guidelineChars": 162
-              },
-              {
-                "name": "anchor_grep",
-                "chars": 476,
-                "tokens": 119,
+                "name": "grep",
+                "chars": 484,
+                "tokens": 121,
                 "descriptionChars": 64,
                 "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 96
+                "guidelineChars": 111
+              },
+              {
+                "name": "replace",
+                "chars": 512,
+                "tokens": 128,
+                "descriptionChars": 64,
+                "schemaChars": 193,
+                "snippetChars": 0,
+                "guidelineChars": 245
+              },
+              {
+                "name": "insert",
+                "chars": 470,
+                "tokens": 118,
+                "descriptionChars": 58,
+                "schemaChars": 246,
+                "snippetChars": 0,
+                "guidelineChars": 157
               },
               {
                 "name": "undo_last_change",
-                "chars": 269,
-                "tokens": 68,
-                "descriptionChars": 62,
+                "chars": 252,
+                "tokens": 63,
+                "descriptionChars": 58,
                 "schemaChars": 77,
                 "snippetChars": 0,
-                "guidelineChars": 111
+                "guidelineChars": 98
               }
             ]
           },
           "upstream": {
-            "totalTokens": 2040,
-            "toolTokens": 2040,
+            "totalTokens": 2114,
+            "toolTokens": 2114,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -389,187 +390,248 @@
               "read",
               "replace",
               "insert",
-              "anchor_grep",
+              "grep",
               "undo_last_change"
             ],
             "tools": [
               {
                 "name": "read",
-                "chars": 1102,
-                "tokens": 276,
-                "descriptionChars": 509,
-                "schemaChars": 330,
+                "chars": 1396,
+                "tokens": 349,
+                "descriptionChars": 641,
+                "schemaChars": 391,
                 "snippetChars": 58,
-                "guidelineChars": 198
+                "guidelineChars": 299
+              },
+              {
+                "name": "grep",
+                "chars": 2007,
+                "tokens": 502,
+                "descriptionChars": 795,
+                "schemaChars": 792,
+                "snippetChars": 155,
+                "guidelineChars": 258
               },
               {
                 "name": "replace",
-                "chars": 2960,
-                "tokens": 740,
-                "descriptionChars": 838,
-                "schemaChars": 754,
-                "snippetChars": 144,
-                "guidelineChars": 1214
+                "chars": 2292,
+                "tokens": 573,
+                "descriptionChars": 392,
+                "schemaChars": 539,
+                "snippetChars": 116,
+                "guidelineChars": 1235
               },
               {
                 "name": "insert",
-                "chars": 1513,
-                "tokens": 379,
-                "descriptionChars": 586,
-                "schemaChars": 729,
-                "snippetChars": 126,
-                "guidelineChars": 63
-              },
-              {
-                "name": "anchor_grep",
-                "chars": 1695,
-                "tokens": 424,
-                "descriptionChars": 531,
-                "schemaChars": 792,
-                "snippetChars": 133,
-                "guidelineChars": 225
+                "chars": 1955,
+                "tokens": 489,
+                "descriptionChars": 217,
+                "schemaChars": 594,
+                "snippetChars": 134,
+                "guidelineChars": 1001
               },
               {
                 "name": "undo_last_change",
-                "chars": 882,
-                "tokens": 221,
-                "descriptionChars": 457,
+                "chars": 803,
+                "tokens": 201,
+                "descriptionChars": 229,
                 "schemaChars": 118,
-                "snippetChars": 83,
-                "guidelineChars": 205
+                "snippetChars": 68,
+                "guidelineChars": 369
               }
             ]
           },
-          "savedTokens": 1488,
-          "reductionPercent": 72.9
+          "savedTokens": 1603,
+          "reductionPercent": 75.8
         },
         {
-          "id": "anchor-grep",
-          "label": "With anchor_grep",
+          "id": "all-tools",
+          "label": "All eight tools on",
+          "labelZh": "开启全部八个工具",
           "lean": {
-            "totalTokens": 552,
-            "toolTokens": 552,
+            "totalTokens": 867,
+            "toolTokens": 867,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
             "activeToolNames": [
               "read",
               "replace",
+              "replace_match",
               "insert",
-              "anchor_grep",
+              "copy",
+              "move",
+              "grep",
               "undo_last_change"
             ],
             "tools": [
               {
                 "name": "read",
-                "chars": 349,
-                "tokens": 88,
+                "chars": 323,
+                "tokens": 81,
                 "descriptionChars": 65,
-                "schemaChars": 156,
+                "schemaChars": 186,
                 "snippetChars": 0,
-                "guidelineChars": 121
+                "guidelineChars": 65
               },
               {
-                "name": "replace",
-                "chars": 597,
-                "tokens": 150,
-                "descriptionChars": 64,
-                "schemaChars": 244,
-                "snippetChars": 0,
-                "guidelineChars": 279
-              },
-              {
-                "name": "insert",
-                "chars": 507,
-                "tokens": 127,
-                "descriptionChars": 63,
-                "schemaChars": 273,
-                "snippetChars": 0,
-                "guidelineChars": 162
-              },
-              {
-                "name": "anchor_grep",
-                "chars": 476,
-                "tokens": 119,
+                "name": "grep",
+                "chars": 484,
+                "tokens": 121,
                 "descriptionChars": 64,
                 "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 96
+                "guidelineChars": 111
+              },
+              {
+                "name": "replace",
+                "chars": 512,
+                "tokens": 128,
+                "descriptionChars": 64,
+                "schemaChars": 193,
+                "snippetChars": 0,
+                "guidelineChars": 245
+              },
+              {
+                "name": "replace_match",
+                "chars": 468,
+                "tokens": 117,
+                "descriptionChars": 70,
+                "schemaChars": 253,
+                "snippetChars": 0,
+                "guidelineChars": 129
+              },
+              {
+                "name": "insert",
+                "chars": 470,
+                "tokens": 118,
+                "descriptionChars": 58,
+                "schemaChars": 246,
+                "snippetChars": 0,
+                "guidelineChars": 157
+              },
+              {
+                "name": "copy",
+                "chars": 483,
+                "tokens": 121,
+                "descriptionChars": 59,
+                "schemaChars": 302,
+                "snippetChars": 0,
+                "guidelineChars": 115
+              },
+              {
+                "name": "move",
+                "chars": 471,
+                "tokens": 118,
+                "descriptionChars": 59,
+                "schemaChars": 302,
+                "snippetChars": 0,
+                "guidelineChars": 103
               },
               {
                 "name": "undo_last_change",
-                "chars": 269,
-                "tokens": 68,
-                "descriptionChars": 62,
+                "chars": 252,
+                "tokens": 63,
+                "descriptionChars": 58,
                 "schemaChars": 77,
                 "snippetChars": 0,
-                "guidelineChars": 111
+                "guidelineChars": 98
               }
             ]
           },
           "upstream": {
-            "totalTokens": 2040,
-            "toolTokens": 2040,
+            "totalTokens": 4732,
+            "toolTokens": 4732,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
             "activeToolNames": [
               "read",
               "replace",
+              "replace_match",
               "insert",
-              "anchor_grep",
+              "copy",
+              "move",
+              "grep",
               "undo_last_change"
             ],
             "tools": [
               {
                 "name": "read",
-                "chars": 1102,
-                "tokens": 276,
-                "descriptionChars": 509,
-                "schemaChars": 330,
+                "chars": 1550,
+                "tokens": 388,
+                "descriptionChars": 641,
+                "schemaChars": 391,
                 "snippetChars": 58,
-                "guidelineChars": 198
+                "guidelineChars": 453
+              },
+              {
+                "name": "grep",
+                "chars": 2053,
+                "tokens": 514,
+                "descriptionChars": 808,
+                "schemaChars": 792,
+                "snippetChars": 155,
+                "guidelineChars": 291
               },
               {
                 "name": "replace",
-                "chars": 2960,
-                "tokens": 740,
-                "descriptionChars": 838,
-                "schemaChars": 754,
-                "snippetChars": 144,
-                "guidelineChars": 1214
+                "chars": 2574,
+                "tokens": 644,
+                "descriptionChars": 535,
+                "schemaChars": 539,
+                "snippetChars": 116,
+                "guidelineChars": 1374
+              },
+              {
+                "name": "replace_match",
+                "chars": 3809,
+                "tokens": 953,
+                "descriptionChars": 805,
+                "schemaChars": 1183,
+                "snippetChars": 184,
+                "guidelineChars": 1621
               },
               {
                 "name": "insert",
-                "chars": 1513,
-                "tokens": 379,
-                "descriptionChars": 586,
-                "schemaChars": 729,
-                "snippetChars": 126,
-                "guidelineChars": 63
+                "chars": 2094,
+                "tokens": 524,
+                "descriptionChars": 217,
+                "schemaChars": 594,
+                "snippetChars": 134,
+                "guidelineChars": 1140
               },
               {
-                "name": "anchor_grep",
-                "chars": 1695,
-                "tokens": 424,
-                "descriptionChars": 531,
-                "schemaChars": 792,
+                "name": "copy",
+                "chars": 2924,
+                "tokens": 731,
+                "descriptionChars": 358,
+                "schemaChars": 638,
                 "snippetChars": 133,
-                "guidelineChars": 225
+                "guidelineChars": 1788
+              },
+              {
+                "name": "move",
+                "chars": 2827,
+                "tokens": 707,
+                "descriptionChars": 317,
+                "schemaChars": 638,
+                "snippetChars": 133,
+                "guidelineChars": 1732
               },
               {
                 "name": "undo_last_change",
-                "chars": 882,
-                "tokens": 221,
-                "descriptionChars": 457,
+                "chars": 1083,
+                "tokens": 271,
+                "descriptionChars": 257,
                 "schemaChars": 118,
-                "snippetChars": 83,
-                "guidelineChars": 205
+                "snippetChars": 68,
+                "guidelineChars": 621
               }
             ]
           },
-          "savedTokens": 1488,
-          "reductionPercent": 72.9
+          "savedTokens": 3865,
+          "reductionPercent": 81.7
         }
       ]
     }

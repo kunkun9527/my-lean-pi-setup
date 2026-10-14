@@ -98,7 +98,10 @@ try {
     const { buildSystemPrompt } = await import(
       pathToFileURL(path.join(path.dirname(piModulePath), "core", "system-prompt.js")).href
     );
-    eventResult = await runner.emitBeforeAgentStart("", undefined, session._baseSystemPromptOptions);
+    // Pi 1.2+ takes (trigger, options) instead of (prompt, images, options).
+    eventResult = runner.emitBeforeAgentStart.length === 2
+      ? await runner.emitBeforeAgentStart({ prompt: "", images: undefined }, session._baseSystemPromptOptions)
+      : await runner.emitBeforeAgentStart("", undefined, session._baseSystemPromptOptions);
     finalSystemPrompt = buildSystemPrompt(eventResult.systemPromptOptions);
   }
   if (extensionErrors.length > 0) {
