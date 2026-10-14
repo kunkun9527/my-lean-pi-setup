@@ -39,14 +39,14 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 <!-- token-benchmark:aggregate:start -->
 | Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
-| `pi-web-access-lean` | **153** | 2,979 | 2,826 | **94.9%** |
+| `pi-web-access-lean` | **153** | 2,837 | 2,684 | **94.6%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
 | `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
 | `pi-hashline-edit-pro-lean` | **503** | 2,114 | 1,611 | **76.2%** |
-| **Total** | **1,401** | **15,795** | **14,394** | **91.1%** |
+| **Total** | **1,401** | **15,653** | **14,252** | **91.0%** |
 
-Across all 5 wrappers, recurring initialization context is reduced by **14,394 tokens (91.1%)** versus their pinned upstream versions.
+Across all 5 wrappers, recurring initialization context is reduced by **14,252 tokens (91.0%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>

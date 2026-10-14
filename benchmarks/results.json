@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-14T14:13:59.549Z",
+  "generatedAt": "2026-10-14T15:07:20.154Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.2.0",
   "totals": {
     "leanTokens": 1401,
-    "upstreamTokens": 15795,
-    "savedTokens": 14394,
-    "reductionPercent": 91.1
+    "upstreamTokens": 15653,
+    "savedTokens": 14252,
+    "reductionPercent": 91
   },
   "extensions": [
     {
@@ -15,9 +15,9 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.35.1",
+      "leanVersion": "0.40.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.35.0",
+      "upstreamVersion": "0.40.0",
       "profiles": [
         {
           "id": "default",
@@ -44,8 +44,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 2979,
-            "toolTokens": 2979,
+            "totalTokens": 2837,
+            "toolTokens": 2837,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -58,28 +58,28 @@
             "tools": [
               {
                 "name": "web_search",
-                "chars": 4751,
-                "tokens": 1188,
-                "descriptionChars": 1429,
-                "schemaChars": 3108,
+                "chars": 3816,
+                "tokens": 954,
+                "descriptionChars": 309,
+                "schemaChars": 3293,
                 "snippetChars": 201,
                 "guidelineChars": 0
               },
               {
                 "name": "source_check",
-                "chars": 2472,
-                "tokens": 618,
+                "chars": 2559,
+                "tokens": 640,
                 "descriptionChars": 134,
-                "schemaChars": 2206,
+                "schemaChars": 2293,
                 "snippetChars": 117,
                 "guidelineChars": 0
               },
               {
                 "name": "fetch_content",
-                "chars": 2921,
-                "tokens": 731,
+                "chars": 3201,
+                "tokens": 801,
                 "descriptionChars": 465,
-                "schemaChars": 2356,
+                "schemaChars": 2636,
                 "snippetChars": 84,
                 "guidelineChars": 0
               },
@@ -94,8 +94,8 @@
               }
             ]
           },
-          "savedTokens": 2826,
-          "reductionPercent": 94.9
+          "savedTokens": 2684,
+          "reductionPercent": 94.6
         }
       ]
     },
@@ -104,9 +104,9 @@
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
-      "leanVersion": "2.12.1",
+      "leanVersion": "2.13.8",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
-      "upstreamVersion": "2.12.0",
+      "upstreamVersion": "2.13.8",
       "profiles": [
         {
           "id": "default",
@@ -163,9 +163,9 @@
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "leanPackage": "@ssk_dev/rpiv-todo-lean",
-      "leanVersion": "2.12.1",
+      "leanVersion": "2.13.8",
       "upstreamPackage": "@juicesharp/rpiv-todo",
-      "upstreamVersion": "2.12.0",
+      "upstreamVersion": "2.13.8",
       "profiles": [
         {
           "id": "default",
@@ -222,9 +222,9 @@
       "directory": "pi-subagents-lean",
       "displayName": "Subagents",
       "leanPackage": "@ssk_dev/pi-subagents-lean",
-      "leanVersion": "0.19.4",
+      "leanVersion": "0.22.0",
       "upstreamPackage": "@tintinweb/pi-subagents",
-      "upstreamVersion": "0.19.0",
+      "upstreamVersion": "0.22.0",
       "profiles": [
         {
           "id": "default",
