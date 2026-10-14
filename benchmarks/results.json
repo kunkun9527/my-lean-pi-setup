@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-14T14:02:58.258Z",
+  "generatedAt": "2026-10-14T14:13:59.549Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.2.0",
   "totals": {
-    "leanTokens": 1409,
+    "leanTokens": 1401,
     "upstreamTokens": 15795,
-    "savedTokens": 14386,
+    "savedTokens": 14394,
     "reductionPercent": 91.1
   },
   "extensions": [
@@ -320,8 +320,8 @@
           "label": "Default: five core tools",
           "labelZh": "默认：五个核心工具",
           "lean": {
-            "totalTokens": 511,
-            "toolTokens": 511,
+            "totalTokens": 503,
+            "toolTokens": 503,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -344,12 +344,12 @@
               },
               {
                 "name": "grep",
-                "chars": 484,
-                "tokens": 121,
+                "chars": 450,
+                "tokens": 113,
                 "descriptionChars": 64,
                 "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 111
+                "guidelineChars": 77
               },
               {
                 "name": "replace",
@@ -441,16 +441,16 @@
               }
             ]
           },
-          "savedTokens": 1603,
-          "reductionPercent": 75.8
+          "savedTokens": 1611,
+          "reductionPercent": 76.2
         },
         {
           "id": "all-tools",
           "label": "All eight tools on",
           "labelZh": "开启全部八个工具",
           "lean": {
-            "totalTokens": 867,
-            "toolTokens": 867,
+            "totalTokens": 859,
+            "toolTokens": 859,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -476,12 +476,12 @@
               },
               {
                 "name": "grep",
-                "chars": 484,
-                "tokens": 121,
+                "chars": 450,
+                "tokens": 113,
                 "descriptionChars": 64,
                 "schemaChars": 302,
                 "snippetChars": 0,
-                "guidelineChars": 111
+                "guidelineChars": 77
               },
               {
                 "name": "replace",
@@ -630,8 +630,8 @@
               }
             ]
           },
-          "savedTokens": 3865,
-          "reductionPercent": 81.7
+          "savedTokens": 3873,
+          "reductionPercent": 81.8
         }
       ]
     }

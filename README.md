@@ -43,10 +43,10 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
 | `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
-| `pi-hashline-edit-pro-lean` | **511** | 2,114 | 1,603 | **75.8%** |
-| **Total** | **1,409** | **15,795** | **14,386** | **91.1%** |
+| `pi-hashline-edit-pro-lean` | **503** | 2,114 | 1,611 | **76.2%** |
+| **Total** | **1,401** | **15,795** | **14,394** | **91.1%** |
 
-Across all 5 wrappers, recurring initialization context is reduced by **14,386 tokens (91.1%)** versus their pinned upstream versions.
+Across all 5 wrappers, recurring initialization context is reduced by **14,394 tokens (91.1%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
