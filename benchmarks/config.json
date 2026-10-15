@@ -59,19 +59,8 @@
       "profiles": [
         {
           "id": "default",
-          "label": "Default: five core tools",
-          "labelZh": "默认：五个核心工具",
-          "homeFiles": {
-            ".config/pi-hashline-edit-pro/config.json": "{\n  \"copyMoveEnabled\": false,\n  \"replaceMatchEnabled\": false\n}\n"
-          }
-        },
-        {
-          "id": "all-tools",
-          "label": "All eight tools on",
-          "labelZh": "开启全部八个工具",
-          "homeFiles": {
-            ".config/pi-hashline-edit-pro/config.json": "{\n  \"copyMoveEnabled\": true,\n  \"replaceMatchEnabled\": true\n}\n"
-          }
+          "label": "Default: all eight tools",
+          "labelZh": "默认：全部八个工具"
         }
       ]
     }

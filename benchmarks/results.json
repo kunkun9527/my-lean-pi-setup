@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-14T15:40:29.185Z",
+  "generatedAt": "2026-10-15T17:11:04.359Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.2.0",
   "totals": {
-    "leanTokens": 1401,
-    "upstreamTokens": 15653,
-    "savedTokens": 14252,
-    "reductionPercent": 91
+    "leanTokens": 2180,
+    "upstreamTokens": 18271,
+    "savedTokens": 16091,
+    "reductionPercent": 88.1
   },
   "extensions": [
     {
@@ -311,146 +311,17 @@
       "directory": "pi-hashline-edit-pro-lean",
       "displayName": "Hashline Edit",
       "leanPackage": "pi-hashline-edit-pro-lean",
-      "leanVersion": "6.4.5-lean.2",
+      "leanVersion": "6.4.6-lean.1",
       "upstreamPackage": "pi-hashline-edit-pro",
-      "upstreamVersion": "6.4.5",
+      "upstreamVersion": "6.4.6",
       "profiles": [
         {
           "id": "default",
-          "label": "Default: five core tools",
-          "labelZh": "默认：五个核心工具",
+          "label": "Default: all eight tools",
+          "labelZh": "默认：全部八个工具",
           "lean": {
-            "totalTokens": 503,
-            "toolTokens": 503,
-            "promptDeltaTokens": 0,
-            "promptDeltaChars": 0,
-            "eventMessageChars": 0,
-            "activeToolNames": [
-              "read",
-              "replace",
-              "insert",
-              "grep",
-              "undo_last_change"
-            ],
-            "tools": [
-              {
-                "name": "read",
-                "chars": 323,
-                "tokens": 81,
-                "descriptionChars": 65,
-                "schemaChars": 186,
-                "snippetChars": 0,
-                "guidelineChars": 65
-              },
-              {
-                "name": "grep",
-                "chars": 450,
-                "tokens": 113,
-                "descriptionChars": 64,
-                "schemaChars": 302,
-                "snippetChars": 0,
-                "guidelineChars": 77
-              },
-              {
-                "name": "replace",
-                "chars": 512,
-                "tokens": 128,
-                "descriptionChars": 64,
-                "schemaChars": 193,
-                "snippetChars": 0,
-                "guidelineChars": 245
-              },
-              {
-                "name": "insert",
-                "chars": 470,
-                "tokens": 118,
-                "descriptionChars": 58,
-                "schemaChars": 246,
-                "snippetChars": 0,
-                "guidelineChars": 157
-              },
-              {
-                "name": "undo_last_change",
-                "chars": 252,
-                "tokens": 63,
-                "descriptionChars": 58,
-                "schemaChars": 77,
-                "snippetChars": 0,
-                "guidelineChars": 98
-              }
-            ]
-          },
-          "upstream": {
-            "totalTokens": 2114,
-            "toolTokens": 2114,
-            "promptDeltaTokens": 0,
-            "promptDeltaChars": 0,
-            "eventMessageChars": 0,
-            "activeToolNames": [
-              "read",
-              "replace",
-              "insert",
-              "grep",
-              "undo_last_change"
-            ],
-            "tools": [
-              {
-                "name": "read",
-                "chars": 1396,
-                "tokens": 349,
-                "descriptionChars": 641,
-                "schemaChars": 391,
-                "snippetChars": 58,
-                "guidelineChars": 299
-              },
-              {
-                "name": "grep",
-                "chars": 2007,
-                "tokens": 502,
-                "descriptionChars": 795,
-                "schemaChars": 792,
-                "snippetChars": 155,
-                "guidelineChars": 258
-              },
-              {
-                "name": "replace",
-                "chars": 2292,
-                "tokens": 573,
-                "descriptionChars": 392,
-                "schemaChars": 539,
-                "snippetChars": 116,
-                "guidelineChars": 1235
-              },
-              {
-                "name": "insert",
-                "chars": 1955,
-                "tokens": 489,
-                "descriptionChars": 217,
-                "schemaChars": 594,
-                "snippetChars": 134,
-                "guidelineChars": 1001
-              },
-              {
-                "name": "undo_last_change",
-                "chars": 803,
-                "tokens": 201,
-                "descriptionChars": 229,
-                "schemaChars": 118,
-                "snippetChars": 68,
-                "guidelineChars": 369
-              }
-            ]
-          },
-          "savedTokens": 1611,
-          "reductionPercent": 76.2
-        },
-        {
-          "id": "all-tools",
-          "label": "All eight tools on",
-          "labelZh": "开启全部八个工具",
-          "lean": {
-            "totalTokens": 859,
-            "toolTokens": 859,
+            "totalTokens": 1282,
+            "toolTokens": 1282,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -467,75 +338,75 @@
             "tools": [
               {
                 "name": "read",
-                "chars": 323,
-                "tokens": 81,
-                "descriptionChars": 65,
+                "chars": 585,
+                "tokens": 147,
+                "descriptionChars": 80,
                 "schemaChars": 186,
-                "snippetChars": 0,
-                "guidelineChars": 65
+                "snippetChars": 37,
+                "guidelineChars": 275
               },
               {
                 "name": "grep",
-                "chars": 450,
-                "tokens": 113,
-                "descriptionChars": 64,
+                "chars": 581,
+                "tokens": 146,
+                "descriptionChars": 99,
                 "schemaChars": 302,
-                "snippetChars": 0,
-                "guidelineChars": 77
+                "snippetChars": 28,
+                "guidelineChars": 145
               },
               {
                 "name": "replace",
-                "chars": 512,
-                "tokens": 128,
-                "descriptionChars": 64,
-                "schemaChars": 193,
-                "snippetChars": 0,
-                "guidelineChars": 245
+                "chars": 1013,
+                "tokens": 254,
+                "descriptionChars": 68,
+                "schemaChars": 405,
+                "snippetChars": 34,
+                "guidelineChars": 496
               },
               {
                 "name": "replace_match",
-                "chars": 468,
-                "tokens": 117,
-                "descriptionChars": 70,
-                "schemaChars": 253,
-                "snippetChars": 0,
-                "guidelineChars": 129
+                "chars": 777,
+                "tokens": 195,
+                "descriptionChars": 46,
+                "schemaChars": 434,
+                "snippetChars": 44,
+                "guidelineChars": 237
               },
               {
                 "name": "insert",
-                "chars": 470,
-                "tokens": 118,
-                "descriptionChars": 58,
-                "schemaChars": 246,
-                "snippetChars": 0,
-                "guidelineChars": 157
+                "chars": 521,
+                "tokens": 131,
+                "descriptionChars": 43,
+                "schemaChars": 359,
+                "snippetChars": 36,
+                "guidelineChars": 74
               },
               {
                 "name": "copy",
-                "chars": 483,
-                "tokens": 121,
-                "descriptionChars": 59,
-                "schemaChars": 302,
-                "snippetChars": 0,
-                "guidelineChars": 115
+                "chars": 862,
+                "tokens": 216,
+                "descriptionChars": 56,
+                "schemaChars": 552,
+                "snippetChars": 31,
+                "guidelineChars": 216
               },
               {
                 "name": "move",
-                "chars": 471,
-                "tokens": 118,
-                "descriptionChars": 59,
+                "chars": 396,
+                "tokens": 99,
+                "descriptionChars": 56,
                 "schemaChars": 302,
-                "snippetChars": 0,
-                "guidelineChars": 103
+                "snippetChars": 31,
+                "guidelineChars": 0
               },
               {
                 "name": "undo_last_change",
-                "chars": 252,
-                "tokens": 63,
-                "descriptionChars": 58,
+                "chars": 375,
+                "tokens": 94,
+                "descriptionChars": 35,
                 "schemaChars": 77,
-                "snippetChars": 0,
-                "guidelineChars": 98
+                "snippetChars": 44,
+                "guidelineChars": 200
               }
             ]
           },
@@ -630,8 +501,8 @@
               }
             ]
           },
-          "savedTokens": 3873,
-          "reductionPercent": 81.8
+          "savedTokens": 3450,
+          "reductionPercent": 72.9
         }
       ]
     }
