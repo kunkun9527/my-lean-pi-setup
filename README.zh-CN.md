@@ -12,7 +12,7 @@
 
 1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
 2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 长上下文管理：[`billion-context-pi`](#billion-context-pi) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#长上下文管理二选一)。
+3. 长上下文管理：[`billion-context-pi-lean`](#billion-context-pi-lean) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#长上下文管理二选一)。
 4. 只把你真正常用的工具换成[精简版](#精简版扩展)。
 5. 再用 `pi-context-view` 测一次，看省了多少。
 
@@ -73,60 +73,55 @@
 
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 长上下文管理 | [billion-context-pi](#billion-context-pi) 或 [pi-blackhole](#pi-blackhole)（二选一） | 压缩较早的上下文，需要时找回细节 |
+| 长上下文管理 | [billion-context-pi-lean](#billion-context-pi-lean) 或 [pi-blackhole](#pi-blackhole)（二选一） | 压缩较早的上下文，需要时找回细节 |
 | 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
 | 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
 
 ### 长上下文管理：二选一
 
-billion-context-pi 和 pi-blackhole 都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
+billion-context-pi-lean 和 pi-blackhole 都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
-两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。billion-context-pi 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
+两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。billion-context-pi-lean 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
 
-**为什么是 200k 左右：除了效果，还有成本。** 每轮对话都要把整个上下文重新发给模型。就算命中缓存、读取很便宜，每轮的花费还是会随上下文变长而增加。压缩一次也有固定成本：要重新写缓存，billion-context-pi 还要让模型输出摘要。压得太勤，这笔固定成本要反复付；压得太晚，每轮都在为一大段旧内容付钱。两者之间有一个最划算的点，可以按模型价格和自己的使用习惯算出来。我按 Opus 5.5 的价格，配合 pi-blackhole 估算过：它压缩时不用模型输出 token，后台便宜模型的花费可以忽略不计。算出来最划算的点大约在 150k–200k，正好落在 smart zone 里。用 billion-context-pi 的话，要把写摘要的输出 token 也算进去，最划算的点会往后挪一些，但算法一样。
+**为什么是 200k 左右：除了效果，还有成本。** 每轮对话都要把整个上下文重新发给模型。就算命中缓存、读取很便宜，每轮的花费还是会随上下文变长而增加。压缩一次也有固定成本：要重新写缓存，billion-context-pi-lean 还要输出摘要。压得太勤，这笔固定成本要反复付；压得太晚，每轮都在为一大段旧内容付钱。两者之间有一个最划算的点，可以按模型价格和自己的使用习惯算出来。我按 Opus 5.5 的价格，配合 pi-blackhole 估算过：它压缩时不用模型输出 token，后台便宜模型的花费可以忽略不计。算出来最划算的点大约在 150k–200k，正好落在 smart zone 里。用 billion-context-pi-lean 的话，要把写摘要的输出 token 也算进去（交给便宜模型写就很便宜），最划算的点会往后挪一些，但算法一样。
 
-| | billion-context-pi | pi-blackhole |
+| | billion-context-pi-lean | pi-blackhole |
 | --- | --- | --- |
-| 谁来压缩 | 模型自己决定什么时候压、压哪一段，写出摘要 | 程序按规则提取目标、文件、提交、偏好等，不调用模型 |
-| 压缩成本 | 模型要输出摘要，花输出 token | 压缩本身零成本 |
+| 谁来压缩 | 模型自己决定什么时候压、压哪一段；摘要由主模型或你指定的便宜模型写 | 程序按规则提取目标、文件、提交、偏好等，不调用模型 |
+| 压缩成本 | 写摘要要花输出 token；配了便宜的摘要模型后，主模型只写 1–2 句说明 | 压缩本身零成本 |
 | 找回原文 | `decompress` 把原文还原回上下文 | `recall` 搜原始会话记录，按需取回片段 |
 | 缓存 | 对缓存友好 | 压缩后用提取的信息和记忆重写前缀，要重新写一次缓存，但量不大 |
-| 额外要求 | 无 | 自带的记忆功能靠后台 worker 运行，要配一个便宜的模型 |
+| 额外要求 | 无；便宜的摘要模型可选 | 自带的记忆功能靠后台 worker 运行，要配一个便宜的模型 |
 
 **怎么选：**
 
 * **有便宜的模型可用**（比如 GPT Luna，或者本地模型）：用 **pi-blackhole**。压缩不花主模型的钱，记忆交给便宜模型在后台做。
-* **只用一个模型**：用 **billion-context-pi**。不用额外配模型，摘要由模型自己写，质量更稳。
+* **只用一个模型**：用 **billion-context-pi-lean**。不用额外配模型，摘要由模型自己写，质量更稳。
 
-### billion-context-pi
+### billion-context-pi-lean
 
-[billion-context-pi](https://github.com/ranxianglei/billion-context-pi) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长会话、上下文窗口小的模型最用得上。
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长会话、上下文窗口小的模型最用得上。
 
 默认上下文每增长约 50k，就会提醒模型压缩一次，通常能把上下文维持在 150k 以内，不需要额外调。
 
-**请直接用官方版，并打开它的 `lean` 提示词包。** 官方把我那版精简提示词（保留了大约九成）做成了内置的 `lean` 提示词包，但默认不启用。
+**推荐用我维护的分支，而不是官方版。** 它基于 [billion-context-pi](https://github.com/ranxianglei/billion-context-pi) v0.1.83，专注于运行稳定性和降低 token 消耗：
+
+* **常驻上下文 486 token**，比上游默认配置（8,670）少 94.4%，比上游开 `lean` 提示词包（4,877）少 90.0%。差距里有一部分是上游的子代理工具，本分支已删除这项功能，详见[对比](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README.zh-CN.md#上下文占用对比)。
+* **摘要可以交给便宜模型写。** 主模型只负责选范围，每次压缩提示里的规则从约 1,460 token 降到约 220。
+* **修了上游的一些 bug**，比如紧急截断算出来了却没用到请求上、并发保存状态会失败。
 
 <details>
-<summary><b>配置方法</b>：安装并打开 <code>lean</code> 提示词包</summary>
+<summary><b>配置方法</b>：安装，可选指定摘要模型</summary>
 
-1. 安装：`pi install npm:billion-context-pi`。
-2. 在 `~/.pi/acp.json`（全局）或 `<项目>/.pi/acp.json`（单个项目）里写：
-
-   ```json
-   {
-     "compress": { "promptPack": "lean" },
-     "delegate": false
-   }
-   ```
-
-   `delegate: false` 关掉它自带的子代理工具。如果你想用它的子代理，就去掉这一行，同时别再装其他子代理扩展。
+1. 安装：`pi install git:github.com/kunkun9527/billion-context-pi-lean`。
+2. 可选：用 `/acp compact <provider/model>` 指定一个便宜的摘要模型，会保存为 `~/.pi/acp.json` 里的 `compressionModelId`。不指定的话，和上游一样由主模型写摘要。
 3. 新开一个会话就生效。
 
-`lean` 包有意保留了比较详细的 `howToCompress` 规则，弱一点的模型靠这些规则才不会压出幻觉。用前沿模型还想再压的话，可以在同一个文件里用 `promptSections` / `prompts` 覆盖对应段落，见官方的 [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md)。
+不要和 `billion-context-pi` 或 `billion-context` 同时装，工具和钩子会重复注册。子代理委派已删除，子代理请用单独的扩展，比如 [pi-subagents-lean](#精简版扩展)。其他配置见分支的 [README](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README.zh-CN.md#配置)。
 
 </details>
 
-> 我以前做的精简提示词已经被官方采纳，成了 `lean` 提示词包（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)）。现在 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 是我自己维护的 v0.1.83 分支，专注于运行稳定性和降低 token 消耗（比如摘要可以交给便宜模型写）。
+> 我以前做的精简提示词已经被官方采纳，成了内置的 `lean` 提示词包（见 [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)）。想用官方版的话，安装 `npm:billion-context-pi`，并在 `acp.json` 里设置 `"compress": { "promptPack": "lean" }`。
 
 ### pi-blackhole
 

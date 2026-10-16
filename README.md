@@ -12,7 +12,7 @@ This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use 
 
 1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
 2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
-3. For long-context management, pick one: [`billion-context-pi`](#billion-context-pi) or [`pi-blackhole`](#pi-blackhole). See [which one](#long-context-management-pick-one).
+3. For long-context management, pick one: [`billion-context-pi-lean`](#billion-context-pi-lean) or [`pi-blackhole`](#pi-blackhole). See [which one](#long-context-management-pick-one).
 4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
 5. Measure again with `pi-context-view` to see what you saved.
 
@@ -73,60 +73,55 @@ For the reasoning, before/after examples, and what Anthropic says about it, see 
 
 | Area | Tool | What it does |
 | --- | --- | --- |
-| Long-context management | [billion-context-pi](#billion-context-pi) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts older context and brings details back |
+| Long-context management | [billion-context-pi-lean](#billion-context-pi-lean) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts older context and brings details back |
 | Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
 | Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
 
 ### Long-context management: pick one
 
-billion-context-pi and pi-blackhole both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
+billion-context-pi-lean and pi-blackhole both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
 
-The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). billion-context-pi does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
+The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). billion-context-pi-lean does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
 
-**Why around 200k: quality, and also cost.** Every turn resends the whole context to the model. Even with cheap cache reads, each turn costs more as the context grows. Compacting also has a fixed cost: the cache has to be rewritten, and billion-context-pi also has the model write a summary. Compact too often and you keep paying that fixed cost; compact too late and every turn pays for a long tail of old context. In between there is a cheapest point, which you can work out from your model's pricing and how you work. Using Opus 5.5 pricing with pi-blackhole (compaction needs no output tokens, and I ignore the cost of the cheap background model), I estimate that point at about 150k–200k, right inside the smart zone. With billion-context-pi you also need to count the output tokens for the summary, which pushes the cheapest point a bit later, but the method is the same.
+**Why around 200k: quality, and also cost.** Every turn resends the whole context to the model. Even with cheap cache reads, each turn costs more as the context grows. Compacting also has a fixed cost: the cache has to be rewritten, and billion-context-pi-lean also needs a summary written. Compact too often and you keep paying that fixed cost; compact too late and every turn pays for a long tail of old context. In between there is a cheapest point, which you can work out from your model's pricing and how you work. Using Opus 5.5 pricing with pi-blackhole (compaction needs no output tokens, and I ignore the cost of the cheap background model), I estimate that point at about 150k–200k, right inside the smart zone. With billion-context-pi-lean you also need to count the output tokens for the summary (cheap if a cheap summary model writes it), which pushes the cheapest point a bit later, but the method is the same.
 
-| | billion-context-pi | pi-blackhole |
+| | billion-context-pi-lean | pi-blackhole |
 | --- | --- | --- |
-| Who compacts | The model decides when and what to compress, and writes the summary | Code extracts goals, files, commits, preferences, etc. by rule; no model call |
-| Compaction cost | The model spends output tokens on summaries | Compaction itself is free |
+| Who compacts | The model decides when and what to compress; the main model or a cheap model you choose writes the summary | Code extracts goals, files, commits, preferences, etc. by rule; no model call |
+| Compaction cost | Summaries cost output tokens; with a cheap summary model, the main model writes only a 1–2 sentence note | Compaction itself is free |
 | Getting originals back | `decompress` restores the original content into context | `recall` searches the raw session log and returns snippets on demand |
 | Cache | Cache-friendly | After compaction, the extracted info and memory form a new prefix that has to be cached again, but it's small |
-| Extra requirement | None | Its built-in memory runs as background workers that need a cheap model |
+| Extra requirement | None; a cheap summary model is optional | Its built-in memory runs as background workers that need a cheap model |
 
 **Which one:**
 
 * **You have a cheap model** (e.g. GPT Luna, or a local model): use **pi-blackhole**. Compaction costs nothing on your main model, and the cheap model handles memory in the background.
-* **You use a single model**: use **billion-context-pi**. No extra model to set up, and the model writes its own summaries, so quality is steadier.
+* **You use a single model**: use **billion-context-pi-lean**. No extra model to set up, and the model writes its own summaries, so quality is steadier.
 
-### billion-context-pi
+### billion-context-pi-lean
 
-[billion-context-pi](https://github.com/ranxianglei/billion-context-pi) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
+[billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
 
 By default it nudges the model to compress each time context grows by about 50k, which usually keeps context under 150k with no tuning.
 
-**Use the official version and turn on its `lean` prompt pack.** Upstream took my trimmed prompts (keeping about 90% of them) and ships them as the built-in `lean` pack, but it's off by default.
+**I recommend my fork over the official version.** It is based on [billion-context-pi](https://github.com/ranxianglei/billion-context-pi) v0.1.83 and focuses on runtime stability and spending fewer tokens:
+
+* **Always-on context: 486 tokens**, 94.4% fewer than upstream's default (8,670) and 90.0% fewer than its `lean` prompt pack (4,877). Part of the gap is upstream's sub-agent tools, which the fork removed; see the [benchmark](https://github.com/kunkun9527/billion-context-pi-lean#context-footprint-benchmark).
+* **A cheap model can write the summaries.** The main model only picks ranges, and the rules in each compression nudge drop from about 1,460 tokens to about 220.
+* **Upstream bugs fixed**, such as emergency truncation never reaching the request and concurrent state saves failing.
 
 <details>
-<summary><b>Setup</b>: install and turn on the <code>lean</code> pack</summary>
+<summary><b>Setup</b>: install, optionally pick a summary model</summary>
 
-1. Install: `pi install npm:billion-context-pi`.
-2. In `~/.pi/acp.json` (global) or `<project>/.pi/acp.json` (one project), add:
-
-   ```json
-   {
-     "compress": { "promptPack": "lean" },
-     "delegate": false
-   }
-   ```
-
-   `delegate: false` turns off its built-in sub-agent tools. If you want its sub-agents, leave that line out and don't install another sub-agent extension.
+1. Install: `pi install git:github.com/kunkun9527/billion-context-pi-lean`.
+2. Optional: pick a cheap summary model with `/acp compact <provider/model>`; it is saved as `compressionModelId` in `~/.pi/acp.json`. Without one, the main model writes summaries, as upstream does.
 3. Start a new session for it to take effect.
 
-The `lean` pack deliberately keeps the detailed `howToCompress` rules, because weaker models need them to avoid hallucinated summaries. If you run frontier models and want to trim further, override those sections in the same file with `promptSections` / `prompts`; see upstream [CONFIGURATION.md](https://github.com/ranxianglei/billion-context-pi/blob/master/CONFIGURATION.md).
+Don't install it together with `billion-context-pi` or `billion-context`: tools and hooks would register twice. Sub-agent delegation is removed, so use a separate sub-agent extension such as [pi-subagents-lean](#lean-extensions). Other options: the fork's [README](https://github.com/kunkun9527/billion-context-pi-lean#configuration).
 
 </details>
 
-> My earlier lean prompts were adopted upstream as the `lean` pack (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)). I now keep [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) as my own fork of v0.1.83, focused on runtime stability and spending fewer tokens (for example, a cheap model can write the summaries).
+> My earlier lean prompts were adopted upstream as its built-in `lean` prompt pack (see [issue #4](https://github.com/kunkun9527/billion-context-pi-lean/issues/4)). If you prefer the official version, install `npm:billion-context-pi` and set `"compress": { "promptPack": "lean" }` in `acp.json`.
 
 ### pi-blackhole
 
