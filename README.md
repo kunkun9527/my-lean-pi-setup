@@ -12,7 +12,7 @@ This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use 
 
 1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
 2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
-3. For long-context management, install [`billion-context-pi-lean`](#billion-context-pi-lean). If you'd rather have free rule-based compaction with background memory, use [`pi-blackhole`](#pi-blackhole) instead; see [when to switch](#long-context-management).
+3. For long-context management, install [`billion-context-pi-lean`](#billion-context-pi-lean).
 4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
 5. Measure again with `pi-context-view` to see what you saved.
 
