@@ -4,7 +4,7 @@
 
 这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。这样 token 更少、成本更低，模型也能把注意力放在真正重要的内容上，表现更聪明。仓库里有三样东西：
 
-* **5 个常用扩展的精简版**：功能不变，常驻上下文合计少约 91%。
+* **4 个常用扩展的精简版**：功能不变，常驻上下文合计少约 93%。
 * **3 个搭配使用的组件**：分别负责长上下文管理、基础 Prompt 和用量查看。
 * **一份 `AGENTS.md` 规则模板**。
 
@@ -30,7 +30,6 @@
 | --- | --- | --- |
 | [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | 把任务交给子代理，支持后台运行和中途调整方向 | 启动、取结果、调整方向合成一个 `subagent` 工具；代理发现和生命周期管理保留 |
 | [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | 搜索网页、核实说法、抓取页面，长结果可分页 | 4 个工具合成一个 `web_access`，高级参数要用时再查帮助 |
-| [pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) | 用每行的 HASH 锚点定位和修改文件，改错可一步撤回 | 缩短 `read`、`replace`、`undo_last_replace` 的说明；安全校验都在 |
 | [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | 需求或决定不明确时，用选择题问用户 | 删掉说明里重复的话；提问界面和选项校验没动 |
 | [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | 拆任务、记依赖、跟进度 | 换成更短、更平的 Schema；功能一个没少 |
 
@@ -43,15 +42,14 @@
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
 | `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
-| `pi-hashline-edit-pro-lean` | **1,282** | 4,732 | 3,450 | **72.9%** |
-| **合计** | **2,180** | **18,271** | **16,091** | **88.1%** |
+| **合计** | **898** | **13,539** | **12,641** | **93.4%** |
 
-5 个精简版合计，常驻的初始上下文比锁定的上游版本少 **16,091 tokens（88.1%）**。
+4 个精简版合计，常驻的初始上下文比锁定的上游版本少 **12,641 tokens（93.4%）**。
 
 <details>
 <summary>测量方式</summary>
 
-* 测试环境：Pi `1.2.0`，使用仓库内置自动化工具。
+* 测试环境：Pi `1.3.0`，使用仓库内置自动化工具。
 * 每个精简版和它的上游版本，都在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。
 * 不计内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 和 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。
 * Token 按 `ceil(字符数 / 4)` 估算，不是某个模型 tokenizer 的实际计费值。上游版本是各精简包锁定的精确版本，已对照 lockfile 和已安装的包校验。

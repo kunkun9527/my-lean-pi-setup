@@ -4,7 +4,7 @@
 
 This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. Fewer tokens means lower cost, and the model can focus on what matters, so it works smarter. The repo has three parts:
 
-* **Lean versions of 5 popular extensions**: same features, about 91% less always-on context combined.
+* **Lean versions of 4 popular extensions**: same features, about 93% less always-on context combined.
 * **3 companion tools**: for long-context management, the base prompt, and seeing where tokens go.
 * **An `AGENTS.md` template**.
 
@@ -30,7 +30,6 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | --- | --- | --- |
 | [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | Hands tasks to subagents that can run in the background and be redirected mid-task | Start, fetch results, and redirect merged into one `subagent` tool; agent discovery and lifecycle kept |
 | [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | Searches the web, checks claims, fetches pages, pages through long results | Four tools merged into one `web_access`; advanced options in on-demand help |
-| [pi-hashline-edit-pro-lean](https://github.com/kunkun9527/pi-hashline-edit-pro-lean) | Edits files via stable per-line HASH anchors, with one-step undo | Shorter `read`, `replace`, `undo_last_replace` descriptions; all safety checks kept |
 | [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | Asks multiple-choice questions when a requirement or decision is unclear | Repeated wording removed; question UI and option validation unchanged |
 | [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | Breaks work into tasks, tracks dependencies and progress | Shorter, flatter schema; no task features dropped |
 
@@ -43,15 +42,14 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
 | `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
-| `pi-hashline-edit-pro-lean` | **1,282** | 4,732 | 3,450 | **72.9%** |
-| **Total** | **2,180** | **18,271** | **16,091** | **88.1%** |
+| **Total** | **898** | **13,539** | **12,641** | **93.4%** |
 
-Across all 5 wrappers, recurring initialization context is reduced by **16,091 tokens (88.1%)** versus their pinned upstream versions.
+Across all 4 wrappers, recurring initialization context is reduced by **12,641 tokens (93.4%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
 
-* Test environment: Pi `1.2.0` using the repository's automated benchmark tool.
+* Test environment: Pi `1.3.0` using the repository's automated benchmark tool.
 * Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
 * Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
 * Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.

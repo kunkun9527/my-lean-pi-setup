@@ -50,19 +50,6 @@
           "label": "Default"
         }
       ]
-    },
-    {
-      "id": "hashline-edit",
-      "directory": "pi-hashline-edit-pro-lean",
-      "displayName": "Hashline Edit",
-      "upstreamPackage": "pi-hashline-edit-pro",
-      "profiles": [
-        {
-          "id": "default",
-          "label": "Default: all eight tools",
-          "labelZh": "默认：全部八个工具"
-        }
-      ]
     }
   ]
 }
