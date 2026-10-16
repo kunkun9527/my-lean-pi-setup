@@ -27,11 +27,11 @@
 
 | 扩展 | 做什么 | 精简了什么 |
 | --- | --- | --- |
-| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | 把任务交给子代理，支持后台运行和中途调整方向 | 启动、取结果、调整方向合成一个 `subagent` 工具；代理发现和生命周期管理保留 |
-| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | 搜索网页、核实说法、抓取页面，长结果可分页 | 4 个工具合成一个 `web_access`，高级参数要用时再查帮助 |
-| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | 需求或决定不明确时，用选择题问用户 | 删掉说明里重复的话；提问界面和选项校验没动 |
-| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | 拆任务、记依赖、跟进度 | 换成更短、更平的 Schema；功能一个没少 |
-| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) | 把较早的对话压成摘要，需要时找回原文，长会话也能把上下文控制得很小 | 8 个工具精简成 `compress` 和 `acp_context` 两个（子代理委派已删）；常驻提示只留调用前必须的规则 |
+| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean)<br>`pi install npm:@ssk_dev/pi-subagents-lean` | 把任务交给子代理，支持后台运行和中途调整方向 | 启动、取结果、调整方向合成一个 `subagent` 工具；代理发现和生命周期管理保留 |
+| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean)<br>`pi install npm:@ssk_dev/pi-web-access-lean` | 搜索网页、核实说法、抓取页面，长结果可分页 | 4 个工具合成一个 `web_access`，高级参数要用时再查帮助 |
+| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean)<br>`pi install npm:@ssk_dev/rpiv-ask-user-question-lean` | 需求或决定不明确时，用选择题问用户 | 删掉说明里重复的话；提问界面和选项校验没动 |
+| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean)<br>`pi install npm:@ssk_dev/rpiv-todo-lean` | 拆任务、记依赖、跟进度 | 换成更短、更平的 Schema；功能一个没少 |
+| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean)<br>`pi install npm:billion-context-pi-lean` | 把较早的对话压成摘要，需要时找回原文，长会话也能把上下文控制得很小 | 8 个工具精简成 `compress` 和 `acp_context` 两个（子代理委派已删）；常驻提示只留调用前必须的规则 |
 
 ### 启动时的上下文占用
 

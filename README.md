@@ -27,11 +27,11 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 
 | Extension | What it does | What was trimmed |
 | --- | --- | --- |
-| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | Hands tasks to subagents that can run in the background and be redirected mid-task | Start, fetch results, and redirect merged into one `subagent` tool; agent discovery and lifecycle kept |
-| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | Searches the web, checks claims, fetches pages, pages through long results | Four tools merged into one `web_access`; advanced options in on-demand help |
-| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | Asks multiple-choice questions when a requirement or decision is unclear | Repeated wording removed; question UI and option validation unchanged |
-| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | Breaks work into tasks, tracks dependencies and progress | Shorter, flatter schema; no task features dropped |
-| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) | Compresses older conversation into summaries and restores details on demand, keeping long sessions in a small context | 8 tools cut to `compress` and `acp_context` (subagent delegation removed); the always-on prompt keeps only the rules needed before a call |
+| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean)<br>`pi install npm:@ssk_dev/pi-subagents-lean` | Hands tasks to subagents that can run in the background and be redirected mid-task | Start, fetch results, and redirect merged into one `subagent` tool; agent discovery and lifecycle kept |
+| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean)<br>`pi install npm:@ssk_dev/pi-web-access-lean` | Searches the web, checks claims, fetches pages, pages through long results | Four tools merged into one `web_access`; advanced options in on-demand help |
+| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean)<br>`pi install npm:@ssk_dev/rpiv-ask-user-question-lean` | Asks multiple-choice questions when a requirement or decision is unclear | Repeated wording removed; question UI and option validation unchanged |
+| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean)<br>`pi install npm:@ssk_dev/rpiv-todo-lean` | Breaks work into tasks, tracks dependencies and progress | Shorter, flatter schema; no task features dropped |
+| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean)<br>`pi install npm:billion-context-pi-lean` | Compresses older conversation into summaries and restores details on demand, keeping long sessions in a small context | 8 tools cut to `compress` and `acp_context` (subagent delegation removed); the always-on prompt keeps only the rules needed before a call |
 
 ### Context used at startup
 
