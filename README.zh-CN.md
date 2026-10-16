@@ -5,14 +5,14 @@
 这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。这样 token 更少、成本更低，模型也能把注意力放在真正重要的内容上，表现更聪明。仓库里有三样东西：
 
 * **5 个常用扩展的精简版**：常驻上下文合计少约 94%。
-* **3 个搭配使用的组件**：分别负责长上下文管理、基础 Prompt 和用量查看。
+* **2 个搭配使用的组件**：分别负责基础 Prompt 和用量查看。
 * **一份 `AGENTS.md` 规则模板**。
 
 ## 快速开始
 
 1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
 2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 长上下文管理：[`billion-context-pi-lean`](#billion-context-pi-lean) 和 [`pi-blackhole`](#pi-blackhole) 二选一，见[怎么选](#长上下文管理二选一)。
+3. 长上下文管理：装 [`billion-context-pi-lean`](#billion-context-pi-lean)。想要零成本的规则压缩和后台记忆，可以换成 [`pi-blackhole`](#pi-blackhole)，见[什么时候换](#长上下文管理)。
 4. 只把你真正常用的工具换成[精简版](#精简版扩展)。
 5. 再用 `pi-context-view` 测一次，看省了多少。
 
@@ -69,17 +69,9 @@
 
 原理、原文对比和 Anthropic 的相关说法，见文章：[中文（知乎）](https://zhuanlan.zhihu.com/p/2087689382069383746) · [English (dev.to)](https://dev.to/shengkai_su/cut-91-of-your-tool-prompts-a-practical-guide-for-pi-agent-users-and-extension-authors-4jo9)。想给别的扩展做 lean 版，可以直接用[这两段提示词](docs/make-your-own-lean.zh-CN.md)交给 agent：一段用来做，一段用来跟进上游更新。
 
-## 搭配使用的组件
+## 长上下文管理
 
-| 管哪部分 | 组件 | 做什么 |
-| --- | --- | --- |
-| 长上下文管理 | [billion-context-pi-lean](#billion-context-pi-lean) 或 [pi-blackhole](#pi-blackhole)（二选一） | 压缩较早的上下文，需要时找回细节 |
-| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
-| 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
-
-### 长上下文管理：二选一
-
-billion-context-pi-lean 和 pi-blackhole 都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
+我默认用 **billion-context-pi-lean**，**pi-blackhole** 作为备选。两个都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
 两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。billion-context-pi-lean 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
 
@@ -93,10 +85,11 @@ billion-context-pi-lean 和 pi-blackhole 都负责管理长上下文（比如一
 | 缓存 | 对缓存友好 | 压缩后用提取的信息和记忆重写前缀，要重新写一次缓存，但量不大 |
 | 额外要求 | 无；便宜的摘要模型可选 | 自带的记忆功能靠后台 worker 运行，要配一个便宜的模型 |
 
-**怎么选：**
+**什么时候换成 pi-blackhole**（其他情况用 billion-context-pi-lean 就行）：
 
-* **有便宜的模型可用**（比如 GPT Luna，或者本地模型）：用 **pi-blackhole**。压缩不花主模型的钱，记忆交给便宜模型在后台做。
-* **只用一个模型**：用 **billion-context-pi-lean**。不用额外配模型，摘要由模型自己写，质量更稳。
+* 想让压缩完全不花模型 token：它按规则提取，不调用模型。
+* 想要后台记忆，持续记下关键事实和决策。
+* 有便宜的模型给它的 worker 用（比如 GPT Luna，或者本地模型），也不介意每次压缩后重新写一次前缀缓存。
 
 ### billion-context-pi-lean
 
@@ -176,6 +169,13 @@ pi install git:github.com/kunkun9527/pi-blackhole
 用 git 安装需要先在 `~/.pi/agent/settings.json` 里设置 `"npmCommand": ["npm"]`。原版和 fork 只能装一个。
 
 </details>
+
+## 搭配使用的组件
+
+| 管哪部分 | 组件 | 做什么 |
+| --- | --- | --- |
+| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
+| 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
 
 ### pi-docs-slim
 

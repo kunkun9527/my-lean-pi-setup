@@ -5,14 +5,14 @@
 This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. Fewer tokens means lower cost, and the model can focus on what matters, so it works smarter. The repo has three parts:
 
 * **Lean versions of 5 popular extensions**: about 94% less always-on context combined.
-* **3 companion tools**: for long-context management, the base prompt, and seeing where tokens go.
+* **2 companion tools**: for the base prompt and seeing where tokens go.
 * **An `AGENTS.md` template**.
 
 ## Getting started
 
 1. Check your current token usage with [`pi-context-view`](#pi-context-view) so you have a baseline.
 2. Install [`pi-docs-slim`](#pi-docs-slim) to shorten the base prompt.
-3. For long-context management, pick one: [`billion-context-pi-lean`](#billion-context-pi-lean) or [`pi-blackhole`](#pi-blackhole). See [which one](#long-context-management-pick-one).
+3. For long-context management, install [`billion-context-pi-lean`](#billion-context-pi-lean). If you'd rather have free rule-based compaction with background memory, use [`pi-blackhole`](#pi-blackhole) instead; see [when to switch](#long-context-management).
 4. Swap in [lean versions](#lean-extensions) only for the tools you actually use.
 5. Measure again with `pi-context-view` to see what you saved.
 
@@ -69,17 +69,9 @@ The trimming comes down to three methods:
 
 For the reasoning, before/after examples, and what Anthropic says about it, see the article: [English (dev.to)](https://dev.to/shengkai_su/cut-91-of-your-tool-prompts-a-practical-guide-for-pi-agent-users-and-extension-authors-4jo9) · [中文（知乎）](https://zhuanlan.zhihu.com/p/2087689382069383746). To make a lean version of another extension, hand [these two prompts](docs/make-your-own-lean.md) to your agent: one to build it, one to keep it in sync with upstream.
 
-## Companion tools
+## Long-context management
 
-| Area | Tool | What it does |
-| --- | --- | --- |
-| Long-context management | [billion-context-pi-lean](#billion-context-pi-lean) or [pi-blackhole](#pi-blackhole) (pick one) | Compacts older context and brings details back |
-| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
-| Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
-
-### Long-context management: pick one
-
-billion-context-pi-lean and pi-blackhole both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
+By default I use **billion-context-pi-lean**; **pi-blackhole** is the alternative. Both manage long context (say, one session running for days and adding up to billions of tokens), but in different ways. **Install only one**: both take over Pi's compaction and will overwrite each other.
 
 The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). billion-context-pi-lean does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
 
@@ -93,10 +85,11 @@ The core job of both is to keep context within a set range: even on a 1M-window 
 | Cache | Cache-friendly | After compaction, the extracted info and memory form a new prefix that has to be cached again, but it's small |
 | Extra requirement | None; a cheap summary model is optional | Its built-in memory runs as background workers that need a cheap model |
 
-**Which one:**
+**When to switch to pi-blackhole** (otherwise stay with billion-context-pi-lean):
 
-* **You have a cheap model** (e.g. GPT Luna, or a local model): use **pi-blackhole**. Compaction costs nothing on your main model, and the cheap model handles memory in the background.
-* **You use a single model**: use **billion-context-pi-lean**. No extra model to set up, and the model writes its own summaries, so quality is steadier.
+* You want compaction to cost no model tokens at all: it extracts by rule, without calling a model.
+* You want background memory that keeps recording key facts and decisions as you go.
+* You have a cheap model for its workers (e.g. GPT Luna, or a local model), and don't mind re-caching the prefix after each compaction.
 
 ### billion-context-pi-lean
 
@@ -176,6 +169,13 @@ pi install git:github.com/kunkun9527/pi-blackhole
 Installing from git requires `"npmCommand": ["npm"]` in `~/.pi/agent/settings.json`. Install either upstream or the fork, not both.
 
 </details>
+
+## Companion tools
+
+| Area | Tool | What it does |
+| --- | --- | --- |
+| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
+| Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
 
 ### pi-docs-slim
 
