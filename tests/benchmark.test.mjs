@@ -15,15 +15,14 @@ const config = JSON.parse(await readFile(path.join(setupRoot, "benchmarks", "con
 const results = JSON.parse(await readFile(path.join(setupRoot, "benchmarks", "results.json"), "utf8"));
 
 test("configuration covers the maintained public Lean wrappers", async () => {
-  assert.equal(config.extensions.length, 4);
+  assert.equal(config.extensions.length, 5);
   assert.equal(config.extensions.some((extension) => extension.directory === "pi-hashline-edit-pro-lean"), false);
-  assert.equal(config.extensions.some((extension) => extension.directory === "billion-context-pi-lean"), false);
   assert.equal(config.extensions.some((extension) => extension.directory === "pi-goal-lean"), false);
   for (const extension of config.extensions) {
     const packageRoot = path.join(packagesRoot, extension.directory);
-    await access(path.join(packageRoot, "index.ts"));
+    await access(path.join(packageRoot, extension.leanEntry ?? "index.ts"));
     const packageJson = JSON.parse(await readFile(path.join(packageRoot, "package.json"), "utf8"));
-    const declaredVersion = packageJson.dependencies[extension.upstreamPackage];
+    const declaredVersion = packageJson.dependencies?.[extension.upstreamPackage] ?? packageJson.devDependencies?.[extension.upstreamPackage];
     assert.match(declaredVersion, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
 
     const lockfile = JSON.parse(await readFile(path.join(packageRoot, "package-lock.json"), "utf8"));
@@ -69,18 +68,20 @@ test("all generated README blocks have exactly one start and end marker", async 
     path.join(setupRoot, "README.md"),
     path.join(setupRoot, "README.zh-CN.md"),
   ];
+  const benchmarkBlockOptional = new Set();
   for (const extension of config.extensions) {
-    files.push(
-      path.join(packagesRoot, extension.directory, "README.md"),
-      path.join(packagesRoot, extension.directory, "README_zh-CN.md"),
-    );
+    for (const fileName of ["README.md", "README_zh-CN.md"]) {
+      const filePath = path.join(packagesRoot, extension.directory, fileName);
+      files.push(filePath);
+      if (extension.readmeBenchmarkBlock === false) benchmarkBlockOptional.add(filePath);
+    }
   }
 
   for (const filePath of files) {
     const content = await readFile(filePath, "utf8");
     const isSetupReadme = path.dirname(filePath) === setupRoot;
-    const ids = isSetupReadme ? ["aggregate"] : ["benchmark"];
-    if (!isSetupReadme) ids.push("summary");
+    const ids = isSetupReadme ? ["aggregate"] : ["summary"];
+    if (!isSetupReadme && !benchmarkBlockOptional.has(filePath)) ids.push("benchmark");
     for (const id of ids) {
       assert.equal(content.split(`<!-- token-benchmark:${id}:start -->`).length - 1, 1, `${filePath}: ${id} start`);
       assert.equal(content.split(`<!-- token-benchmark:${id}:end -->`).length - 1, 1, `${filePath}: ${id} end`);
@@ -131,6 +132,6 @@ test("report runs all measurements with isolated worker cwd and environment", as
     timeout: 180_000,
     maxBuffer: 2 * 1024 * 1024,
   });
-  assert.match(stdout, /Measuring 4 Lean extensions in isolated Pi sessions/);
+  assert.match(stdout, /Measuring 5 Lean extensions in isolated Pi sessions/);
   assert.match(stdout, /Report only: no files changed/);
 });

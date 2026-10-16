@@ -110,7 +110,9 @@ try {
   const eventMessagesJson = JSON.stringify(eventResult?.messages ?? []);
   const eventMessageChars = eventResult?.messages?.length ? eventMessagesJson.length : 0;
   const promptDeltaChars = finalSystemPrompt.length - initialSystemPrompt.length + eventMessageChars;
-  const promptDeltaTokens = Math.ceil(finalSystemPrompt.length / 4) - Math.ceil(initialSystemPrompt.length / 4)
+  // Estimate the added characters directly: rounding both prompts separately made the result
+  // depend on the base prompt length (which includes the temp cwd path) and drift by 1 token.
+  const promptDeltaTokens = Math.ceil((finalSystemPrompt.length - initialSystemPrompt.length) / 4)
     + Math.ceil(eventMessageChars / 4);
   const toolTokens = tools.reduce((sum, tool) => sum + tool.tokens, 0);
 

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-16T06:28:15.413Z",
+  "generatedAt": "2026-10-16T07:06:54.120Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.3.0",
   "totals": {
-    "leanTokens": 898,
-    "upstreamTokens": 13539,
-    "savedTokens": 12641,
-    "reductionPercent": 93.4
+    "leanTokens": 1384,
+    "upstreamTokens": 22209,
+    "savedTokens": 20825,
+    "reductionPercent": 93.8
   },
   "extensions": [
     {
@@ -303,6 +303,145 @@
           },
           "savedTokens": 8265,
           "reductionPercent": 96.8
+        }
+      ]
+    },
+    {
+      "id": "billion-context",
+      "directory": "billion-context-pi-lean",
+      "displayName": "Billion Context",
+      "leanPackage": "billion-context-pi-lean",
+      "leanVersion": "0.1.83-lean.10",
+      "upstreamPackage": "billion-context-pi",
+      "upstreamVersion": "0.1.83",
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default",
+          "lean": {
+            "totalTokens": 486,
+            "toolTokens": 318,
+            "promptDeltaTokens": 168,
+            "promptDeltaChars": 670,
+            "eventMessageChars": 0,
+            "activeToolNames": [
+              "compress",
+              "acp_context"
+            ],
+            "tools": [
+              {
+                "name": "compress",
+                "chars": 921,
+                "tokens": 231,
+                "descriptionChars": 91,
+                "schemaChars": 819,
+                "snippetChars": 0,
+                "guidelineChars": 0
+              },
+              {
+                "name": "acp_context",
+                "chars": 345,
+                "tokens": 87,
+                "descriptionChars": 134,
+                "schemaChars": 197,
+                "snippetChars": 0,
+                "guidelineChars": 0
+              }
+            ]
+          },
+          "upstream": {
+            "totalTokens": 8670,
+            "toolTokens": 3725,
+            "promptDeltaTokens": 4945,
+            "promptDeltaChars": 19778,
+            "eventMessageChars": 0,
+            "activeToolNames": [
+              "compress",
+              "decompress",
+              "search_context",
+              "acp_status",
+              "acp_cache",
+              "acp_delegate",
+              "acp_delegate_wait",
+              "acp_delegate_cancel"
+            ],
+            "tools": [
+              {
+                "name": "compress",
+                "chars": 2196,
+                "tokens": 549,
+                "descriptionChars": 243,
+                "schemaChars": 1495,
+                "snippetChars": 90,
+                "guidelineChars": 357
+              },
+              {
+                "name": "decompress",
+                "chars": 2184,
+                "tokens": 546,
+                "descriptionChars": 655,
+                "schemaChars": 928,
+                "snippetChars": 172,
+                "guidelineChars": 416
+              },
+              {
+                "name": "search_context",
+                "chars": 839,
+                "tokens": 210,
+                "descriptionChars": 212,
+                "schemaChars": 246,
+                "snippetChars": 58,
+                "guidelineChars": 306
+              },
+              {
+                "name": "acp_status",
+                "chars": 1356,
+                "tokens": 339,
+                "descriptionChars": 232,
+                "schemaChars": 831,
+                "snippetChars": 88,
+                "guidelineChars": 192
+              },
+              {
+                "name": "acp_cache",
+                "chars": 816,
+                "tokens": 204,
+                "descriptionChars": 377,
+                "schemaChars": 264,
+                "snippetChars": 27,
+                "guidelineChars": 136
+              },
+              {
+                "name": "acp_delegate",
+                "chars": 5806,
+                "tokens": 1452,
+                "descriptionChars": 2593,
+                "schemaChars": 2335,
+                "snippetChars": 101,
+                "guidelineChars": 762
+              },
+              {
+                "name": "acp_delegate_wait",
+                "chars": 1367,
+                "tokens": 342,
+                "descriptionChars": 556,
+                "schemaChars": 558,
+                "snippetChars": 61,
+                "guidelineChars": 172
+              },
+              {
+                "name": "acp_delegate_cancel",
+                "chars": 331,
+                "tokens": 83,
+                "descriptionChars": 103,
+                "schemaChars": 141,
+                "snippetChars": 65,
+                "guidelineChars": 0
+              }
+            ]
+          },
+          "savedTokens": 8184,
+          "reductionPercent": 94.4
         }
       ]
     }

@@ -50,6 +50,20 @@
           "label": "Default"
         }
       ]
+    },
+    {
+      "id": "billion-context",
+      "directory": "billion-context-pi-lean",
+      "displayName": "Billion Context",
+      "upstreamPackage": "billion-context-pi",
+      "leanEntry": "lean/index.ts",
+      "readmeBenchmarkBlock": false,
+      "profiles": [
+        {
+          "id": "default",
+          "label": "Default"
+        }
+      ]
     }
   ]
 }

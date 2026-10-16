@@ -4,7 +4,7 @@
 
 This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. Fewer tokens means lower cost, and the model can focus on what matters, so it works smarter. The repo has three parts:
 
-* **Lean versions of 4 popular extensions**: same features, about 93% less always-on context combined.
+* **Lean versions of 5 popular extensions**: about 94% less always-on context combined.
 * **3 companion tools**: for long-context management, the base prompt, and seeing where tokens go.
 * **An `AGENTS.md` template**.
 
@@ -24,7 +24,7 @@ Keep in mind:
 
 ## Lean extensions
 
-Many great Pi extensions ship long tool descriptions that get sent with every request, eating tokens before the conversation even starts. The lean versions only change what the model sees: tool schemas and descriptions are cut down to what's actually needed. Features and underlying code come straight from upstream, unchanged.
+Many great Pi extensions ship long tool descriptions that get sent with every request, eating tokens before the conversation even starts. The lean versions mainly change what the model sees: tool schemas, descriptions, and injected prompts are cut down to what's actually needed.
 
 | Extension | What it does | What was trimmed |
 | --- | --- | --- |
@@ -32,19 +32,21 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | Searches the web, checks claims, fetches pages, pages through long results | Four tools merged into one `web_access`; advanced options in on-demand help |
 | [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | Asks multiple-choice questions when a requirement or decision is unclear | Repeated wording removed; question UI and option validation unchanged |
 | [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | Breaks work into tasks, tracks dependencies and progress | Shorter, flatter schema; no task features dropped |
+| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) | Compresses older conversation into summaries and restores details on demand, keeping long sessions in a small context | 8 tools cut to `compress` and `acp_context` (subagent delegation removed); the always-on prompt keeps only the rules needed before a call |
 
 ### Context used at startup
 
 <!-- token-benchmark:aggregate:start -->
-| Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |
+| Extension | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
 | `pi-web-access-lean` | **153** | 2,837 | 2,684 | **94.6%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **250** | 904 | 654 | **72.3%** |
 | `pi-subagents-lean` | **275** | 8,540 | 8,265 | **96.8%** |
-| **Total** | **898** | **13,539** | **12,641** | **93.4%** |
+| `billion-context-pi-lean` | **486** | 8,670 | 8,184 | **94.4%** |
+| **Total** | **1,384** | **22,209** | **20,825** | **93.8%** |
 
-Across all 4 wrappers, recurring initialization context is reduced by **12,641 tokens (93.4%)** versus their pinned upstream versions.
+Across all 5 Lean extensions, recurring initialization context is reduced by **20,825 tokens (93.8%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>

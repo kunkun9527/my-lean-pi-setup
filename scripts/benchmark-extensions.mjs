@@ -124,7 +124,8 @@ async function measureAll(extensionConfigs) {
       throw new Error(`${extensionConfig.id}: upstream package has no valid pi.extensions or main entry.`);
     }
     const upstreamExtensionPath = containedPath(upstreamRoot, upstreamEntry, `${extensionConfig.id}: upstream entry`);
-    await access(path.join(packageRoot, "index.ts"));
+    const leanExtensionPath = containedPath(packageRoot, extensionConfig.leanEntry ?? "index.ts", `${extensionConfig.id}: lean entry`);
+    await access(leanExtensionPath);
     await access(upstreamExtensionPath);
     console.log(`  ${extensionConfig.displayName}`);
     const profiles = [];
@@ -133,7 +134,7 @@ async function measureAll(extensionConfigs) {
         extensionId: extensionConfig.id,
         variant: "lean",
         profile,
-        extensionPath: path.join(packageRoot, "index.ts"),
+        extensionPath: leanExtensionPath,
       });
       const upstream = await runMeasurement({
         extensionId: extensionConfig.id,
@@ -320,8 +321,12 @@ function renderAllReadmes(result, extensionConfigs) {
 }
 
 function renderExtensionReadme(filePath, extension, piVersion, language) {
-  const content = readFileSyncText(filePath);
-  let rendered = replaceManagedBlock(content, "benchmark", extensionBenchmark(extension, piVersion, language), filePath);
+  const extensionConfig = config.extensions.find((item) => item.id === extension.id);
+  let rendered = readFileSyncText(filePath);
+  // Forks such as billion-context-pi-lean keep a hand-written detailed comparison; only the summary line is generated.
+  if (extensionConfig.readmeBenchmarkBlock !== false) {
+    rendered = replaceManagedBlock(rendered, "benchmark", extensionBenchmark(extension, piVersion, language), filePath);
+  }
   if (rendered.includes("<!-- token-benchmark:summary:start -->")) {
     rendered = replaceManagedBlock(rendered, "summary", extensionSummary(extension, language), filePath);
   }
@@ -419,7 +424,7 @@ function aggregateBenchmark(result, language) {
   const totals = result.totals;
   if (language === "zh") {
     return [
-      "| 扩展封装 | 精简版 | 锁定上游 | 节省 Token | 降幅 |",
+      "| 扩展 | 精简版 | 锁定上游 | 节省 Token | 降幅 |",
       "| --- | ---: | ---: | ---: | ---: |",
       ...rows,
       `| **合计** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
@@ -438,12 +443,12 @@ function aggregateBenchmark(result, language) {
     ].join("\n");
   }
   return [
-    "| Wrapper | Lean | Pinned Upstream | Tokens Saved | Reduction |",
+    "| Extension | Lean | Pinned Upstream | Tokens Saved | Reduction |",
     "| --- | ---: | ---: | ---: | ---: |",
     ...rows,
     `| **Total** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
     "",
-    `Across all ${config.extensions.length} wrappers, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions.`,
+    `Across all ${config.extensions.length} Lean extensions, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions.`,
     "",
     "<details>",
     "<summary>Methodology</summary>",
@@ -521,7 +526,8 @@ async function preloadReadmes() {
 
 async function validateUpstreamDependency(packageRoot, leanPackage, extensionConfig) {
   const packageName = extensionConfig.upstreamPackage;
-  const declaredVersion = leanPackage.dependencies?.[packageName];
+  // Wrappers depend on upstream at runtime; forks pin it as a devDependency for measurement only.
+  const declaredVersion = leanPackage.dependencies?.[packageName] ?? leanPackage.devDependencies?.[packageName];
   if (typeof declaredVersion !== "string" || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(declaredVersion)) {
     throw new Error(`${extensionConfig.id}: ${packageName} must be pinned to an exact version; found ${JSON.stringify(declaredVersion)}.`);
   }
