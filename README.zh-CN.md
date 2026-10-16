@@ -12,9 +12,8 @@
 
 1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
 2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 长上下文管理：装 [`billion-context-pi-lean`](#billion-context-pi-lean)。
-4. 只把你真正常用的工具换成[精简版](#精简版扩展)。
-5. 再用 `pi-context-view` 测一次，看省了多少。
+3. 安装你需要的 [lean 版扩展](#精简版扩展)。
+4. 再用 `pi-context-view` 测一次，看省了多少。
 
 注意：
 
