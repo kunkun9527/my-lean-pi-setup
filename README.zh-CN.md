@@ -106,18 +106,18 @@ billion-context-pi-lean 和 pi-blackhole 都负责管理长上下文（比如一
 
 **推荐用我维护的分支，而不是官方版。** 它基于 [billion-context-pi](https://github.com/ranxianglei/billion-context-pi) v0.1.83，专注于运行稳定性和降低 token 消耗：
 
-* **常驻上下文 486 token**，比上游默认配置（8,670）少 94.4%，比上游开 `lean` 提示词包（4,877）少 90.0%。差距里有一部分是上游的子代理工具，本分支已删除这项功能，详见[对比](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README.zh-CN.md#上下文占用对比)。
+* **常驻上下文 486 token**，比上游默认配置（8,670）少 94.4%，比上游开 `lean` 提示词包（4,877）少 90.0%。差距里有一部分是上游的子代理工具，本分支已删除这项功能，详见[对比](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README_zh-CN.md#上下文占用对比)。
 * **摘要可以交给便宜模型写。** 主模型只负责选范围，每次压缩提示里的规则从约 1,460 token 降到约 220。
 * **修了上游的一些 bug**，比如紧急截断算出来了却没用到请求上、并发保存状态会失败。
 
 <details>
 <summary><b>配置方法</b>：安装，可选指定摘要模型</summary>
 
-1. 安装：`pi install git:github.com/kunkun9527/billion-context-pi-lean`。
+1. 安装：`pi install npm:billion-context-pi-lean`。
 2. 可选：用 `/acp compact <provider/model>` 指定一个便宜的摘要模型，会保存为 `~/.pi/acp.json` 里的 `compressionModelId`。不指定的话，和上游一样由主模型写摘要。
 3. 新开一个会话就生效。
 
-不要和 `billion-context-pi` 或 `billion-context` 同时装，工具和钩子会重复注册。子代理委派已删除，子代理请用单独的扩展，比如 [pi-subagents-lean](#精简版扩展)。其他配置见分支的 [README](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README.zh-CN.md#配置)。
+不要和 `billion-context-pi` 或 `billion-context` 同时装，工具和钩子会重复注册。子代理委派已删除，子代理请用单独的扩展，比如 [pi-subagents-lean](#精简版扩展)。其他配置见分支的 [README](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README_zh-CN.md#配置)。
 
 </details>
 

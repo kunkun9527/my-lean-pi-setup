@@ -113,7 +113,7 @@ By default it nudges the model to compress each time context grows by about 50k,
 <details>
 <summary><b>Setup</b>: install, optionally pick a summary model</summary>
 
-1. Install: `pi install git:github.com/kunkun9527/billion-context-pi-lean`.
+1. Install: `pi install npm:billion-context-pi-lean`.
 2. Optional: pick a cheap summary model with `/acp compact <provider/model>`; it is saved as `compressionModelId` in `~/.pi/acp.json`. Without one, the main model writes summaries, as upstream does.
 3. Start a new session for it to take effect.
 
