@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-16T07:06:54.120Z",
+  "generatedAt": "2026-10-17T11:48:08.033Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.3.0",
   "totals": {
     "leanTokens": 1384,
-    "upstreamTokens": 22209,
-    "savedTokens": 20825,
+    "upstreamTokens": 22225,
+    "savedTokens": 20841,
     "reductionPercent": 93.8
   },
   "extensions": [
@@ -15,9 +15,9 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.40.1",
+      "leanVersion": "0.42.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.40.0",
+      "upstreamVersion": "0.42.0",
       "profiles": [
         {
           "id": "default",
@@ -44,8 +44,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 2837,
-            "toolTokens": 2837,
+            "totalTokens": 2853,
+            "toolTokens": 2853,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -58,19 +58,19 @@
             "tools": [
               {
                 "name": "web_search",
-                "chars": 3816,
-                "tokens": 954,
+                "chars": 3848,
+                "tokens": 962,
                 "descriptionChars": 309,
-                "schemaChars": 3293,
+                "schemaChars": 3325,
                 "snippetChars": 201,
                 "guidelineChars": 0
               },
               {
                 "name": "source_check",
-                "chars": 2559,
-                "tokens": 640,
+                "chars": 2591,
+                "tokens": 648,
                 "descriptionChars": 134,
-                "schemaChars": 2293,
+                "schemaChars": 2325,
                 "snippetChars": 117,
                 "guidelineChars": 0
               },
@@ -94,7 +94,7 @@
               }
             ]
           },
-          "savedTokens": 2684,
+          "savedTokens": 2700,
           "reductionPercent": 94.6
         }
       ]
@@ -104,7 +104,7 @@
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
-      "leanVersion": "2.13.9",
+      "leanVersion": "2.13.10",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
       "upstreamVersion": "2.13.8",
       "profiles": [
@@ -311,7 +311,7 @@
       "directory": "billion-context-pi-lean",
       "displayName": "Billion Context",
       "leanPackage": "billion-context-pi-lean",
-      "leanVersion": "0.1.83-lean.10",
+      "leanVersion": "0.2.1",
       "upstreamPackage": "billion-context-pi",
       "upstreamVersion": "0.1.83",
       "profiles": [
