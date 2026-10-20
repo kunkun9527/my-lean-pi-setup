@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T10:53:27.798Z",
+  "generatedAt": "2026-10-20T11:02:13.597Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.3.0",
   "totals": {
-    "leanTokens": 1385,
+    "leanTokens": 1403,
     "upstreamTokens": 22225,
-    "savedTokens": 20840,
-    "reductionPercent": 93.8
+    "savedTokens": 20822,
+    "reductionPercent": 93.7
   },
   "extensions": [
     {
@@ -163,16 +163,16 @@
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "leanPackage": "@ssk_dev/rpiv-todo-lean",
-      "leanVersion": "2.13.10",
+      "leanVersion": "2.13.11",
       "upstreamPackage": "@juicesharp/rpiv-todo",
-      "upstreamVersion": "2.13.8",
+      "upstreamVersion": "2.13.9",
       "profiles": [
         {
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 250,
-            "toolTokens": 250,
+            "totalTokens": 268,
+            "toolTokens": 268,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -182,12 +182,12 @@
             "tools": [
               {
                 "name": "todo",
-                "chars": 998,
-                "tokens": 250,
+                "chars": 1072,
+                "tokens": 268,
                 "descriptionChars": 119,
                 "schemaChars": 631,
                 "snippetChars": 0,
-                "guidelineChars": 241
+                "guidelineChars": 315
               }
             ]
           },
@@ -212,8 +212,8 @@
               }
             ]
           },
-          "savedTokens": 654,
-          "reductionPercent": 72.3
+          "savedTokens": 636,
+          "reductionPercent": 70.4
         }
       ]
     },
