@@ -38,19 +38,19 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 <!-- token-benchmark:aggregate:start -->
 | Extension | Lean | Pinned Upstream | Tokens Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
-| `pi-web-access-lean` | **153** | 2,853 | 2,700 | **94.6%** |
+| `pi-web-access-lean` | **153** | 2,867 | 2,714 | **94.7%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **268** | 904 | 636 | **70.4%** |
 | `pi-subagents-lean` | **276** | 8,540 | 8,264 | **96.8%** |
 | `billion-context-pi-lean` | **486** | 8,670 | 8,184 | **94.4%** |
-| **Total** | **1,403** | **22,225** | **20,822** | **93.7%** |
+| **Total** | **1,403** | **22,239** | **20,836** | **93.7%** |
 
-Across all 5 Lean extensions, recurring initialization context is reduced by **20,822 tokens (93.7%)** versus their pinned upstream versions.
+Across all 5 Lean extensions, recurring initialization context is reduced by **20,836 tokens (93.7%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
 
-* Test environment: Pi `1.3.0` using the repository's automated benchmark tool.
+* Test environment: Pi `1.4.0` using the repository's automated benchmark tool.
 * Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
 * Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
 * Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.

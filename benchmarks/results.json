@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T11:43:10.965Z",
+  "generatedAt": "2026-10-25T09:54:52.587Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
-  "piVersion": "1.3.0",
+  "piVersion": "1.4.0",
   "totals": {
     "leanTokens": 1403,
-    "upstreamTokens": 22225,
-    "savedTokens": 20822,
+    "upstreamTokens": 22239,
+    "savedTokens": 20836,
     "reductionPercent": 93.7
   },
   "extensions": [
@@ -15,9 +15,9 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.42.2",
+      "leanVersion": "0.44.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.42.0",
+      "upstreamVersion": "0.44.0",
       "profiles": [
         {
           "id": "default",
@@ -44,8 +44,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 2853,
-            "toolTokens": 2853,
+            "totalTokens": 2867,
+            "toolTokens": 2867,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -58,19 +58,19 @@
             "tools": [
               {
                 "name": "web_search",
-                "chars": 3848,
-                "tokens": 962,
+                "chars": 3874,
+                "tokens": 969,
                 "descriptionChars": 309,
-                "schemaChars": 3325,
+                "schemaChars": 3351,
                 "snippetChars": 201,
                 "guidelineChars": 0
               },
               {
                 "name": "source_check",
-                "chars": 2591,
-                "tokens": 648,
+                "chars": 2617,
+                "tokens": 655,
                 "descriptionChars": 134,
-                "schemaChars": 2325,
+                "schemaChars": 2351,
                 "snippetChars": 117,
                 "guidelineChars": 0
               },
@@ -94,8 +94,8 @@
               }
             ]
           },
-          "savedTokens": 2700,
-          "reductionPercent": 94.6
+          "savedTokens": 2714,
+          "reductionPercent": 94.7
         }
       ]
     },
@@ -311,7 +311,7 @@
       "directory": "billion-context-pi-lean",
       "displayName": "Billion Context",
       "leanPackage": "billion-context-pi-lean",
-      "leanVersion": "0.2.2",
+      "leanVersion": "0.2.3",
       "upstreamPackage": "billion-context-pi",
       "upstreamVersion": "0.1.83",
       "profiles": [
