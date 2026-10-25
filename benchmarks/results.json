@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-25T09:54:52.587Z",
+  "generatedAt": "2026-10-25T10:34:20.410Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.4.0",
   "totals": {
-    "leanTokens": 1403,
-    "upstreamTokens": 22239,
-    "savedTokens": 20836,
-    "reductionPercent": 93.7
+    "leanTokens": 1489,
+    "upstreamTokens": 22579,
+    "savedTokens": 21090,
+    "reductionPercent": 93.4
   },
   "extensions": [
     {
@@ -104,9 +104,9 @@
       "directory": "rpiv-ask-user-question-lean",
       "displayName": "Ask User Question",
       "leanPackage": "@ssk_dev/rpiv-ask-user-question-lean",
-      "leanVersion": "2.13.11",
+      "leanVersion": "2.15.0",
       "upstreamPackage": "@juicesharp/rpiv-ask-user-question",
-      "upstreamVersion": "2.13.8",
+      "upstreamVersion": "2.15.0",
       "profiles": [
         {
           "id": "default",
@@ -163,16 +163,16 @@
       "directory": "rpiv-todo-lean",
       "displayName": "Todo",
       "leanPackage": "@ssk_dev/rpiv-todo-lean",
-      "leanVersion": "2.13.12",
+      "leanVersion": "2.15.0",
       "upstreamPackage": "@juicesharp/rpiv-todo",
-      "upstreamVersion": "2.13.9",
+      "upstreamVersion": "2.15.0",
       "profiles": [
         {
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 268,
-            "toolTokens": 268,
+            "totalTokens": 354,
+            "toolTokens": 354,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -182,18 +182,18 @@
             "tools": [
               {
                 "name": "todo",
-                "chars": 1072,
-                "tokens": 268,
+                "chars": 1413,
+                "tokens": 354,
                 "descriptionChars": 119,
-                "schemaChars": 631,
+                "schemaChars": 953,
                 "snippetChars": 0,
-                "guidelineChars": 315
+                "guidelineChars": 334
               }
             ]
           },
           "upstream": {
-            "totalTokens": 904,
-            "toolTokens": 904,
+            "totalTokens": 1244,
+            "toolTokens": 1244,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -203,17 +203,17 @@
             "tools": [
               {
                 "name": "todo",
-                "chars": 3615,
-                "tokens": 904,
-                "descriptionChars": 392,
-                "schemaChars": 1498,
+                "chars": 4976,
+                "tokens": 1244,
+                "descriptionChars": 442,
+                "schemaChars": 2511,
                 "snippetChars": 56,
-                "guidelineChars": 1662
+                "guidelineChars": 1960
               }
             ]
           },
-          "savedTokens": 636,
-          "reductionPercent": 70.4
+          "savedTokens": 890,
+          "reductionPercent": 71.5
         }
       ]
     },
