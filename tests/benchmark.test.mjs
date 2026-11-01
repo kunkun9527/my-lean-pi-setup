@@ -31,6 +31,9 @@ test("configuration covers the maintained public Lean wrappers", async () => {
     assert.equal(typeof lockEntry.integrity, "string");
 
     const installedPath = path.join(packageRoot, "node_modules", ...extension.upstreamPackage.split("/"), "package.json");
+    const runtimeDependency = Boolean(packageJson.dependencies?.[extension.upstreamPackage]);
+    // Dev-only upstreams may be pruned locally; the benchmark then fetches the pinned version itself.
+    if (!runtimeDependency && !(await access(installedPath).then(() => true, () => false))) continue;
     const installed = JSON.parse(await readFile(installedPath, "utf8"));
     assert.equal(installed.name, extension.upstreamPackage);
     assert.equal(installed.version, declaredVersion);

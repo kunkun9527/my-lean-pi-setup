@@ -22,6 +22,8 @@ const packagesRoot = path.resolve(setupRoot, config.packagesRoot);
 // Not README.*: npm force-packs README.* files and may pick one as the package page.
 const EXTENSION_ZH_README = "README_zh-CN.md";
 const resultsPath = path.resolve(setupRoot, config.resultsFile);
+// Temporary installs of dev-only upstream packages; removed after measuring.
+const temporaryUpstreamRoots = [];
 let previous;
 let previousText;
 try {
@@ -44,6 +46,8 @@ async function main() {
     console.error("No benchmark JSON or README files were changed.");
     process.exitCode = 1;
     return;
+  } finally {
+    await Promise.all(temporaryUpstreamRoots.map((root) => rm(root, { recursive: true, force: true })));
   }
 
   printComparison(current, previous);
@@ -543,7 +547,11 @@ async function validateUpstreamDependency(packageRoot, leanPackage, extensionCon
     throw new Error(`${extensionConfig.id}: lockfile entry for ${packageName}@${declaredVersion} has no integrity hash.`);
   }
 
-  const upstreamRoot = packageRootForDependency(packageRoot, packageName);
+  let upstreamRoot = packageRootForDependency(packageRoot, packageName);
+  if (!existsSync(path.join(upstreamRoot, "package.json")) && !leanPackage.dependencies?.[packageName]) {
+    // Local runtime pruning (npm prune --omit=dev) removes dev-only upstreams; fetch the pinned version elsewhere.
+    upstreamRoot = await installTemporaryUpstream(extensionConfig.id, packageName, declaredVersion, lockEntry.integrity);
+  }
   const upstreamPackage = JSON.parse(await readFile(path.join(upstreamRoot, "package.json"), "utf8"));
   if (upstreamPackage.name !== packageName || upstreamPackage.version !== declaredVersion) {
     throw new Error(
@@ -551,6 +559,33 @@ async function validateUpstreamDependency(packageRoot, leanPackage, extensionCon
     );
   }
   return { upstreamRoot, upstreamPackage };
+}
+
+async function installTemporaryUpstream(extensionId, packageName, version, expectedIntegrity) {
+  const installRoot = await mkdtemp(path.join(os.tmpdir(), `pi-token-bench-upstream-${extensionId}-`));
+  temporaryUpstreamRoots.push(installRoot);
+  console.log(`  (${extensionId}: ${packageName} not installed locally; fetching ${version} into a temporary directory)`);
+  await writeFile(path.join(installRoot, "package.json"), '{"private":true}\n', "utf8");
+  // Peers (Pi, typebox) are provided by Pi's extension loader, as in a real install.
+  const args = ["install", `${packageName}@${version}`, "--ignore-scripts", "--omit=peer", "--legacy-peer-deps", "--no-audit", "--no-fund"];
+  const result = await new Promise((resolve, reject) => {
+    // npm is npm.cmd on Windows and needs a shell; the arguments are fixed flags plus a validated exact version.
+    const child = process.platform === "win32"
+      ? spawn(`npm ${args.join(" ")}`, { cwd: installRoot, shell: true, stdio: ["ignore", "pipe", "pipe"] })
+      : spawn("npm", args, { cwd: installRoot, stdio: ["ignore", "pipe", "pipe"] });
+    let output = "";
+    child.stdout.on("data", (chunk) => { output += chunk; });
+    child.stderr.on("data", (chunk) => { output += chunk; });
+    child.on("error", reject);
+    child.on("close", (code) => resolve({ code, output }));
+  });
+  if (result.code !== 0) throw new Error(`${extensionId}: npm install ${packageName}@${version} failed.\n${result.output}`);
+  const lockfile = JSON.parse(await readFile(path.join(installRoot, "package-lock.json"), "utf8"));
+  const integrity = lockfile.packages?.[`node_modules/${packageName}`]?.integrity;
+  if (integrity !== expectedIntegrity) {
+    throw new Error(`${extensionId}: fetched ${packageName}@${version} integrity ${integrity} does not match package-lock.json.`);
+  }
+  return packageRootForDependency(installRoot, packageName);
 }
 
 function containedPath(root, relativePath, label) {
