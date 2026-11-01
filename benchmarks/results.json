@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-25T10:34:20.410Z",
+  "generatedAt": "2026-11-01T14:28:34.868Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.4.0",
   "totals": {
     "leanTokens": 1489,
-    "upstreamTokens": 22579,
-    "savedTokens": 21090,
-    "reductionPercent": 93.4
+    "upstreamTokens": 20889,
+    "savedTokens": 19400,
+    "reductionPercent": 92.9
   },
   "extensions": [
     {
@@ -15,9 +15,9 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.44.0",
+      "leanVersion": "0.46.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.44.0",
+      "upstreamVersion": "0.46.0",
       "profiles": [
         {
           "id": "default",
@@ -44,8 +44,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 2867,
-            "toolTokens": 2867,
+            "totalTokens": 1165,
+            "toolTokens": 1165,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -58,44 +58,44 @@
             "tools": [
               {
                 "name": "web_search",
-                "chars": 3874,
-                "tokens": 969,
-                "descriptionChars": 309,
-                "schemaChars": 3351,
-                "snippetChars": 201,
+                "chars": 1351,
+                "tokens": 338,
+                "descriptionChars": 142,
+                "schemaChars": 1076,
+                "snippetChars": 120,
                 "guidelineChars": 0
               },
               {
                 "name": "source_check",
-                "chars": 2617,
-                "tokens": 655,
-                "descriptionChars": 134,
-                "schemaChars": 2351,
-                "snippetChars": 117,
+                "chars": 897,
+                "tokens": 225,
+                "descriptionChars": 58,
+                "schemaChars": 749,
+                "snippetChars": 75,
                 "guidelineChars": 0
               },
               {
                 "name": "fetch_content",
-                "chars": 3201,
-                "tokens": 801,
-                "descriptionChars": 465,
-                "schemaChars": 2636,
+                "chars": 1486,
+                "tokens": 372,
+                "descriptionChars": 151,
+                "schemaChars": 1235,
                 "snippetChars": 84,
                 "guidelineChars": 0
               },
               {
                 "name": "get_search_content",
-                "chars": 1768,
-                "tokens": 442,
-                "descriptionChars": 164,
-                "schemaChars": 1392,
-                "snippetChars": 191,
+                "chars": 920,
+                "tokens": 230,
+                "descriptionChars": 100,
+                "schemaChars": 660,
+                "snippetChars": 139,
                 "guidelineChars": 0
               }
             ]
           },
-          "savedTokens": 2714,
-          "reductionPercent": 94.7
+          "savedTokens": 1012,
+          "reductionPercent": 86.9
         }
       ]
     },
@@ -222,9 +222,9 @@
       "directory": "pi-subagents-lean",
       "displayName": "Subagents",
       "leanPackage": "@ssk_dev/pi-subagents-lean",
-      "leanVersion": "0.22.4",
+      "leanVersion": "0.22.5",
       "upstreamPackage": "@tintinweb/pi-subagents",
-      "upstreamVersion": "0.22.0",
+      "upstreamVersion": "0.22.1",
       "profiles": [
         {
           "id": "default",
@@ -251,8 +251,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 8540,
-            "toolTokens": 8540,
+            "totalTokens": 8552,
+            "toolTokens": 8552,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -265,10 +265,10 @@
             "tools": [
               {
                 "name": "Agent",
-                "chars": 10251,
-                "tokens": 2563,
+                "chars": 10298,
+                "tokens": 2575,
                 "descriptionChars": 6287,
-                "schemaChars": 2966,
+                "schemaChars": 3013,
                 "snippetChars": 67,
                 "guidelineChars": 923
               },
@@ -301,7 +301,7 @@
               }
             ]
           },
-          "savedTokens": 8264,
+          "savedTokens": 8276,
           "reductionPercent": 96.8
         }
       ]
