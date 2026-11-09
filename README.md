@@ -4,7 +4,7 @@
 
 This is the [Pi coding agent](https://github.com/earendil-works/pi) setup I use every day. The goal is simple: send less useless context with every request. Fewer tokens means lower cost, and the model can focus on what matters, so it works smarter. The repo has three parts:
 
-* **Lean versions of 5 popular extensions**: about 94% less always-on context combined.
+* **Lean versions of 5 popular extensions**: about 93% less always-on context combined.
 * **2 companion tools**: for the base prompt and seeing where tokens go.
 * **An `AGENTS.md` template**.
 
