@@ -41,11 +41,11 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 | `pi-web-access-lean` | **153** | 1,165 | 1,012 | **86.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **354** | 1,244 | 890 | **71.5%** |
-| `pi-subagents-lean` | **276** | 8,552 | 8,276 | **96.8%** |
+| `pi-subagents-lean` | **276** | 8,542 | 8,266 | **96.8%** |
 | `billion-context-pi-lean` | **486** | 8,670 | 8,184 | **94.4%** |
-| **Total** | **1,489** | **20,889** | **19,400** | **92.9%** |
+| **Total** | **1,489** | **20,879** | **19,390** | **92.9%** |
 
-Across all 5 Lean extensions, recurring initialization context is reduced by **19,400 tokens (92.9%)** versus their pinned upstream versions.
+Across all 5 Lean extensions, recurring initialization context is reduced by **19,390 tokens (92.9%)** versus their pinned upstream versions.
 
 <details>
 <summary>Methodology</summary>
