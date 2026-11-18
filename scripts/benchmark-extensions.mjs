@@ -52,7 +52,7 @@ async function main() {
 
   printComparison(current, previous);
 
-  const renderedFiles = renderAllReadmes(current, config.extensions);
+  const renderedFiles = new Map([...renderAllReadmes(current, config.extensions), ...renderCharts(current)]);
   const snapshot = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
@@ -77,7 +77,10 @@ async function main() {
       stale.push(relativeDisplay(resultsPath));
     }
     for (const [filePath, expected] of renderedFiles) {
-      const actual = await readFile(filePath, "utf8");
+      const actual = await readFile(filePath, "utf8").catch((error) => {
+        if (error.code === "ENOENT") return undefined;
+        throw error;
+      });
       if (actual !== expected) stale.push(relativeDisplay(filePath));
     }
     if (stale.length > 0) {
@@ -88,7 +91,7 @@ async function main() {
       process.exitCode = 1;
       return;
     }
-    console.log("\n\x1b[32;1mBenchmark snapshot and README blocks are current.\x1b[0m");
+    console.log("\n\x1b[32;1mBenchmark snapshot, charts, and README blocks are current.\x1b[0m");
     return;
   }
 
@@ -428,15 +431,15 @@ function aggregateBenchmark(result, language) {
   const totals = result.totals;
   if (language === "zh") {
     return [
+      `${config.extensions.length} 个精简版合计，常驻的初始上下文比锁定的上游版本少 **${format(totals.savedTokens)} tokens（${totals.reductionPercent.toFixed(1)}%）**，对比图见[开头](#我的-pi-精简配置)。`,
+      "",
+      "<details>",
+      "<summary>逐项数字和测量方式</summary>",
+      "",
       "| 扩展 | 精简版 | 锁定上游 | 节省 Token | 降幅 |",
       "| --- | ---: | ---: | ---: | ---: |",
       ...rows,
       `| **合计** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
-      "",
-      `${config.extensions.length} 个精简版合计，常驻的初始上下文比锁定的上游版本少 **${format(totals.savedTokens)} tokens（${totals.reductionPercent.toFixed(1)}%）**。`,
-      "",
-      "<details>",
-      "<summary>测量方式</summary>",
       "",
       `* 测试环境：Pi \`${result.piVersion}\`，使用仓库内置自动化工具。`,
       "* 每个精简版和它的上游版本，都在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。",
@@ -447,15 +450,15 @@ function aggregateBenchmark(result, language) {
     ].join("\n");
   }
   return [
+    `Across all ${config.extensions.length} Lean extensions, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).`,
+    "",
+    "<details>",
+    "<summary>Per-extension numbers and methodology</summary>",
+    "",
     "| Extension | Lean | Pinned Upstream | Tokens Saved | Reduction |",
     "| --- | ---: | ---: | ---: | ---: |",
     ...rows,
     `| **Total** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
-    "",
-    `Across all ${config.extensions.length} Lean extensions, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions.`,
-    "",
-    "<details>",
-    "<summary>Methodology</summary>",
     "",
     `* Test environment: Pi \`${result.piVersion}\` using the repository's automated benchmark tool.`,
     "* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.",
@@ -464,6 +467,85 @@ function aggregateBenchmark(result, language) {
     "",
     "</details>",
   ].join("\n");
+}
+
+const chartText = {
+  en: {
+    file: "chart.svg",
+    fonts: "-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
+    caption: (count) => `Always-on context at startup, ${count} extensions`,
+    subline: (saved) => `${saved} fewer tokens per request, same features`,
+    upstream: "Pinned upstream",
+    lean: "Lean",
+    footnote: "Tokens estimated as ceil(chars / 4).",
+  },
+  zh: {
+    file: "chart.zh-CN.svg",
+    fonts: "-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif",
+    caption: (count) => `启动时的常驻上下文，${count} 个扩展`,
+    subline: (saved) => `每次请求少 ${saved} tokens，功能不变`,
+    upstream: "锁定上游",
+    lean: "精简版",
+    footnote: "Token 按 ceil(字符数 / 4) 估算。",
+  },
+};
+
+function renderCharts(result) {
+  return new Map(Object.entries(chartText).map(([language, text]) => [
+    path.join(setupRoot, "benchmarks", text.file),
+    renderChart(result, text),
+  ]));
+}
+
+// One SVG serves GitHub light and dark themes through prefers-color-scheme.
+function renderChart(result, text) {
+  const rows = result.extensions
+    .map((extension) => ({
+      name: extension.directory,
+      profile: extension.profiles.find((item) => item.id === "default") ?? extension.profiles[0],
+    }))
+    .sort((a, b) => b.profile.upstream.totalTokens - a.profile.upstream.totalTokens);
+  const barX = 250;
+  const maxBar = 440;
+  const maxTokens = Math.max(1, ...rows.map((row) => row.profile.upstream.totalTokens));
+  const width = (tokens) => Math.max(1, Math.round(tokens / maxTokens * maxBar * 10) / 10);
+  const totals = result.totals;
+  const height = 150 + rows.length * 50 + 30;
+  const rowSvg = rows.map(({ name, profile }, index) => {
+    const upW = width(profile.upstream.totalTokens);
+    const leanW = width(profile.lean.totalTokens);
+    return [
+      `    <g transform="translate(0,${150 + index * 50})">`,
+      `      <text x="24" y="22" class="fg">${escapeXml(name)}</text>`,
+      `      <rect x="${barX}" y="6" width="${upW}" height="11" class="up"/><text x="${round1(barX + upW + 8)}" y="16" class="mu num">${format(profile.upstream.totalTokens)}</text>`,
+      `      <rect x="${barX}" y="21" width="${leanW}" height="11" class="ac"/><text x="${round1(barX + leanW + 8)}" y="31" class="fg num" font-weight="600">${format(profile.lean.totalTokens)} <tspan class="mu" font-weight="400">−${profile.reductionPercent.toFixed(1)}%</tspan></text>`,
+      "    </g>",
+    ].join("\n");
+  });
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${height}" viewBox="0 0 800 ${height}" font-family="${text.fonts}">`,
+    "  <style>",
+    "    .fg{fill:#1f2328}.mu{fill:#59636e}.up{fill:#d0d7de}.ac{fill:#1a7f37}",
+    "    @media (prefers-color-scheme: dark){.fg{fill:#e6edf3}.mu{fill:#9198a1}.up{fill:#3d444d}.ac{fill:#3fb950}}",
+    "    .num{font-variant-numeric:tabular-nums}",
+    "  </style>",
+    `  <text x="24" y="34" class="mu" font-size="14">${escapeXml(text.caption(rows.length))}</text>`,
+    `  <text x="24" y="86" class="ac" font-size="48" font-weight="700">−${totals.reductionPercent.toFixed(1)}%</text>`,
+    `  <text x="222" y="70" class="fg num" font-size="18" font-weight="600">${format(totals.upstreamTokens)} → ${format(totals.leanTokens)} tokens</text>`,
+    `  <text x="222" y="92" class="mu" font-size="14">${escapeXml(text.subline(format(totals.savedTokens)))}</text>`,
+    `  <rect x="24" y="116" width="10" height="10" class="up"/><text x="40" y="125" class="mu" font-size="12">${escapeXml(text.upstream)}</text>`,
+    `  <rect x="150" y="116" width="10" height="10" class="ac"/><text x="166" y="125" class="mu" font-size="12">${escapeXml(text.lean)}</text>`,
+    '  <g font-size="13">',
+    ...rowSvg,
+    "  </g>",
+    `  <text x="24" y="${height - 12}" class="mu" font-size="11">${escapeXml(text.footnote)}</text>`,
+    "</svg>",
+    "",
+  ].join("\n");
+}
+
+function escapeXml(value) {
+  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function methodLine(piVersion, language) {

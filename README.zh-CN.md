@@ -1,23 +1,57 @@
+<div align="center">
+
 # 我的 Pi 精简配置
+
+**给 Pi 装上电池，能耗更低，干活一样好。**
+
+5 个常用 Pi 扩展的精简版，外加一份 `AGENTS.md` 规则模板。<br>
+功能和效果不变，常驻上下文只剩一小部分。
 
 [English](README.md)
 
+<br>
+
+<img src="benchmarks/chart.zh-CN.svg" alt="启动时的常驻上下文：精简版与锁定上游对比" width="800">
+
+</div>
+
+## 为什么做这个
+
 这是我自己在用的 [Pi coding agent](https://github.com/earendil-works/pi) 配置，目标是让每次请求少带点没用的上下文。这样 token 更少、成本更低，模型也能把注意力放在真正重要的内容上，表现更聪明。仓库里有三样东西：
 
-* **5 个常用扩展的精简版**：常驻上下文合计少约 93%。
+* **5 个常用扩展的精简版**：功能不变，工具说明短得多。
 * **2 个搭配使用的组件**：分别负责基础 Prompt 和用量查看。
 * **一份 `AGENTS.md` 规则模板**。
 
 ## 快速开始
 
-1. 用 [`pi-context-view`](#pi-context-view) 看一下现在的 token 占用，作为对比基准。
-2. 装 [`pi-docs-slim`](#pi-docs-slim)，缩短基础 Prompt。
-3. 安装你需要的 [lean 版扩展](#精简版扩展)。
+1. 装 [`pi-context-view`](#pi-context-view)，看一下现在的 token 占用，作为对比基准：
+
+   ```bash
+   pi install npm:pi-context-view
+   ```
+
+2. 用 [`pi-docs-slim`](#pi-docs-slim) 缩短 Pi 自带的基础 Prompt。它精简的是 Pi 本身，不是扩展：
+
+   ```bash
+   pi install npm:@ssk_dev/pi-docs-slim
+   ```
+
+3. 安装你需要的 [lean 版扩展](#精简版扩展)：
+
+   ```bash
+   pi install npm:@ssk_dev/pi-subagents-lean
+   pi install npm:@ssk_dev/pi-web-access-lean
+   pi install npm:@ssk_dev/rpiv-ask-user-question-lean
+   pi install npm:@ssk_dev/rpiv-todo-lean
+   pi install npm:billion-context-pi-lean    # 或 pi-blackhole，见「长上下文管理」
+   ```
+
 4. 再用 `pi-context-view` 测一次，看省了多少。
 
 注意：
 
-* 具体安装步骤看各个仓库的说明。
+* 配置细节看各个仓库的 README。
 * 原版扩展和它的精简版只能装一个，同时装会重复注册工具。
 * 不要把 API 密钥和内部服务地址提交到公开配置里。
 
@@ -27,28 +61,28 @@
 
 | 扩展 | 做什么 | 精简了什么 |
 | --- | --- | --- |
-| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean)<br>`pi install npm:@ssk_dev/pi-subagents-lean` | 把任务交给子代理，支持后台运行和中途调整方向 | 启动、取结果、调整方向合成一个 `subagent` 工具；代理发现和生命周期管理保留 |
-| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean)<br>`pi install npm:@ssk_dev/pi-web-access-lean` | 搜索网页、核实说法、抓取页面，长结果可分页 | 4 个工具合成一个 `web_access`，高级参数要用时再查帮助 |
-| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean)<br>`pi install npm:@ssk_dev/rpiv-ask-user-question-lean` | 需求或决定不明确时，用选择题问用户 | 删掉说明里重复的话；提问界面和选项校验没动 |
-| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean)<br>`pi install npm:@ssk_dev/rpiv-todo-lean` | 拆任务、记依赖、跟进度 | 换成更短、更平的 Schema；功能一个没少 |
-| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean)<br>`pi install npm:billion-context-pi-lean` | 把较早的对话压成摘要，需要时找回原文，长会话也能把上下文控制得很小 | 8 个工具精简成 `compress` 和 `acp_context` 两个（子代理委派已删）；常驻提示只留调用前必须的规则 |
+| [pi-subagents-lean](https://github.com/kunkun9527/pi-subagents-lean) | 把任务交给子代理，支持后台运行和中途调整方向 | 启动、取结果、调整方向合成一个 `subagent` 工具；代理发现和生命周期管理保留 |
+| [pi-web-access-lean](https://github.com/kunkun9527/pi-web-access-lean) | 搜索网页、核实说法、抓取页面，长结果可分页 | 4 个工具合成一个 `web_access`，高级参数要用时再查帮助 |
+| [rpiv-ask-user-question-lean](https://github.com/kunkun9527/rpiv-ask-user-question-lean) | 需求或决定不明确时，用选择题问用户 | 删掉说明里重复的话；提问界面和选项校验没动 |
+| [rpiv-todo-lean](https://github.com/kunkun9527/rpiv-todo-lean) | 拆任务、记依赖、跟进度 | 换成更短、更平的 Schema；功能一个没少 |
+| [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) | 把较早的对话压成摘要，需要时找回原文，长会话也能把上下文控制得很小 | 8 个工具精简成 `compress` 和 `acp_context` 两个（子代理委派已删）；常驻提示只留调用前必须的规则 |
 
 ### 启动时的上下文占用
 
 <!-- token-benchmark:aggregate:start -->
+5 个精简版合计，常驻的初始上下文比锁定的上游版本少 **19,373 tokens（92.8%）**，对比图见[开头](#我的-pi-精简配置)。
+
+<details>
+<summary>逐项数字和测量方式</summary>
+
 | 扩展 | 精简版 | 锁定上游 | 节省 Token | 降幅 |
 | --- | ---: | ---: | ---: | ---: |
 | `pi-web-access-lean` | **153** | 1,165 | 1,012 | **86.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **354** | 1,244 | 890 | **71.5%** |
 | `pi-subagents-lean` | **276** | 8,542 | 8,266 | **96.8%** |
-| `billion-context-pi-lean` | **486** | 8,670 | 8,184 | **94.4%** |
-| **合计** | **1,489** | **20,879** | **19,390** | **92.9%** |
-
-5 个精简版合计，常驻的初始上下文比锁定的上游版本少 **19,390 tokens（92.9%）**。
-
-<details>
-<summary>测量方式</summary>
+| `billion-context-pi-lean` | **503** | 8,670 | 8,167 | **94.2%** |
+| **合计** | **1,506** | **20,879** | **19,373** | **92.8%** |
 
 * 测试环境：Pi `1.4.0`，使用仓库内置自动化工具。
 * 每个精简版和它的上游版本，都在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。
@@ -58,23 +92,13 @@
 </details>
 <!-- token-benchmark:aggregate:end -->
 
-### 原理和自己动手做
-
-精简主要靠三种方法：
-
-1. **说明写短**：同一件事只说一遍；schema 已经表达的类型、枚举、长度不再用文字重复；去掉只对人有用的界面说明和 MUST 这类狠话。代码能处理的交给代码，比如缺了能确定补全的参数就直接补。
-2. **合并工具**：多个工具合成一个，用 `op` 区分操作，冷门参数放进 `op: help`，要用时再查。
-3. **会话中途不改工具列表**：工具定义在请求最前面，中途增减工具会让之前的 prompt 缓存全部失效。所以 `pi-web-access-lean` 拦掉了上游的 `web_enable`。
-
-原理、原文对比和 Anthropic 的相关说法，见文章：[中文（知乎）](https://zhuanlan.zhihu.com/p/2087689382069383746) · [English (dev.to)](https://dev.to/shengkai_su/cut-91-of-your-tool-prompts-a-practical-guide-for-pi-agent-users-and-extension-authors-4jo9)。想给别的扩展做 lean 版，可以直接用[这两段提示词](docs/make-your-own-lean.zh-CN.md)交给 agent：一段用来做，一段用来跟进上游更新。
-
 ## 长上下文管理
 
 我默认用 **billion-context-pi-lean**，**pi-blackhole** 作为备选。两个都负责管理长上下文（比如一个会话连续跑好几天，累计几十亿 tokens），但思路不同。**只装一个**，两个都会接管 Pi 的压缩，同时装会互相覆盖。
 
 两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。billion-context-pi-lean 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
 
-**为什么是 200k 左右：除了效果，还有成本。** 每轮对话都要把整个上下文重新发给模型。就算命中缓存、读取很便宜，每轮的花费还是会随上下文变长而增加。压缩一次也有固定成本：要重新写缓存，billion-context-pi-lean 还要输出摘要。压得太勤，这笔固定成本要反复付；压得太晚，每轮都在为一大段旧内容付钱。两者之间有一个最划算的点，可以按模型价格和自己的使用习惯算出来。我按 Opus 5.5 的价格，配合 pi-blackhole 估算过：它压缩时不用模型输出 token，后台便宜模型的花费可以忽略不计。算出来最划算的点大约在 150k–200k，正好落在 smart zone 里。用 billion-context-pi-lean 的话，要把写摘要的输出 token 也算进去（交给便宜模型写就很便宜），最划算的点会往后挪一些，但算法一样。
+控制在 200k 左右也差不多是最省钱的点：每轮的成本和压缩的固定成本在这里最划算，推导见[成本怎么算](docs/long-context.zh-CN.md)。
 
 | | billion-context-pi-lean | pi-blackhole |
 | --- | --- | --- |
@@ -98,7 +122,7 @@
 
 **推荐用我维护的分支，而不是官方版。** 它基于 [billion-context-pi](https://github.com/ranxianglei/billion-context-pi) v0.1.83，专注于运行稳定性和降低 token 消耗：
 
-* **常驻上下文 486 token**，比上游默认配置（8,670）少 94.4%，比上游开 `lean` 提示词包（4,877）少 90.0%。差距里有一部分是上游的子代理工具，本分支已删除这项功能，详见[对比](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README_zh-CN.md#上下文占用对比)。
+* **常驻上下文 503 token**，比上游默认配置（8,670）少 94.2%，比上游开 `lean` 提示词包（4,877）少 89.7%。差距里有一部分是上游的子代理工具，本分支已删除这项功能，详见[对比](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README_zh-CN.md#上下文占用对比)。
 * **摘要可以交给便宜模型写。** 主模型只负责选范围，每次压缩提示里的规则从约 1,460 token 降到约 220。
 * **修了上游的一些 bug**，比如紧急截断算出来了却没用到请求上、并发保存状态会失败。
 
@@ -188,6 +212,10 @@ pi install npm:@ssk_dev/pi-docs-slim
 
 [pi-context-view](https://github.com/dimk90/pi-context-view) 用来查看 token 都花在哪：基础 Prompt、工具、扩展、对话各占多少。它只负责看，不负责压缩。
 
+```bash
+pi install npm:pi-context-view
+```
+
 ## AGENTS.md 规则模板
 
 仓库里附了一份我自己在用的 `AGENTS.md`，有[中文版](agents/zh-CN/AGENTS.md)和[英文版](agents/en/AGENTS.md)。
@@ -196,6 +224,18 @@ pi install npm:@ssk_dev/pi-docs-slim
 * **先装 Skills**：需求对齐那条规则用的是 [mattpocock/skills](https://github.com/mattpocock/skills) 里的 `grilling` skill，安装：`npx skills@latest add mattpocock/skills`。
 * **子代理部分要自己改**：`Subagents Delegation` 一节是配合子代理扩展写的，只用了上游的标准类型（`Explore`、`Plan`、`general-purpose`）。按自己的工作流改；没装子代理扩展就整节删掉。
 * **来源**：参考 [i-have-adhd](https://github.com/ayghri/i-have-adhd)（先给结果、给出下一步、不说客套话）和 [ponytail](https://github.com/DietrichGebert/ponytail)（防止过度设计，按顺序选第一个够用的方案）精简而成。
+
+---
+
+## 原理和自己动手做
+
+精简主要靠三种方法：
+
+1. **说明写短**：同一件事只说一遍；schema 已经表达的类型、枚举、长度不再用文字重复；去掉只对人有用的界面说明和 MUST 这类狠话。代码能处理的交给代码，比如缺了能确定补全的参数就直接补。
+2. **合并工具**：多个工具合成一个，用 `op` 区分操作，冷门参数放进 `op: help`，要用时再查。
+3. **会话中途不改工具列表**：工具定义在请求最前面，中途增减工具会让之前的 prompt 缓存全部失效。所以 `pi-web-access-lean` 拦掉了上游的 `web_enable`。
+
+原理、原文对比和 Anthropic 的相关说法，见文章：[中文（知乎）](https://zhuanlan.zhihu.com/p/2087689382069383746) · [English (dev.to)](https://dev.to/shengkai_su/cut-91-of-your-tool-prompts-a-practical-guide-for-pi-agent-users-and-extension-authors-4jo9)。想给别的扩展做 lean 版，可以直接用[这两段提示词](docs/make-your-own-lean.zh-CN.md)交给 agent：一段用来做，一段用来跟进上游更新。
 
 ## 维护与测量
 
@@ -207,46 +247,19 @@ pi install npm:@ssk_dev/pi-docs-slim
 测量脚本会把每个精简版和它锁定的上游版本，分别放在独立的临时 Pi 进程里测：
 
 ```bash
-npm run benchmark          # 测量，显示变化，并更新 JSON 和 README 里的数字
+npm run benchmark          # 测量，显示变化，并更新 JSON、对比图和 README 里的数字
 npm run benchmark:report   # 只测量、只输出，不改文件
 npm run benchmark:check    # 检查结果和 README 是不是最新的
 ```
 
-结果保存在 `benchmarks/results.json`。脚本只改 README 里 `token-benchmark` 标记之间的内容；数字没变就不会改文件。
+结果保存在 `benchmarks/results.json`，对比图会重新生成为 `benchmarks/chart.svg` 和 `benchmarks/chart.zh-CN.svg`。README 里脚本只改 `token-benchmark` 标记之间的内容；数字没变就不会改文件。
 
 </details>
 
-## 附录：实测后撤下的工具
+## 延伸阅读
 
-这个 README 以前推荐过 RTK 和 Headroom。后来我对照自己的 Pi 会话记录逐条核算，发现它们实际省得很少，副作用倒不少，所以撤下了。数据只来自我自己的环境（Windows + Git Bash + Pi，一个人用），仅供参考；想用的话建议先在自己的会话上测一下。
-
-<details>
-<summary><b>RTK + pi-rtk-optimizer</b>：实际只省 9.7%，还会悄悄返回错误结果</summary>
-
-统计范围：10 天，约 5,800 次 bash 调用，其中约 2,600 次被改写成 rtk 命令。
-
-* **实际节省远低于 `rtk gain` 的数字。** `rtk gain` 显示省了 48.6%。我把 1,475 条只读命令分别用原命令和 rtk 版重跑一遍，条件相同（包括 Pi 自带的 50KB 输出截断），实际只少了 **9.7%** 的输出 token。差距的原因之一：`head`/`tail` 被改写成 `rtk read` 后，节省是按整个文件的大小算的。
-* **节省集中在极少数命令上。** 91.9% 的节省来自 50 条大范围搜索（比如搜进了 `node_modules`）。62.5% 的命令一点没省，16% 的命令输出反而变长。
-* **会悄悄给出错误结果。** 有 16 次原生 `grep` 能搜到内容，rtk 却返回空或报错（Git Bash 的路径转换和正则语法不兼容）。搜索结果还会被截断、缩进被去掉。模型不知道这些，会当成真实结果继续推理。
-* **常用参数直接报错。** `git stash -q`、`diff -u/-r/-q`、`find -not/-exec`、`du` 等都不支持，前面加 `command` 也绕不开改写。
-* **干扰模型。** 没装 hook 时，rtk 会在输出里插一行 "No hook installed — run `rtk init -g`"，10 天里出现了 1,238 次。模型为此花了好几轮排查，最后自己执行了 `rtk init -g`，改的却是 Claude Code 的配置。
-
-Pi 本身会把单次输出截到 50KB。剩下的"偶尔一次搜索范围太大"，在 `AGENTS.md` 里写一句"在大目录里搜索前先用 `rg -l` / `rg -c` 看范围"就够了。
-
-</details>
-
-<details>
-<summary><b>Headroom / noheadroom</b>：Pi 这边看不出节省，还让请求累计多等了约 12 小时</summary>
-
-统计范围：30 天，约 37,700 轮请求。
-
-* **面板上的节省数字不可信。** 有三天，Headroom 统计的节省是 8.9 亿 token，而 Pi 同期发出的 prompt 总共只有约 4 亿。它统计的输入中位数约 36 万 token，Pi 实际请求的中位数只有 6.5 万。面板数字里还混进了它自己的自检请求。
-* **从 Pi 这边看不出任何节省。** 那几天每轮 prompt 的大小和缓存命中率（89%～94%）跟平时没有区别。
-* **压缩只作用于一轮。** 扩展只在当次请求里替换工具输出，不写回会话，下一轮又发原文。
-* **拖慢请求。** 扩展要等压缩返回才把请求发给模型。5,321 次压缩平均每次 8.2 秒，1,565 次超过 5 秒，累计等待约 12 小时。
-* 我后来改成只做无损压缩，结果 10 天只触发了 78 次（不到 1% 的轮次），省下的不到总输入的 0.05%，跟没装差不多。
-
-</details>
+* [为什么把上下文控制在 200k 左右](docs/long-context.zh-CN.md)：每轮成本和压缩成本怎么权衡。
+* [实测后撤下的工具](docs/retired-tools.zh-CN.md)：RTK 和 Headroom 为什么不再推荐，附实测数据。
 
 ## 许可与署名
 

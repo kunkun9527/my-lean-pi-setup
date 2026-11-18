@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-09T16:03:34.656Z",
+  "generatedAt": "2026-11-18T14:47:08.519Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.4.0",
   "totals": {
-    "leanTokens": 1489,
+    "leanTokens": 1506,
     "upstreamTokens": 20879,
-    "savedTokens": 19390,
-    "reductionPercent": 92.9
+    "savedTokens": 19373,
+    "reductionPercent": 92.8
   },
   "extensions": [
     {
@@ -311,7 +311,7 @@
       "directory": "billion-context-pi-lean",
       "displayName": "Billion Context",
       "leanPackage": "billion-context-pi-lean",
-      "leanVersion": "0.3.0",
+      "leanVersion": "0.4.1",
       "upstreamPackage": "billion-context-pi",
       "upstreamVersion": "0.1.83",
       "profiles": [
@@ -319,10 +319,10 @@
           "id": "default",
           "label": "Default",
           "lean": {
-            "totalTokens": 486,
+            "totalTokens": 503,
             "toolTokens": 318,
-            "promptDeltaTokens": 168,
-            "promptDeltaChars": 670,
+            "promptDeltaTokens": 185,
+            "promptDeltaChars": 739,
             "eventMessageChars": 0,
             "activeToolNames": [
               "compress",
@@ -440,8 +440,8 @@
               }
             ]
           },
-          "savedTokens": 8184,
-          "reductionPercent": 94.4
+          "savedTokens": 8167,
+          "reductionPercent": 94.2
         }
       ]
     }
