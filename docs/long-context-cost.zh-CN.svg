@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="360" viewBox="0 0 800 360" font-family="-apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif">
+  <style>
+    .fg{fill:#1f2328}.mu{fill:#59636e}.grid{stroke:#d8dee4;stroke-width:1}.ac{stroke:#1a7f37}.acf{fill:#1a7f37}.band{fill:#1a7f37;fill-opacity:.10}.warn{fill:#cf222e;fill-opacity:.08}
+    @media (prefers-color-scheme: dark){.fg{fill:#e6edf3}.mu{fill:#9198a1}.grid{stroke:#30363d}.ac{stroke:#3fb950}.acf{fill:#3fb950}.band{fill:#3fb950;fill-opacity:.14}.warn{fill:#f85149;fill-opacity:.12}}
+  </style>
+  <text x="24" y="30" class="mu" font-size="14">压缩点和成本：Opus 5.5 价格，回放 22,488 次真实请求</text>
+  <rect x="70" y="70" width="40.0" height="230" class="warn"/>
+  <rect x="120.0" y="70" width="100.0" height="230" class="band"/>
+  <line x1="70" y1="70" x2="70" y2="300" class="grid"/><text x="70" y="318" class="mu" font-size="11" text-anchor="middle">50k</text>
+  <line x1="170" y1="70" x2="170" y2="300" class="grid"/><text x="170" y="318" class="mu" font-size="11" text-anchor="middle">100k</text>
+  <line x1="270" y1="70" x2="270" y2="300" class="grid"/><text x="270" y="318" class="mu" font-size="11" text-anchor="middle">150k</text>
+  <line x1="370" y1="70" x2="370" y2="300" class="grid"/><text x="370" y="318" class="mu" font-size="11" text-anchor="middle">200k</text>
+  <line x1="470" y1="70" x2="470" y2="300" class="grid"/><text x="470" y="318" class="mu" font-size="11" text-anchor="middle">250k</text>
+  <line x1="570" y1="70" x2="570" y2="300" class="grid"/><text x="570" y="318" class="mu" font-size="11" text-anchor="middle">300k</text>
+  <line x1="670" y1="70" x2="670" y2="300" class="grid"/><text x="670" y="318" class="mu" font-size="11" text-anchor="middle">350k</text>
+  <line x1="770" y1="70" x2="770" y2="300" class="grid"/><text x="770" y="318" class="mu" font-size="11" text-anchor="middle">400k</text>
+  <line x1="70" y1="300" x2="770" y2="300" class="grid"/><text x="62" y="304" class="mu" font-size="11" text-anchor="end">+0%</text>
+  <line x1="70" y1="234.28571428571428" x2="770" y2="234.28571428571428" class="grid"/><text x="62" y="238.28571428571428" class="mu" font-size="11" text-anchor="end">+20%</text>
+  <line x1="70" y1="168.57142857142858" x2="770" y2="168.57142857142858" class="grid"/><text x="62" y="172.57142857142858" class="mu" font-size="11" text-anchor="end">+40%</text>
+  <line x1="70" y1="102.85714285714286" x2="770" y2="102.85714285714286" class="grid"/><text x="62" y="106.85714285714286" class="mu" font-size="11" text-anchor="end">+60%</text>
+  <text x="74" y="62" class="mu" font-size="11">比最低点贵</text>
+  <path d="M70.0,116.2 L80.0,209.0 L90.0,249.5 L100.0,268.8 L110.0,282.2 L120.0,289.3 L130.0,294.4 L140.0,297.0 L150.0,298.3 L160.0,300.0 L170.0,298.2 L180.0,296.1 L190.0,295.3 L200.0,290.8 L210.0,289.5 L220.0,284.3 L230.0,283.1 L240.0,280.0 L250.0,276.7 L260.0,271.3 L270.0,268.7 L280.0,264.0 L290.0,259.5 L300.0,256.6 L310.0,255.7 L320.0,250.8 L330.0,244.8 L340.0,242.0 L350.0,238.8 L360.0,235.2 L370.0,229.5 L380.0,225.9 L390.0,220.7 L400.0,219.4 L410.0,217.8 L420.0,213.2 L430.0,205.9 L440.0,198.3 L450.0,194.1 L460.0,190.5 L470.0,184.7 L480.0,180.4 L490.0,176.6 L500.0,171.6 L510.0,168.1 L520.0,163.0 L530.0,160.2 L540.0,158.4 L550.0,155.1 L560.0,151.7 L570.0,146.3 L770.0,79.2" fill="none" class="ac" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="160.0" cy="300.0" r="4" class="acf"/><text x="168.0" y="292.0" class="fg" font-size="12" font-weight="600">95k</text>
+  <circle cx="270.0" cy="268.7" r="4" class="acf"/><text x="280.0" y="286.7" class="fg" font-size="12" font-weight="600">150k +10%</text>
+  <circle cx="370.0" cy="229.5" r="4" class="acf"/><text x="380.0" y="247.5" class="fg" font-size="12" font-weight="600">200k +21%</text>
+  <rect x="70" y="332" width="10" height="10" class="warn"/><text x="86" y="341" class="mu" font-size="12">≤ 70k 几乎每个任务都压缩</text>
+  <rect x="300" y="332" width="10" height="10" class="band"/><text x="316" y="341" class="mu" font-size="12">75k–125k 比最低点贵不到 5%</text>
+  <text x="770" y="341" class="mu" font-size="12" text-anchor="end">一直不压到 1M：贵 175%</text>
+</svg>

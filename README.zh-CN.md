@@ -120,7 +120,7 @@ pi install npm:@ssk_dev/pi-docs-slim
 
 两个扩展的核心作用，是把上下文控制在一定范围内：比如 1M 窗口的模型，上下文也不超过 200k 左右，让模型一直待在表现最好的区间（smart zone），避免 context rot（上下文越长，模型越容易忽略或记错前面的内容）。billion-context-pi-lean 默认就能做到；pi-blackhole 的默认阈值比较宽松，推荐调低，见[下面的说明](#pi-blackhole)。
 
-控制在 200k 左右也差不多是最省钱的点：每轮的成本和压缩的固定成本在这里最划算，推导见[成本怎么算](docs/long-context.zh-CN.md)。
+成本也支持控制上下文。按 Opus 5.5 的价格回放我自己的会话，最省钱的压缩点在 95k 左右；200k 贵约 21%，但压缩次数只有四分之一；一直跑到 1M 要贵 175%。推导见[成本怎么算](docs/long-context.zh-CN.md)。
 
 | | billion-context-pi-lean | pi-blackhole |
 | --- | --- | --- |
@@ -257,7 +257,7 @@ npm run benchmark:check    # 检查结果和 README 是不是最新的
 
 ## 延伸阅读
 
-* [为什么把上下文控制在 200k 左右](docs/long-context.zh-CN.md)：每轮成本和压缩成本怎么权衡。
+* [上下文压到多大最省钱](docs/long-context.zh-CN.md)：按 Opus 5.5 价格推导，并用真实会话回放验证。
 * [实测后撤下的工具](docs/retired-tools.zh-CN.md)：RTK 和 Headroom 为什么不再推荐，附实测数据。
 
 ## 许可与署名
