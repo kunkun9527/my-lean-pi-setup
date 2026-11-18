@@ -21,6 +21,7 @@ const config = JSON.parse(await readFile(configPath, "utf8"));
 const packagesRoot = path.resolve(setupRoot, config.packagesRoot);
 // Not README.*: npm force-packs README.* files and may pick one as the package page.
 const EXTENSION_ZH_README = "README_zh-CN.md";
+const EXTENSION_CHART_DIR = "assets";
 const resultsPath = path.resolve(setupRoot, config.resultsFile);
 // Temporary installs of dev-only upstream packages; removed after measuring.
 const temporaryUpstreamRoots = [];
@@ -345,11 +346,14 @@ function renderSetupReadme(filePath, result, language) {
 }
 
 function extensionSummary(extension, language) {
-  const profile = extension.profiles.find((item) => item.id === "default") ?? extension.profiles[0];
-  if (language === "zh") {
-    return `> **常驻上下文：Lean ${format(profile.lean.totalTokens)} tokens，上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\` ${format(profile.upstream.totalTokens)} tokens，少 ${profile.reductionPercent.toFixed(1)}%。**`;
-  }
-  return `> **Always-on context: ${format(profile.lean.totalTokens)} tokens vs. ${format(profile.upstream.totalTokens)} for upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\`, ${profile.reductionPercent.toFixed(1)}% less.**`;
+  const text = chartText[language];
+  const profile = defaultProfile(extension);
+  const alt = text.extensionAlt(format(profile.upstream.totalTokens), format(profile.lean.totalTokens), profile.reductionPercent.toFixed(1));
+  return `<p align="center"><img src="${EXTENSION_CHART_DIR}/${text.file}" alt="${escapeXml(alt)}" width="800"></p>`;
+}
+
+function defaultProfile(extension) {
+  return extension.profiles.find((item) => item.id === "default") ?? extension.profiles[0];
 }
 
 function extensionBenchmark(extension, piVersion, language) {
@@ -366,8 +370,6 @@ function extensionBenchmark(extension, piVersion, language) {
       `| Lean \`${extension.leanPackage}@${extension.leanVersion}\` | ${leanTools} | **${format(profile.lean.totalTokens)}** |`,
       `| 上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\` | ${upstreamTools} | **${format(profile.upstream.totalTokens)}** |`,
       "",
-      `少 **${format(profile.savedTokens)} tokens（${profile.reductionPercent.toFixed(1)}%）**。`,
-      "",
       methodLine(piVersion, "zh"),
     ].join("\n");
   }
@@ -378,8 +380,6 @@ function extensionBenchmark(extension, piVersion, language) {
     "| --- | --- | ---: |",
     `| Lean \`${extension.leanPackage}@${extension.leanVersion}\` | ${leanTools} | **${format(profile.lean.totalTokens)}** |`,
     `| Upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\` | ${upstreamTools} | **${format(profile.upstream.totalTokens)}** |`,
-    "",
-    `That is **${format(profile.savedTokens)} tokens (${profile.reductionPercent.toFixed(1)}%)** less.`,
     "",
     methodLine(piVersion, "en"),
   ].join("\n");
@@ -480,6 +480,8 @@ const chartText = {
     upstream: "Pinned upstream",
     lean: "Lean",
     footnote: "Tokens estimated as ceil(chars / 4).",
+    extensionCaption: (upstream) => `Always-on context vs. upstream ${upstream}`,
+    extensionAlt: (upstream, lean, percent) => `Always-on context: ${upstream} tokens upstream, ${lean} Lean, ${percent}% less`,
   },
   zh: {
     file: "chart.zh-CN.svg",
@@ -489,14 +491,52 @@ const chartText = {
     upstream: "锁定上游",
     lean: "精简版",
     footnote: "Token 按 ceil(字符数 / 4) 估算。",
+    extensionCaption: (upstream) => `常驻上下文，对比上游 ${upstream}`,
+    extensionAlt: (upstream, lean, percent) => `常驻上下文：上游 ${upstream} tokens，精简版 ${lean}，少 ${percent}%`,
   },
 };
 
 function renderCharts(result) {
-  return new Map(Object.entries(chartText).map(([language, text]) => [
-    path.join(setupRoot, "benchmarks", text.file),
-    renderChart(result, text),
-  ]));
+  const files = new Map();
+  for (const text of Object.values(chartText)) {
+    files.set(path.join(setupRoot, "benchmarks", text.file), renderChart(result, text));
+    for (const extension of result.extensions) {
+      files.set(path.join(packagesRoot, extension.directory, EXTENSION_CHART_DIR, text.file), renderExtensionChart(extension, text));
+    }
+  }
+  return files;
+}
+
+// Same look as the setup chart, for one extension's default profile.
+function renderExtensionChart(extension, text) {
+  const profile = defaultProfile(extension);
+  const barX = 142;
+  const maxBar = 548;
+  const width = (tokens) => Math.max(1, Math.round(tokens / Math.max(1, profile.upstream.totalTokens) * maxBar * 10) / 10);
+  const upW = width(profile.upstream.totalTokens);
+  const leanW = width(profile.lean.totalTokens);
+  const height = 220;
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${height}" viewBox="0 0 800 ${height}" font-family="${text.fonts}">`,
+    "  <style>",
+    "    .fg{fill:#1f2328}.mu{fill:#59636e}.up{fill:#d0d7de}.ac{fill:#1a7f37}",
+    "    @media (prefers-color-scheme: dark){.fg{fill:#e6edf3}.mu{fill:#9198a1}.up{fill:#3d444d}.ac{fill:#3fb950}}",
+    "    .num{font-variant-numeric:tabular-nums}",
+    "  </style>",
+    `  <text x="24" y="34" class="mu" font-size="14">${escapeXml(text.extensionCaption(`${extension.upstreamPackage}@${extension.upstreamVersion}`))}</text>`,
+    `  <text x="24" y="86" class="ac" font-size="48" font-weight="700">−${profile.reductionPercent.toFixed(1)}%</text>`,
+    `  <text x="222" y="70" class="fg num" font-size="18" font-weight="600">${format(profile.upstream.totalTokens)} → ${format(profile.lean.totalTokens)} tokens</text>`,
+    `  <text x="222" y="92" class="mu" font-size="14">${escapeXml(text.subline(format(profile.savedTokens)))}</text>`,
+    '  <g font-size="13">',
+    `    <text x="24" y="138" class="mu">${escapeXml(text.upstream)}</text>`,
+    `    <rect x="${barX}" y="124" width="${upW}" height="18" class="up"/><text x="${round1(barX + upW + 8)}" y="138" class="mu num">${format(profile.upstream.totalTokens)}</text>`,
+    `    <text x="24" y="172" class="fg" font-weight="600">${escapeXml(text.lean)}</text>`,
+    `    <rect x="${barX}" y="158" width="${leanW}" height="18" class="ac"/><text x="${round1(barX + leanW + 8)}" y="172" class="fg num" font-weight="600">${format(profile.lean.totalTokens)}</text>`,
+    "  </g>",
+    `  <text x="24" y="${height - 12}" class="mu" font-size="11">${escapeXml(text.footnote)}</text>`,
+    "</svg>",
+    "",
+  ].join("\n");
 }
 
 // One SVG serves GitHub light and dark themes through prefers-color-scheme.
