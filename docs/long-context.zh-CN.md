@@ -97,6 +97,8 @@ $$
 | 150k | +9.5% | 每 60 次请求，约 7 个任务 |
 | 200k | +21.5% | 每 94 次请求，约 11 个任务 |
 
+用 billion-context-pi-lean 时，压缩时机由 Nudge interval 控制。它数的是可压缩的旧内容，不是上下文总量：在我的会话里，默认的 50K 大约在 150k 时压缩，我用的 70K 大约在 185k（实测中位数 184k）。换算方法见[它的 README](https://github.com/kunkun9527/billion-context-pi-lean/blob/main/README_zh-CN.md#设置项)。pi-blackhole 的阈值直接就是上下文大小，按[下面的曲线](../README.zh-CN.md#pi-blackhole)设置即可。
+
 两条边界：
 
 - **别超过 300k**：成本贵近一半，上下文也开始出现 context rot。

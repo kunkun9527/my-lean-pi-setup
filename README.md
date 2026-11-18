@@ -140,7 +140,7 @@ I compact at 150k–200k. Replaying my own sessions at Opus 5.5 prices, the chea
 
 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) turns older conversation into summaries and brings details back when you need them. The model decides when and what to compress, instead of everything getting cut off at a hard limit. Most useful for long sessions and models with small context windows.
 
-By default it nudges the model to compress each time context grows by about 50k, which usually keeps context under 150k with no tuning.
+It nudges the model to compress once enough old, compressible content has piled up (Nudge interval, default 50K). That is not the total context: in my sessions the default compacts at about 150k and the 70K I use at about 185k, so it stays in range with little or no tuning.
 
 **I recommend my fork over the official version.** It is based on [billion-context-pi](https://github.com/ranxianglei/billion-context-pi) v0.1.83 and focuses on runtime stability and spending fewer tokens:
 

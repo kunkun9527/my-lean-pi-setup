@@ -140,7 +140,7 @@ pi install npm:@ssk_dev/pi-docs-slim
 
 [billion-context-pi-lean](https://github.com/kunkun9527/billion-context-pi-lean) 会把较早的对话压成摘要，需要时再把细节找回来。由模型自己决定什么时候压、压哪一段，而不是到了上限一刀切。长会话、上下文窗口小的模型最用得上。
 
-默认上下文每增长约 50k，就会提醒模型压缩一次，通常能把上下文维持在 150k 以内，不需要额外调。
+可压缩的旧内容攒够一定量（Nudge interval，默认 50K）时，它会提醒模型压缩。这个数不是上下文总量：在我的会话里，默认值大约在 150k 时压缩，我用的 70K 大约在 185k，基本不用调。
 
 **推荐用我维护的分支，而不是官方版。** 它基于 [billion-context-pi](https://github.com/ranxianglei/billion-context-pi) v0.1.83，专注于运行稳定性和降低 token 消耗：
 

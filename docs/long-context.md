@@ -97,6 +97,8 @@ The cheapest point is not the best one. The more often you compact, the more oft
 | 150k | +9.5% | every 60 requests, about 7 tasks |
 | 200k | +21.5% | every 94 requests, about 11 tasks |
 
+With billion-context-pi-lean, Nudge interval sets when compaction happens. It counts old, compressible content rather than total context: in my sessions the default 50K compacts at about 150k, and the 70K I use at about 185k (measured median 184k). See [its README](https://github.com/kunkun9527/billion-context-pi-lean#settings) for the conversion. pi-blackhole's threshold is the context size itself; set it with [the curve in the README](../README.md#pi-blackhole).
+
 Two limits:
 
 - **Don't go past 300k**: it costs almost half again as much, and context rot starts to show.
