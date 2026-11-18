@@ -59,7 +59,7 @@
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
 | 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
-| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
+| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明，每条请求少约 1,400 字符（约 350 tokens） |
 
 ### pi-context-view
 
@@ -71,7 +71,7 @@ pi install npm:pi-context-view
 
 ### pi-docs-slim
 
-[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。它 fork 自 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim)，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。这段说明是一个约 1,400 字符（约 350 tokens）的 `<docs>` 块，每条请求都会带上；在 Pi-Bolt 的裸系统提示词上，去掉它后从 2,561 字符降到 1,153 字符（−55%）。它精简的是 Pi 自己的提示词而不是扩展，所以不计入扩展的基准；测量方式见[它的 README](https://github.com/kunkun9527/pi-docs-slim/blob/main/README.zh-CN.md#能省多少)。它 fork 自 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim)，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
 
 ```bash
 pi install npm:@ssk_dev/pi-docs-slim
@@ -92,12 +92,12 @@ pi install npm:@ssk_dev/pi-docs-slim
 ### 启动时的上下文占用
 
 <!-- token-benchmark:aggregate:start -->
-5 个精简版合计，常驻的初始上下文比锁定的上游版本少 **19,373 tokens（92.8%）**，对比图见[开头](#我的-pi-精简配置)。
+5 个精简版合计，模型每轮都要读的常驻上下文比锁定的上游版本少 **19,373 tokens（92.8%）**，对比图见[开头](#我的-pi-精简配置)。
 
 <details>
 <summary>逐项数字和测量方式</summary>
 
-| 扩展 | 精简版 | 锁定上游 | 节省 Token | 降幅 |
+| 扩展 | 精简版 | 锁定上游 | 少 | 降幅 |
 | --- | ---: | ---: | ---: | ---: |
 | `pi-web-access-lean` | **153** | 1,165 | 1,012 | **86.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
@@ -106,10 +106,10 @@ pi install npm:@ssk_dev/pi-docs-slim
 | `billion-context-pi-lean` | **503** | 8,670 | 8,167 | **94.2%** |
 | **合计** | **1,506** | **20,879** | **19,373** | **92.8%** |
 
-* 测试环境：Pi `1.4.0`，使用仓库内置自动化工具。
-* 每个精简版和它的上游版本，都在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。
-* 不计内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 和 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。
-* Token 按 `ceil(字符数 / 4)` 估算，不是某个模型 tokenizer 的实际计费值。上游版本是各精简包锁定的精确版本，已对照 lockfile 和已安装的包校验。
+- 用 Pi `1.4.0` 和仓库里的 `npm run benchmark` 测量。
+- 每个版本在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。
+- 不计内置工具、Skills、上下文文件、会话历史、用户消息、其他扩展、运行时 UI 和 Slash Commands；计入 `before_agent_start` 注入的系统提示和消息。
+- Token 按 `ceil(字符数 / 4)` 估算，不是实际计费值。上游版本是各精简包锁定的版本，已对照 lockfile 和已安装的包核对。
 
 </details>
 <!-- token-benchmark:aggregate:end -->

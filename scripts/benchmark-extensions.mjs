@@ -347,9 +347,9 @@ function renderSetupReadme(filePath, result, language) {
 function extensionSummary(extension, language) {
   const profile = extension.profiles.find((item) => item.id === "default") ?? extension.profiles[0];
   if (language === "zh") {
-    return `> **Token 基准：Lean ${format(profile.lean.totalTokens)}，上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\` ${format(profile.upstream.totalTokens)}，减少 ${profile.reductionPercent.toFixed(1)}%。**`;
+    return `> **常驻上下文：Lean ${format(profile.lean.totalTokens)} tokens，上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\` ${format(profile.upstream.totalTokens)} tokens，少 ${profile.reductionPercent.toFixed(1)}%。**`;
   }
-  return `> **Token benchmark: Lean ${format(profile.lean.totalTokens)}, upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\` ${format(profile.upstream.totalTokens)} — ${profile.reductionPercent.toFixed(1)}% fewer.**`;
+  return `> **Always-on context: ${format(profile.lean.totalTokens)} tokens vs. ${format(profile.upstream.totalTokens)} for upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\`, ${profile.reductionPercent.toFixed(1)}% less.**`;
 }
 
 function extensionBenchmark(extension, piVersion, language) {
@@ -359,26 +359,28 @@ function extensionBenchmark(extension, piVersion, language) {
   const upstreamTools = breakdown(profile.upstream, language);
   if (language === "zh") {
     return [
-      `单独启用本扩展时，模型可见的常驻初始化上下文如下：`,
+      "只启用这一个扩展时，模型每轮都会读到的内容：",
       "",
-      "| 版本 | 工具与 Prompt 构成 | 合计 |",
+      "| 版本 | 构成 | 合计 |",
       "| --- | --- | ---: |",
       `| Lean \`${extension.leanPackage}@${extension.leanVersion}\` | ${leanTools} | **${format(profile.lean.totalTokens)}** |`,
       `| 上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\` | ${upstreamTools} | **${format(profile.upstream.totalTokens)}** |`,
       "",
-      `节省 **${format(profile.savedTokens)} tokens（${profile.reductionPercent.toFixed(1)}%）**。`,
+      `少 **${format(profile.savedTokens)} tokens（${profile.reductionPercent.toFixed(1)}%）**。`,
+      "",
       methodLine(piVersion, "zh"),
     ].join("\n");
   }
   return [
-    "With only this extension enabled, its recurring model-facing initialization contribution is:",
+    "With only this extension enabled, what the model reads on every turn:",
     "",
-    "| Variant | Tool and prompt contribution | Total |",
+    "| Variant | Breakdown | Total |",
     "| --- | --- | ---: |",
     `| Lean \`${extension.leanPackage}@${extension.leanVersion}\` | ${leanTools} | **${format(profile.lean.totalTokens)}** |`,
     `| Upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\` | ${upstreamTools} | **${format(profile.upstream.totalTokens)}** |`,
     "",
-    `This saves **${format(profile.savedTokens)} tokens (${profile.reductionPercent.toFixed(1)}%)**.`,
+    `That is **${format(profile.savedTokens)} tokens (${profile.reductionPercent.toFixed(1)}%)** less.`,
+    "",
     methodLine(piVersion, "en"),
   ].join("\n");
 }
@@ -399,7 +401,7 @@ function profileBenchmark(extension, piVersion, language) {
   }).join("\n");
   if (language === "zh") {
     return [
-      `针对上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\`，实测结果如下：`,
+      `对比上游 \`${extension.upstreamPackage}@${extension.upstreamVersion}\`，不同配置下的结果：`,
       "",
       "| 配置 | Lean | 上游 | 节省 |",
       "| --- | ---: | ---: | ---: |",
@@ -411,7 +413,7 @@ function profileBenchmark(extension, piVersion, language) {
     ].join("\n");
   }
   return [
-    `Measured against upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\`:`,
+    `Against upstream \`${extension.upstreamPackage}@${extension.upstreamVersion}\`, by configuration:`,
     "",
     "| Configuration | Lean | Upstream | Saved |",
     "| --- | ---: | ---: | ---: |",
@@ -431,39 +433,39 @@ function aggregateBenchmark(result, language) {
   const totals = result.totals;
   if (language === "zh") {
     return [
-      `${config.extensions.length} 个精简版合计，常驻的初始上下文比锁定的上游版本少 **${format(totals.savedTokens)} tokens（${totals.reductionPercent.toFixed(1)}%）**，对比图见[开头](#我的-pi-精简配置)。`,
+      `${config.extensions.length} 个精简版合计，模型每轮都要读的常驻上下文比锁定的上游版本少 **${format(totals.savedTokens)} tokens（${totals.reductionPercent.toFixed(1)}%）**，对比图见[开头](#我的-pi-精简配置)。`,
       "",
       "<details>",
       "<summary>逐项数字和测量方式</summary>",
       "",
-      "| 扩展 | 精简版 | 锁定上游 | 节省 Token | 降幅 |",
+      "| 扩展 | 精简版 | 锁定上游 | 少 | 降幅 |",
       "| --- | ---: | ---: | ---: | ---: |",
       ...rows,
       `| **合计** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
       "",
-      `* 测试环境：Pi \`${result.piVersion}\`，使用仓库内置自动化工具。`,
-      "* 每个精简版和它的上游版本，都在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。",
-      "* 不计内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 和 Slash Commands；计入扩展通过 `before_agent_start` 注入的系统提示和消息。",
-      "* Token 按 `ceil(字符数 / 4)` 估算，不是某个模型 tokenizer 的实际计费值。上游版本是各精简包锁定的精确版本，已对照 lockfile 和已安装的包校验。",
+      `- 用 Pi \`${result.piVersion}\` 和仓库里的 \`npm run benchmark\` 测量。`,
+      "- 每个版本在独立的临时进程里测，工作目录、Home 和 Pi Agent 目录都是空的。",
+      "- 不计内置工具、Skills、上下文文件、会话历史、用户消息、其他扩展、运行时 UI 和 Slash Commands；计入 `before_agent_start` 注入的系统提示和消息。",
+      "- Token 按 `ceil(字符数 / 4)` 估算，不是实际计费值。上游版本是各精简包锁定的版本，已对照 lockfile 和已安装的包核对。",
       "",
       "</details>",
     ].join("\n");
   }
   return [
-    `Across all ${config.extensions.length} Lean extensions, recurring initialization context is reduced by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).`,
+    `Together, the ${config.extensions.length} Lean extensions cut the always-on context the model reads every turn by **${format(totals.savedTokens)} tokens (${totals.reductionPercent.toFixed(1)}%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).`,
     "",
     "<details>",
     "<summary>Per-extension numbers and methodology</summary>",
     "",
-    "| Extension | Lean | Pinned Upstream | Tokens Saved | Reduction |",
+    "| Extension | Lean | Pinned upstream | Saved | Reduction |",
     "| --- | ---: | ---: | ---: | ---: |",
     ...rows,
     `| **Total** | **${format(totals.leanTokens)}** | **${format(totals.upstreamTokens)}** | **${format(totals.savedTokens)}** | **${totals.reductionPercent.toFixed(1)}%** |`,
     "",
-    `* Test environment: Pi \`${result.piVersion}\` using the repository's automated benchmark tool.`,
-    "* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.",
-    "* Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.",
-    "* Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.",
+    `- Measured with Pi \`${result.piVersion}\` and the repository's \`npm run benchmark\`.`,
+    "- Each variant runs in its own temporary process with an empty working directory, home and Pi agent directory.",
+    "- Built-in tools, skills, context files, session history, user messages, other extensions, runtime UI and slash commands are not counted; system-prompt and message additions from `before_agent_start` are.",
+    "- Tokens are estimated as `ceil(characters / 4)`, not billed tokens. Upstream versions are the ones each Lean package pins, checked against the lockfile and the installed package.",
     "",
     "</details>",
   ].join("\n");
@@ -550,9 +552,9 @@ function escapeXml(value) {
 
 function methodLine(piVersion, language) {
   if (language === "zh") {
-    return `测量环境为 Pi ${piVersion} 的独立临时进程、空白工作目录与空白配置。排除内置工具、Skills、上下文文件、会话历史、用户消息、无关扩展、运行时 UI 与 Slash Commands；计入扩展的 \`before_agent_start\` 注入。Token 是按 \`ceil(字符数 / 4)\` 计算的固定字符代理估算，并非模型 tokenizer 实际计费值。`;
+    return `<sub>测量方式：Pi ${piVersion}，每个版本在独立的临时进程里测，工作目录和配置都是空的。不计内置工具、Skills、上下文文件、会话历史、用户消息、其他扩展、运行时 UI 和 Slash Commands；计入 \`before_agent_start\` 注入的内容。Token 按 \`ceil(字符数 / 4)\` 估算，不是实际计费值。</sub>`;
   }
-  return `Measured with Pi ${piVersion} in separate temporary processes with empty working directories and configuration. Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; \`before_agent_start\` additions are included. Tokens are a fixed character-proxy estimate using \`ceil(characters / 4)\`, not provider tokenizer billing.`;
+  return `<sub>Method: Pi ${piVersion}, each variant measured in its own temporary process with an empty working directory and configuration. Built-in tools, skills, context files, session history, user messages, other extensions, runtime UI and slash commands are not counted; \`before_agent_start\` additions are. Tokens are estimated as \`ceil(characters / 4)\`, not billed tokens.</sub>`;
 }
 
 function profileDisplayLabel(profile, language) {
@@ -565,9 +567,9 @@ function profileDisplayLabel(profile, language) {
 function breakdown(measurement, language) {
   const parts = measurement.tools.map((tool) => `\`${tool.name}\` (${format(tool.tokens)})`);
   if (measurement.promptDeltaTokens !== 0) {
-    parts.push(`${language === "zh" ? "Prompt 注入" : "prompt additions"} (${format(measurement.promptDeltaTokens)})`);
+    parts.push(`${language === "zh" ? "提示词注入" : "prompt additions"} (${format(measurement.promptDeltaTokens)})`);
   }
-  return parts.length > 0 ? parts.join(" + ") : language === "zh" ? "无常驻注入" : "no recurring injection";
+  return parts.length > 0 ? parts.join(" + ") : language === "zh" ? "无常驻内容" : "nothing always-on";
 }
 
 function replaceManagedBlock(content, id, body, filePath) {

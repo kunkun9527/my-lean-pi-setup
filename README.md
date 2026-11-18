@@ -59,7 +59,7 @@ Keep in mind:
 | Area | Tool | What it does |
 | --- | --- | --- |
 | Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
-| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
+| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance, ~1,400 chars (~350 tokens) per request |
 
 ### pi-context-view
 
@@ -71,7 +71,7 @@ pi install npm:pi-context-view
 
 ### pi-docs-slim
 
-[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. It's my fork of Rob Zolkos's [pi-slim](https://github.com/robzolkos/pi-slim), updated to work on Pi 0.87.1; the original no longer removes the docs there.
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. That guidance is a `<docs>` block of about 1,400 characters (~350 tokens) sent with every request; on Pi-Bolt's bare system prompt, removing it takes 2,561 characters down to 1,153 (−55%). It trims Pi's own prompt rather than an extension's, so it isn't counted in the extension benchmark; see [its README](https://github.com/kunkun9527/pi-docs-slim#how-much-it-saves) for how it was measured. It's my fork of Rob Zolkos's [pi-slim](https://github.com/robzolkos/pi-slim), updated to work on Pi 0.87.1; the original no longer removes the docs there.
 
 ```bash
 pi install npm:@ssk_dev/pi-docs-slim
@@ -92,12 +92,12 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 ### Context used at startup
 
 <!-- token-benchmark:aggregate:start -->
-Across all 5 Lean extensions, recurring initialization context is reduced by **19,373 tokens (92.8%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).
+Together, the 5 Lean extensions cut the always-on context the model reads every turn by **19,373 tokens (92.8%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).
 
 <details>
 <summary>Per-extension numbers and methodology</summary>
 
-| Extension | Lean | Pinned Upstream | Tokens Saved | Reduction |
+| Extension | Lean | Pinned upstream | Saved | Reduction |
 | --- | ---: | ---: | ---: | ---: |
 | `pi-web-access-lean` | **153** | 1,165 | 1,012 | **86.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
@@ -106,10 +106,10 @@ Across all 5 Lean extensions, recurring initialization context is reduced by **1
 | `billion-context-pi-lean` | **503** | 8,670 | 8,167 | **94.2%** |
 | **Total** | **1,506** | **20,879** | **19,373** | **92.8%** |
 
-* Test environment: Pi `1.4.0` using the repository's automated benchmark tool.
-* Every Lean and upstream extension is measured in a separate process with an empty temporary working directory, home, and Pi agent directory.
-* Built-in tools, skills, context files, session history, user messages, unrelated extensions, runtime UI, and slash commands are excluded; system-prompt and message additions from `before_agent_start` are included.
-* Tokens are a fixed character-proxy estimate using `ceil(characters / 4)`, not provider tokenizer billing; upstream versions are verified against the manifest, lockfile, and installed package.
+- Measured with Pi `1.4.0` and the repository's `npm run benchmark`.
+- Each variant runs in its own temporary process with an empty working directory, home and Pi agent directory.
+- Built-in tools, skills, context files, session history, user messages, other extensions, runtime UI and slash commands are not counted; system-prompt and message additions from `before_agent_start` are.
+- Tokens are estimated as `ceil(characters / 4)`, not billed tokens. Upstream versions are the ones each Lean package pins, checked against the lockfile and the installed package.
 
 </details>
 <!-- token-benchmark:aggregate:end -->
