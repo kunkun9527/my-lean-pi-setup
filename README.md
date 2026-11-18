@@ -53,7 +53,6 @@ Keep in mind:
 
 * Configuration details live in each repo's README.
 * Install either the original extension or its lean version, not both; loading both registers the same tools twice.
-* Don't commit API keys or private endpoints to a public config.
 
 ## Lean extensions
 
