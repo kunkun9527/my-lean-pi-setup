@@ -1,13 +1,13 @@
-# Where to compact for the lowest cost
+# Why compact at 150k–200k
 
 [Back to README](../README.md)
 
-**Bottom line**: at Opus 5.5 prices, replaying 30 days of my own sessions, the cheapest compaction point is **around 95k**, and anything from 75k to 125k is within 5% of it. Compacting at 200k costs about 21% more; never compacting and running up to 1M costs 175% more.
+**Bottom line**: the cheapest point is not the best one. I compact at **150k–200k**: 10%–21% more than the cheapest point, but 57%–72% fewer compactions, far fewer interruptions, and context still inside the smart zone.
 
-So 200k is not the cheapest point. It is the ceiling: past it, cost climbs fast. I still use about 200k, trading roughly a fifth more cost for far fewer compactions; see [How to choose](#how-to-choose).
+On cost alone, replaying 30 days of my own sessions at Opus 5.5 prices, the cheapest compaction point is around 95k, and anything from 75k to 125k is within 5% of it. Never compacting and running up to 1M costs 175% more.
 
 <p align="center">
-  <img src="long-context-cost.svg" alt="Cost by compaction threshold: lowest at 95k, within 5% from 75k to 125k, +10% at 150k, +21% at 200k" width="800">
+  <img src="long-context-cost.svg" alt="Cost by compaction threshold: lowest at 95k, within 5% from 75k to 125k, +10% to +21% in my 150k–200k pick" width="800">
 </p>
 
 ## Prices
@@ -89,12 +89,20 @@ The cheapest point stays between 70k and 115k, and 200k always costs more. What 
 
 ## How to choose
 
-The curve is flat near its minimum and rises more slowly to the right than to the left, so err toward a larger compaction point rather than a smaller one.
+The cheapest point is not the best one. The more often you compact, the more often the model loses details it just read, has to re-read files or have you explain things again, and gets interrupted mid-task. Luckily the curve rises slowly to the right of its minimum: moving from 95k to 150k costs only 9.5% more. So I settle on 150k–200k, between cost and compaction frequency:
 
-- **Cost only**: set 100k–120k.
-- **My choice, about 200k**: about $13 more per 1,000 requests buys roughly a quarter as many compactions (one every 94 requests instead of 26). Every compaction drops detail and interrupts the work in progress, and 200k is still inside the smart zone.
+| Compaction point | vs. cheapest | How often it compacts |
+| --- | --- | --- |
+| 95k (cheapest) | — | every 26 requests, about 3 tasks |
+| 150k | +9.5% | every 60 requests, about 7 tasks |
+| 200k | +21.5% | every 94 requests, about 11 tasks |
+
+Two limits:
+
 - **Don't go past 300k**: it costs almost half again as much, and context rot starts to show.
 - **Don't go below 70k**: large tasks get compacted halfway through, which costs more and works worse.
+
+If cost is all you care about, set 100k–120k.
 
 ## Limitations
 

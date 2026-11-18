@@ -1,11 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="360" viewBox="0 0 800 360" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
   <style>
-    .fg{fill:#1f2328}.mu{fill:#59636e}.grid{stroke:#d8dee4;stroke-width:1}.ac{stroke:#1a7f37}.acf{fill:#1a7f37}.band{fill:#1a7f37;fill-opacity:.10}.warn{fill:#cf222e;fill-opacity:.08}
-    @media (prefers-color-scheme: dark){.fg{fill:#e6edf3}.mu{fill:#9198a1}.grid{stroke:#30363d}.ac{stroke:#3fb950}.acf{fill:#3fb950}.band{fill:#3fb950;fill-opacity:.14}.warn{fill:#f85149;fill-opacity:.12}}
+    .fg{fill:#1f2328}.mu{fill:#59636e}.grid{stroke:#d8dee4;stroke-width:1}.ac{stroke:#1a7f37}.acf{fill:#1a7f37}.band{fill:#1a7f37;fill-opacity:.10}.warn{fill:#cf222e;fill-opacity:.08}.pick{fill:#0969da;fill-opacity:.10}
+    @media (prefers-color-scheme: dark){.fg{fill:#e6edf3}.mu{fill:#9198a1}.grid{stroke:#30363d}.ac{stroke:#3fb950}.acf{fill:#3fb950}.band{fill:#3fb950;fill-opacity:.14}.warn{fill:#f85149;fill-opacity:.12}.pick{fill:#4493f8;fill-opacity:.16}}
   </style>
   <text x="24" y="30" class="mu" font-size="14">Cost by compaction threshold, Opus 5.5, replaying 22,488 real requests</text>
   <rect x="70" y="70" width="40.0" height="230" class="warn"/>
   <rect x="120.0" y="70" width="100.0" height="230" class="band"/>
+  <rect x="270" y="70" width="100" height="230" class="pick"/>
   <line x1="70" y1="70" x2="70" y2="300" class="grid"/><text x="70" y="318" class="mu" font-size="11" text-anchor="middle">50k</text>
   <line x1="170" y1="70" x2="170" y2="300" class="grid"/><text x="170" y="318" class="mu" font-size="11" text-anchor="middle">100k</text>
   <line x1="270" y1="70" x2="270" y2="300" class="grid"/><text x="270" y="318" class="mu" font-size="11" text-anchor="middle">150k</text>
@@ -25,5 +26,6 @@
   <circle cx="370.0" cy="229.5" r="4" class="acf"/><text x="380.0" y="247.5" class="fg" font-size="12" font-weight="600">200k +21%</text>
   <rect x="70" y="332" width="10" height="10" class="warn"/><text x="86" y="341" class="mu" font-size="12">≤ 70k compacts every task</text>
   <rect x="300" y="332" width="10" height="10" class="band"/><text x="316" y="341" class="mu" font-size="12">75k–125k within 5% of cheapest</text>
-  <text x="770" y="341" class="mu" font-size="12" text-anchor="end">Never compacting until 1M: +175%</text>
+  <rect x="540" y="332" width="10" height="10" class="pick"/><text x="556" y="341" class="mu" font-size="12">150k–200k my pick: fewer compactions</text>
+  <text x="770" y="30" class="mu" font-size="12" text-anchor="end">Never compacting until 1M: +175%</text>
 </svg>

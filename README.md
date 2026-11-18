@@ -120,7 +120,7 @@ By default I use **billion-context-pi-lean**; **pi-blackhole** is the alternativ
 
 The core job of both is to keep context within a set range: even on a 1M-window model, context stays around 200k or less, so the model stays in its smart zone and avoids context rot (the longer the context, the more the model overlooks or misremembers earlier content). billion-context-pi-lean does this out of the box; pi-blackhole's default threshold is looser, so I recommend lowering it (see [below](#pi-blackhole)).
 
-Cost points the same way. Replaying my own sessions at Opus 5.5 prices, the cheapest compaction point is about 95k; 200k costs about 21% more but compacts a quarter as often, while running up to 1M costs 175% more. See [the cost math](docs/long-context.md).
+I compact at 150k–200k. Replaying my own sessions at Opus 5.5 prices, the cheapest point is about 95k, but it compacts too often; 150k–200k costs only 10%–21% more with 57%–72% fewer compactions, while running up to 1M costs 175% more. See [the cost math](docs/long-context.md).
 
 | | billion-context-pi-lean | pi-blackhole |
 | --- | --- | --- |
@@ -257,7 +257,7 @@ Results are saved to `benchmarks/results.json`, and the charts are regenerated a
 
 ## Further reading
 
-* [Where to compact for the lowest cost](docs/long-context.md): Opus 5.5 cost math and a replay of real sessions.
+* [Why compact at 150k–200k](docs/long-context.md): Opus 5.5 cost math, a replay of real sessions, and cost versus compaction frequency.
 * [Tools I dropped after measuring](docs/retired-tools.md): why RTK and Headroom are no longer recommended, with measurements.
 
 ## License and credits
