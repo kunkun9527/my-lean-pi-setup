@@ -58,16 +58,8 @@
 
 | 管哪部分 | 组件 | 做什么 |
 | --- | --- | --- |
-| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
 | 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
-
-### pi-docs-slim
-
-[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。它 fork 自 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim)，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
-
-```bash
-pi install npm:@ssk_dev/pi-docs-slim
-```
+| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
 
 ### pi-context-view
 
@@ -75,6 +67,14 @@ pi install npm:@ssk_dev/pi-docs-slim
 
 ```bash
 pi install npm:pi-context-view
+```
+
+### pi-docs-slim
+
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。它 fork 自 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim)，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
+
+```bash
+pi install npm:@ssk_dev/pi-docs-slim
 ```
 
 ## 精简版扩展
