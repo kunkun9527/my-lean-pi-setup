@@ -54,6 +54,29 @@ Keep in mind:
 * Configuration details live in each repo's README.
 * Install either the original extension or its lean version, not both; loading both registers the same tools twice.
 
+## Companion tools
+
+| Area | Tool | What it does |
+| --- | --- | --- |
+| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
+| Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
+
+### pi-docs-slim
+
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. It's my fork of Rob Zolkos's [pi-slim](https://github.com/robzolkos/pi-slim), updated to work on Pi 0.87.1; the original no longer removes the docs there.
+
+```bash
+pi install npm:@ssk_dev/pi-docs-slim
+```
+
+### pi-context-view
+
+[pi-context-view](https://github.com/dimk90/pi-context-view) shows where your tokens go: base prompt, tools, extensions, and messages. It only measures; it doesn't compress anything.
+
+```bash
+pi install npm:pi-context-view
+```
+
 ## Lean extensions
 
 Many great Pi extensions ship long tool descriptions that get sent with every request, eating tokens before the conversation even starts. The lean versions mainly change what the model sees: tool schemas, descriptions, and injected prompts are cut down to what's actually needed.
@@ -191,29 +214,6 @@ pi install git:github.com/kunkun9527/pi-blackhole
 Installing from git requires `"npmCommand": ["npm"]` in `~/.pi/agent/settings.json`. Install either upstream or the fork, not both.
 
 </details>
-
-## Companion tools
-
-| Area | Tool | What it does |
-| --- | --- | --- |
-| Base prompt | [pi-docs-slim](#pi-docs-slim) | Drops the built-in documentation guidance |
-| Usage view | [pi-context-view](#pi-context-view) | Shows how many tokens each part uses |
-
-### pi-docs-slim
-
-[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) makes Pi's built-in documentation guidance load only when needed (ask with `/pi`), so the base prompt gets shorter. It's my fork of Rob Zolkos's [pi-slim](https://github.com/robzolkos/pi-slim), updated to work on Pi 0.87.1; the original no longer removes the docs there.
-
-```bash
-pi install npm:@ssk_dev/pi-docs-slim
-```
-
-### pi-context-view
-
-[pi-context-view](https://github.com/dimk90/pi-context-view) shows where your tokens go: base prompt, tools, extensions, and messages. It only measures; it doesn't compress anything.
-
-```bash
-pi install npm:pi-context-view
-```
 
 ## AGENTS.md template
 

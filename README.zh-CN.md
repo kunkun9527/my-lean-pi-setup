@@ -54,6 +54,29 @@
 * 配置细节看各个仓库的 README。
 * 原版扩展和它的精简版只能装一个，同时装会重复注册工具。
 
+## 搭配使用的组件
+
+| 管哪部分 | 组件 | 做什么 |
+| --- | --- | --- |
+| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
+| 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
+
+### pi-docs-slim
+
+[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。它 fork 自 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim)，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
+
+```bash
+pi install npm:@ssk_dev/pi-docs-slim
+```
+
+### pi-context-view
+
+[pi-context-view](https://github.com/dimk90/pi-context-view) 用来查看 token 都花在哪：基础 Prompt、工具、扩展、对话各占多少。它只负责看，不负责压缩。
+
+```bash
+pi install npm:pi-context-view
+```
+
 ## 精简版扩展
 
 不少好用的 Pi 扩展会带很长的工具说明，每次请求都要发一遍，对话还没开始就占掉不少 token。精简版主要改模型看到的那部分：把工具的 Schema、说明和注入的提示词缩短到够用为止。
@@ -191,29 +214,6 @@ pi install git:github.com/kunkun9527/pi-blackhole
 用 git 安装需要先在 `~/.pi/agent/settings.json` 里设置 `"npmCommand": ["npm"]`。原版和 fork 只能装一个。
 
 </details>
-
-## 搭配使用的组件
-
-| 管哪部分 | 组件 | 做什么 |
-| --- | --- | --- |
-| 基础 Prompt | [pi-docs-slim](#pi-docs-slim) | 去掉默认附带的文档说明 |
-| 查看用量 | [pi-context-view](#pi-context-view) | 看各部分分别占多少 token |
-
-### pi-docs-slim
-
-[pi-docs-slim](https://github.com/kunkun9527/pi-docs-slim) 让 Pi 默认附带的文档说明改成需要时才加载（用 `/pi` 提问），基础 Prompt 因此变短。它 fork 自 Rob Zolkos 的 [pi-slim](https://github.com/robzolkos/pi-slim)，改成能在 Pi 0.87.1 上用；原版在这个版本上已经去不掉文档说明了。
-
-```bash
-pi install npm:@ssk_dev/pi-docs-slim
-```
-
-### pi-context-view
-
-[pi-context-view](https://github.com/dimk90/pi-context-view) 用来查看 token 都花在哪：基础 Prompt、工具、扩展、对话各占多少。它只负责看，不负责压缩。
-
-```bash
-pi install npm:pi-context-view
-```
 
 ## AGENTS.md 规则模板
 
