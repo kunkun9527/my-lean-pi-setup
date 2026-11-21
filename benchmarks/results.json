@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-21T12:11:26.974Z",
+  "generatedAt": "2026-11-21T12:51:07.289Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.4.0",
   "totals": {
@@ -311,7 +311,7 @@
       "directory": "billion-context-pi-lean",
       "displayName": "Billion Context",
       "leanPackage": "billion-context-pi-lean",
-      "leanVersion": "0.4.1",
+      "leanVersion": "0.4.2",
       "upstreamPackage": "billion-context-pi",
       "upstreamVersion": "0.1.83",
       "profiles": [
