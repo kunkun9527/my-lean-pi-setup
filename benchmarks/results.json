@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-18T14:47:08.519Z",
+  "generatedAt": "2026-11-21T12:11:26.974Z",
   "estimator": "fixed character proxy: ceil(characters / 4)",
   "piVersion": "1.4.0",
   "totals": {
     "leanTokens": 1506,
-    "upstreamTokens": 20879,
-    "savedTokens": 19373,
-    "reductionPercent": 92.8
+    "upstreamTokens": 21293,
+    "savedTokens": 19787,
+    "reductionPercent": 92.9
   },
   "extensions": [
     {
@@ -15,9 +15,9 @@
       "directory": "pi-web-access-lean",
       "displayName": "Web Access",
       "leanPackage": "@ssk_dev/pi-web-access-lean",
-      "leanVersion": "0.47.0",
+      "leanVersion": "0.48.0",
       "upstreamPackage": "pi-web-access",
-      "upstreamVersion": "0.47.0",
+      "upstreamVersion": "0.48.0",
       "profiles": [
         {
           "id": "default",
@@ -222,9 +222,9 @@
       "directory": "pi-subagents-lean",
       "displayName": "Subagents",
       "leanPackage": "@ssk_dev/pi-subagents-lean",
-      "leanVersion": "0.23.1",
+      "leanVersion": "0.26.2",
       "upstreamPackage": "@tintinweb/pi-subagents",
-      "upstreamVersion": "0.23.1",
+      "upstreamVersion": "0.26.2",
       "profiles": [
         {
           "id": "default",
@@ -251,8 +251,8 @@
             ]
           },
           "upstream": {
-            "totalTokens": 8542,
-            "toolTokens": 8542,
+            "totalTokens": 8956,
+            "toolTokens": 8956,
             "promptDeltaTokens": 0,
             "promptDeltaChars": 0,
             "eventMessageChars": 0,
@@ -274,12 +274,12 @@
               },
               {
                 "name": "SubagentWorkflow",
-                "chars": 22423,
-                "tokens": 5606,
-                "descriptionChars": 20645,
+                "chars": 24080,
+                "tokens": 6020,
+                "descriptionChars": 22547,
                 "schemaChars": 1220,
                 "snippetChars": 80,
-                "guidelineChars": 459
+                "guidelineChars": 214
               },
               {
                 "name": "get_subagent_result",
@@ -301,8 +301,8 @@
               }
             ]
           },
-          "savedTokens": 8266,
-          "reductionPercent": 96.8
+          "savedTokens": 8680,
+          "reductionPercent": 96.9
         }
       ]
     },

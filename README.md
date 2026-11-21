@@ -92,7 +92,7 @@ Many great Pi extensions ship long tool descriptions that get sent with every re
 ### Context used at startup
 
 <!-- token-benchmark:aggregate:start -->
-Together, the 5 Lean extensions cut the always-on context the model reads every turn by **19,373 tokens (92.8%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).
+Together, the 5 Lean extensions cut the always-on context the model reads every turn by **19,787 tokens (92.9%)** versus their pinned upstream versions; the chart is [at the top](#my-lean-pi-setup).
 
 <details>
 <summary>Per-extension numbers and methodology</summary>
@@ -102,9 +102,9 @@ Together, the 5 Lean extensions cut the always-on context the model reads every 
 | `pi-web-access-lean` | **153** | 1,165 | 1,012 | **86.9%** |
 | `rpiv-ask-user-question-lean` | **220** | 1,258 | 1,038 | **82.5%** |
 | `rpiv-todo-lean` | **354** | 1,244 | 890 | **71.5%** |
-| `pi-subagents-lean` | **276** | 8,542 | 8,266 | **96.8%** |
+| `pi-subagents-lean` | **276** | 8,956 | 8,680 | **96.9%** |
 | `billion-context-pi-lean` | **503** | 8,670 | 8,167 | **94.2%** |
-| **Total** | **1,506** | **20,879** | **19,373** | **92.8%** |
+| **Total** | **1,506** | **21,293** | **19,787** | **92.9%** |
 
 - Measured with Pi `1.4.0` and the repository's `npm run benchmark`.
 - Each variant runs in its own temporary process with an empty working directory, home and Pi agent directory.
